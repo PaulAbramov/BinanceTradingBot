@@ -8,16 +8,16 @@ INITIALIZE_EASYLOGGINGPP
 class FileLogger : public LoggingFacility
 {
 public:
-    virtual void writeInfoEntry(std::string_view entry) override 
+    virtual void writeInfoEntry(string_view _entry) override 
     {
-        LOG(INFO) << entry;
+        LOG(INFO) << _entry << endl;
     }
-    virtual void writeWarnEntry(std::string_view entry) override 
+    virtual void writeWarnEntry(string_view _entry) override 
     {
-        LOG(WARNING) << entry;
+        LOG(WARNING) << _entry << endl;
     }
-    virtual void writeErrorEntry(std::string_view entry) override 
+    virtual void writeErrorEntry(string_view _entry) override 
     {
-        LOG(ERROR) << entry;
+        LOG(ERROR) << _entry << endl;
     }
 };
