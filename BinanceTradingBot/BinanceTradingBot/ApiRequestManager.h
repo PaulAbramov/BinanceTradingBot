@@ -17,8 +17,8 @@ private:
 	Logger logger;
 
 public:
-	ApiRequestManager(const Logger& logger) : logger(logger) {}
-	void CurlAPIWithHeader(string& url, string& result_json, vector <string>& extra_http_header, string& post_data, string& action);
+	ApiRequestManager(const Logger& _logger) : logger(_logger) {}
+	void CurlAPIWithHeader(string& _url, string& _result_json, vector <string>& _extra_http_header, string& _post_data, string& _action);
 
-	static size_t my_write(void* content, size_t size, size_t nmemb, string* buffer);
+	static size_t WebRequestCallback(void* _content, size_t _size, size_t _nmemb, string* _buffer);
 };

@@ -1,47 +1,55 @@
 #include "WebSocketSession.h"
 
 // Resolver and socket require an io_context
-WebSocketSession::WebSocketSession(net::io_context& ioc,
-	ssl::context& ctx,
-	char const* host,
-	char const* port,
-	char const* target)
-	: ioContext(ioc),
-	sslContext(ctx),
+WebSocketSession::WebSocketSession(net::io_context& _ioc,
+	ssl::context& _ctx,
+	char const* _host,
+	char const* _port,
+	char const* _target,
+	const Logger& _logger)
+	: ioContext(_ioc),
+	sslContext(_ctx),
 	tcpResolver(ioContext),
-	host(host),
+	host(_host),
 	hostAndPort(),
-	port(port),
-	target(target)
+	port(_port),
+	target(_target),
+	logger(_logger)
 {
 }
 
 void WebSocketSession::Start()
 {
-	while (!terminate) {
+	while (!terminate) 
+	{
+		ws = make_shared<websocket::stream<beast::ssl_stream<tcp::socket>>>(ioContext, sslContext);
 
-		ws = std::make_shared<websocket::stream<beast::ssl_stream<tcp::socket>>>(ioContext, sslContext);
-
-		try {
+		try 
+		{
 			ConnectAndReceive(); //initalizes websocket and polls continuously for messages until socket closed or an exception occurs
 		}
-		catch (beast::system_error const& se) {
-			std::cout << "exception: " << se.code() << ", " << se.code().message() << std::endl;
+		catch (beast::system_error const& _systemerror) {
+			oss << "exception: " << _systemerror.code() << ", " << _systemerror.code().message();
+			logger->writeErrorEntry(oss.str());
+			oss.clear();
 			Sleep(1000); //just wait a little while to not spam
 		}
 
 		ws.reset();
 	}
 
-	//if we get to here process has been terminated
+	logger->writeInfoEntry("websocketsession finished.");
 }
 
-void WebSocketSession::Stop() {
+void WebSocketSession::Stop() 
+{
 	terminate = true;
 }
 
 void WebSocketSession::ConnectAndReceive()
 {
+	logger->writeInfoEntry("Connecting to the websocket...");
+
 	// Look up the domain name
 	auto const tcpResolverResults = tcpResolver.resolve(host, port);
 
@@ -49,14 +57,15 @@ void WebSocketSession::ConnectAndReceive()
 	tcpEndPoint = net::connect(get_lowest_layer(*ws), tcpResolverResults);
 
 	// Set SNI Hostname (many hosts need this to handshake successfully)
-	if (!SSL_set_tlsext_host_name(ws->next_layer().native_handle(), host.c_str())) {
-		throw beast::system_error(
-			beast::error_code(static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()), "Failed to set SNI Hostname");
+	if (!SSL_set_tlsext_host_name(ws->next_layer().native_handle(), host.c_str())) 
+	{
+		throw beast::system_error(beast::error_code(static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()), "Failed to set SNI Hostname");
 	}
+
 	// Update the _host string. This will provide the value of the
 	// Host HTTP header during the WebSocket handshake.
 	// See https://tools.ietf.org/html/rfc7230#section-5.4
-	hostAndPort = host + ':' + std::to_string(tcpEndPoint.port());
+	hostAndPort = host + ':' + to_string(tcpEndPoint.port());
 
 	// Perform the SSL handshake
 	ws->next_layer().handshake(ssl::stream_base::client);
@@ -66,7 +75,7 @@ void WebSocketSession::ConnectAndReceive()
 		[](websocket::request_type& req)
 		{
 			req.set(http::field::user_agent,
-				std::string(BOOST_BEAST_VERSION_STRING) +
+				string(BOOST_BEAST_VERSION_STRING) +
 				" websocket-client-coro");
 		}));
 
@@ -74,33 +83,45 @@ void WebSocketSession::ConnectAndReceive()
 	ws->handshake(hostAndPort, target);
 
 	//Read Messages
-	try {
+	try 
+	{
 		while (true) //expect to read continuously until a connection failure
 		{
-			if (!terminate) {
+			if (!terminate) 
+			{
 				ws->read(buffer);
 
 				if (buffer.size() > 0)
 				{
-					std::cout << beast::make_printable(buffer.data()) << std::endl;
+					oss << beast::make_printable(buffer.data());
+					logger->writeErrorEntry(oss.str());
+					oss.clear();
 				}
 				buffer.clear();
 			}
-			else {
+			else 
+			{
 				ws->close(boost::beast::websocket::close_code::normal);
 			}
-
 		}
 	}
-	catch (beast::system_error const& se) {
-		if (se.code() == websocket::error::closed) {
-			std::cout << "socket was closed." << std::endl;
+	catch (beast::system_error const& _systemerror) 
+	{
+		if (_systemerror.code() == websocket::error::closed)
+		{
+			logger->writeWarnEntry("socket was closed.");
 		}
-		else {
-			std::cout << "exception: " << se.code() << ", " << se.code().message() << ", " << se.what();
+		else 
+		{
+			oss << "ConnectAndReceive() failed: " << _systemerror.code() << ", " << _systemerror.code().message() << ", " << _systemerror.what();
+			logger->writeErrorEntry(oss.str());
+			oss.clear();
 		}
 	}
-	catch (std::exception& ex) {
-		std::cout << "exception: " << ex.what();
+	catch (exception& _exception) 
+	{
+		oss << "ConnectAndReceive() failed: " << _exception.what();
+		logger->writeErrorEntry(oss.str());
+		oss.clear();
 	}
 }
