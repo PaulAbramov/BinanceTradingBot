@@ -12,6 +12,8 @@
 
 using namespace std;
 
+namespace fs = std::filesystem;
+
 class ConfigurationManager
 {
 private:
@@ -22,7 +24,7 @@ private:
 
 	void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);
 public:
-	ConfigurationManager(const Logger& logger) : logger(logger) {}
+	ConfigurationManager(const Logger& _logger) : logger(_logger) {}
 	Config Load();
 	Config Create();
 	void Safe(Config& _config);

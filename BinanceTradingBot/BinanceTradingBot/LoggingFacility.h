@@ -9,9 +9,9 @@ class LoggingFacility
 {
 public:
     virtual ~LoggingFacility() = default;
-    virtual void writeInfoEntry(string_view entry) = 0;
-    virtual void writeWarnEntry(string_view entry) = 0;
-    virtual void writeErrorEntry(string_view entry) = 0;
+    virtual void writeInfoEntry(string_view _entry) = 0;
+    virtual void writeWarnEntry(string_view _entry) = 0;
+    virtual void writeErrorEntry(string_view _entry) = 0;
 };
 
 using Logger = shared_ptr<LoggingFacility>;

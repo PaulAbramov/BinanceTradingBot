@@ -14,14 +14,14 @@ Config ConfigurationManager::Load()
 
 	try 
 	{
-		if (std::filesystem::exists(configFileName))
+		if (fs::exists(configFileName))
 		{
 			configFile.open(configFileName, ios::in);
 
 			string configText;
 			char buffer[100];
 
-			while (configFile.peek() != EOF && configFile.getline(buffer, 80))
+			while (configFile.peek() != EOF && configFile.getline(buffer, 100))
 			{
 				configText.append(buffer);
 			}

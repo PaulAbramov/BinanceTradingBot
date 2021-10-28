@@ -8,16 +8,16 @@
 class StandardOutputLogger : public LoggingFacility 
 {
 public:
-    virtual void writeInfoEntry(std::string_view entry) override 
+    virtual void writeInfoEntry(string_view _entry) override 
     {
-        cout << "[INFO] " << entry << endl;
+        cout << "[INFO] " << _entry << endl;
     }
-    virtual void writeWarnEntry(std::string_view entry) override 
+    virtual void writeWarnEntry(string_view _entry) override 
     {
-        cout << "[WARNING] " << entry << endl;
+        cout << "[WARNING] " << _entry << endl;
     }
-    virtual void writeErrorEntry(std::string_view entry) override 
+    virtual void writeErrorEntry(string_view _entry) override 
     {
-        cout << "[ERROR] " << entry << endl;
+        cout << "[ERROR] " << _entry << endl;
     }
 };

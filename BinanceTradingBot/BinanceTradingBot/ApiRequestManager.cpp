@@ -3,9 +3,9 @@
 /*
 * make a webrequest
 */
-void ApiRequestManager::CurlAPIWithHeader(string& url, string& str_result, vector <string>& extra_http_header, string& post_data, string& action)
+void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _str_result, vector <string>& _extra_http_header, string& _post_data, string& _action)
 {
-	logger->writeInfoEntry("making cUrl call to " + url);
+	logger->writeInfoEntry("making cUrl call to " + _url);
 
 	string result;
 	CURL* curl;
@@ -17,30 +17,29 @@ void ApiRequestManager::CurlAPIWithHeader(string& url, string& str_result, vecto
 
 	if (curl)
 	{
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ApiRequestManager::my_write);
+		curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ApiRequestManager::WebRequestCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &result);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
 
-		if (extra_http_header.size() > 0) 
+		if (_extra_http_header.size() > 0) 
 		{
-
 			struct curl_slist* chunk = NULL;
-			for (int i = 0; i < extra_http_header.size(); i++) 
+			for (int i = 0; i < _extra_http_header.size(); i++) 
 			{
-				chunk = curl_slist_append(chunk, extra_http_header[i].c_str());
+				chunk = curl_slist_append(chunk, _extra_http_header[i].c_str());
 			}
 			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 		}
 
-		if (post_data.size() > 0 || action == "POST" || action == "PUT" || action == "DELETE") 
+		if (_post_data.size() > 0 || _action == "POST" || _action == "PUT" || _action == "DELETE") 
 		{
-			if (action == "PUT" || action == "DELETE") 
+			if (_action == "PUT" || _action == "DELETE") 
 			{
-				curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, action.c_str());
+				curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, _action.c_str());
 			}
 
-			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, post_data.c_str());
+			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, _post_data.c_str());
 		}
 
 		res = curl_easy_perform(curl);
@@ -50,7 +49,7 @@ void ApiRequestManager::CurlAPIWithHeader(string& url, string& str_result, vecto
 		/* Check for errors */
 		if (res != CURLE_OK) 
 		{
-			std::ostringstream oss;
+			ostringstream oss;
 			oss << "curl_easy_perform() failed: " << curl_easy_strerror(res);
 
 			logger->writeErrorEntry(oss.str());
@@ -64,10 +63,10 @@ void ApiRequestManager::CurlAPIWithHeader(string& url, string& str_result, vecto
 /*
 * Callbackfunction to retrieve the webrequest
 */
-size_t ApiRequestManager::my_write(void* content, size_t size, size_t nmemb, string* buffer)
+size_t ApiRequestManager::WebRequestCallback(void* _content, size_t _size, size_t _nmemb, string* _buffer)
 {
-	size_t totalsize = size * nmemb;
-	buffer->append((char*)content, totalsize);
+	size_t totalsize = _size * _nmemb;
+	_buffer->append((char*)_content, totalsize);
 
 	return totalsize;
 }

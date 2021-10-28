@@ -4,13 +4,17 @@
 #include "ConfigurationManager.h"
 #include "FileLogger.h"
 #include "StandardOutputLogger.h"
+
 #include <chrono>
 #include <filesystem>
+#include <iostream>
 
 #define BINANCE_HOST "https://api.binance.com"
 
 using namespace std;
 using namespace std::chrono;
+
+namespace fs = std::filesystem;
 
 /*
  * API Endpoints:
@@ -22,15 +26,36 @@ using namespace std::chrono;
 
 static Logger InitializeLogger()
 {
-	std::string filename = "Logger.conf";
-	std::ifstream filestream(filename);
+	string filename = "Logger.conf";
+	ifstream filestream(filename);
+
 	// if configuration file exists - use FilesystemLogger
 	if (filestream.good())
 	{
+		//Check if logs directory exists, if not create it
+		if(!fs::exists("logs"))
+		{
+			fs::create_directory("logs");
+		}
+
 		// Load configuration from file
-		el::Configurations conf(filename);
+		el::Configurations config(filename);
 		// Actually reconfigure all loggers instead
-		el::Loggers::reconfigureAllLoggers(conf);
+		el::Loggers::reconfigureAllLoggers(config);
+
+		// Get the current date
+		struct tm newtime;
+		time_t now = std::time(nullptr);
+		localtime_s(&newtime, &now);
+
+		// Make a string with the current date
+		ostringstream oss;
+		oss << "logs/" << put_time(&newtime, "%d-%m-%Y_%H-%M-%S") << ".log";
+
+		// set globally the filepath to the file with the currentdate
+		config.setGlobally(el::ConfigurationType::Filename, oss.str());
+		el::Loggers::reconfigureLogger("default", config);
+
 		return make_shared<FileLogger>();
 	}
 	else
@@ -42,11 +67,9 @@ static Logger InitializeLogger()
 int main(int argc, char** argv)
 {
 	Logger logger = InitializeLogger();
-
 	logger->writeInfoEntry("Logger initialized");
 
 	ConfigurationManager configManager = ConfigurationManager(logger);
-
 	Config config = configManager.Load();
 
 		string url(BINANCE_HOST);
@@ -113,21 +136,21 @@ int main(int argc, char** argv)
 	// the socket is closed.
 	ioc.run();
 
-	std::string inputStr;
-	std::thread t;
+	string inputStr;
+	thread t;
 
-	std::shared_ptr<WebSocketSession> websocketSession;
+	shared_ptr<WebSocketSession> websocketSession;
 
 	while (inputStr != "x") {
-		std::cout << "Press 'r' to run. Press 's' to stop. Press 'x' to Exit." << std::endl;
-		std::cin >> inputStr;
+		cout << "Press 'r' to run. Press 's' to stop. Press 'x' to Exit." << endl;
+		cin >> inputStr;
 
 		if (inputStr == "r") { //run
 			if (websocketSession.use_count() == 0) { //should not run twice
-				t = std::thread(
-					[&websocketSession, &ioc, &ctx, host, port, target]
+				t = thread(
+					[&websocketSession, &ioc, &ctx, host, port, target, logger]
 					{
-						websocketSession = std::make_shared<WebSocketSession>(ioc, ctx, host, port, target);
+						websocketSession = make_shared<WebSocketSession>(ioc, ctx, host, port, target, logger);
 						websocketSession->Start(); //within a thread so doesn't block
 					});
 			}
