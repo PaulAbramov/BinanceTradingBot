@@ -16,6 +16,12 @@
     <Filter Include="Header Files\Logging">
       <UniqueIdentifier>{264222da-862e-42f5-8297-f78488b63d64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Account">
+      <UniqueIdentifier>{ce1f912c-0e72-400f-b233-e353f0022b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Account">
+      <UniqueIdentifier>{0e96c2ba-cb94-4b73-add8-7e12ff713fc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinanceTradingBot.cpp">
@@ -32,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Logger\easylogging++.cc">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountInformation.cpp">
+      <Filter>Source Files\Account</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="FileLogger.h">
       <Filter>Header Files\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountInformation.h">
+      <Filter>Header Files\Account</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

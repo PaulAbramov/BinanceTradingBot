@@ -4,7 +4,7 @@
 * Check if the configfile exists and open it
 * If it is not existent then create a new one
 */
-Config ConfigurationManager::Load()
+Config ConfigurationManager::LoadConfig()
 {
 	logger->writeInfoEntry("Load Configuration...");
 	Config config;
@@ -35,7 +35,7 @@ Config ConfigurationManager::Load()
 		}
 		else
 		{
-			return Create();
+			return CreateConfig();
 		}
 	}
 	catch (system_error& e) 
@@ -53,7 +53,7 @@ Config ConfigurationManager::Load()
 /*
 * Create and prefill the config file
 */
-Config ConfigurationManager::Create()
+Config ConfigurationManager::CreateConfig()
 {
 	logger->writeInfoEntry("Create Configuration...");
 
@@ -80,7 +80,7 @@ Config ConfigurationManager::Create()
 	return config;
 }
 
-void ConfigurationManager::Safe(Config& _config)
+void ConfigurationManager::SafeConfig(Config& _config)
 {
 	Config config;
 }

@@ -157,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Logger\easylogging++.cc" />
+    <ClCompile Include="AccountInformation.cpp" />
     <ClCompile Include="ApiRequestManager.cpp" />
     <ClCompile Include="BinanceTradingBot.cpp" />
     <ClCompile Include="ConfigurationManager.cpp" />
@@ -169,6 +170,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccountInformation.h" />
     <ClInclude Include="ApiRequestManager.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigurationManager.h" />

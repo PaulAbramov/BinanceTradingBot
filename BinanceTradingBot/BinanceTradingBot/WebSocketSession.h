@@ -1,8 +1,5 @@
 #pragma once
 
-#include "root_certificates.h"
-#include "LoggingFacility.h"
-
 #include <boost/beast/core.hpp>
 #include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
@@ -16,6 +13,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include "root_certificates.h"
+#include "LoggingFacility.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -53,6 +53,6 @@ public:
 		char const* _target,
 		const Logger& _logger);
 
-	void Stop();
-	void Start();
+	void StopWebSocketSession();
+	void StartWebSocketSession();
 };
