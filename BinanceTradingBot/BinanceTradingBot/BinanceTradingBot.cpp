@@ -1,13 +1,12 @@
-// BinanceTradingBot.cpp : This file contains the 'main' function. Program execution begins and ends there.
+#include <chrono>
+#include <filesystem>
+#include <iostream>
 
 #include "WebSocketSession.h"
 #include "ConfigurationManager.h"
 #include "FileLogger.h"
 #include "StandardOutputLogger.h"
-
-#include <chrono>
-#include <filesystem>
-#include <iostream>
+#include "ApiRequestManager.h"
 
 using namespace std;
 using namespace std::chrono;
