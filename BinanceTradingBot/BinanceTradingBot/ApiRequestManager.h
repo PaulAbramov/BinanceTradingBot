@@ -30,14 +30,12 @@ private:
 	Logger logger;
 	string apiKey;
 	string secretKey;
-	//AccountInformation accountInformation;
 
 	void SetSecretAndApiKeyInUrl(string& _url, vector <string>& _extraHttpHeader, string _querystring);
 	void CurlAPIWithHeader(string& _url, string& _strResult, vector <string>& _extraHttpHeader, string& _postData, string& _action, string _queryString);
 	string HmacSha256(const string _secretKey, const string _querystring);
 	string B2AHex(char* _byteArray, int _n);
 	static size_t WebRequestCallback(void* _content, size_t _size, size_t _nmemb, string* _buffer);
-
 
 public:
 	ApiRequestManager(const Logger& _logger, string _apiKey, string _secretKey);
