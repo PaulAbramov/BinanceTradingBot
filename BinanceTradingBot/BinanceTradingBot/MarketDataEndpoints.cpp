@@ -77,12 +77,12 @@ void MarketDataEndpoints::GeMarketRecentTradesListQuery(string& _url, string& _q
 * Weight(IP): 5
 *
 * Parameters:
-* Name			Type	Mandatory	Description
-* symbol		STRING	YES
-* limit			INT		NO			Default 500; max 1000
-* fromId		LONG	NO			Trade id to fetch from. Default gets most recent trades.
+* Name			Type			Mandatory	Description
+* symbol		STRING			YES
+* limit			INT				NO			Default 500; max 1000
+* fromId		UNSGINED SHORT	NO			Trade id to fetch from. Default gets most recent trades.
 */
-void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _queryString, string _symbol, long _fromId, int _limit)
+void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _queryString, string _symbol, unsigned short _fromId, int _limit)
 {
 	if (!_symbol.length() > 0)
 	{
@@ -115,12 +115,12 @@ void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _que
 * Weight(IP): 1
 *
 * Parameters:
-* Name			Type	Mandatory	Description
-* symbol		STRING	YES
-* interval		ENUM	YES	
-* startTime		LONG	NO	
-* endTime		LONG	NO	
-* limit			INT		NO			Default 500; max 1000.
+* Name			Type			Mandatory	Description
+* symbol		STRING			YES
+* interval		ENUM			YES	
+* startTime		UNSGINED SHORT	NO	
+* endTime		UNSGINED SHORT	NO	
+* limit			INT				NO			Default 500; max 1000.
 * 
 * If startTime and endTime are not sent, the most recent klines are returned.
 */

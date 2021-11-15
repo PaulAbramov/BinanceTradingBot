@@ -10,9 +10,9 @@
 * Weight(IP): 10
 * 
 * Parameters:
-* Name			Type	Mandatory	Description
-* recvWindow	long	NO			The value cannot be greater than 60000
-* timestamp		long	YES
+* Name			Type			Mandatory	Description
+* recvWindow	UNSGINED SHORT	NO			The value cannot be greater than 60000
+* timestamp		UNSGINED SHORT	YES
 */
 void WalletEndpoints::GetWalletAllCoinsInformationQuery(string& _url, string& _queryString, unsigned short _recvWindow)
 {
@@ -31,13 +31,13 @@ void WalletEndpoints::GetWalletAllCoinsInformationQuery(string& _url, string& _q
 * Weight(IP): 2400
 *
 * Parameters:
-* Name			Type	Mandatory	Description
-* type			STRING	YES			"SPOT", "MARGIN", "FUTURES"
-* startTime		LONG	NO
-* endTime		LONG	NO	
-* limit			INT		NO			min 5, max 30, default 5
-* recvWindow	LONG	NO	
-* timestamp		LONG	YES
+* Name			Type			Mandatory	Description
+* type			STRING			YES			"SPOT", "MARGIN", "FUTURES"
+* startTime		UNSGINED SHORT	NO
+* endTime		UNSGINED SHORT	NO	
+* limit			INT				NO			min 5, max 30, default 5
+* recvWindow	UNSGINED SHORT	NO	
+* timestamp		UNSGINED SHORT	YES
 */
 void WalletEndpoints::GetWalletDailyAccountSnapshotQuery(string& _url, string& _queryString, SnapshotType _snapshotType, time_t _startTime, time_t _endTime, int _limit, unsigned short _recvWindow)
 {
@@ -87,9 +87,9 @@ void WalletEndpoints::GetWalletDailyAccountSnapshotQuery(string& _url, string& _
 * Weight(IP): 1
 *
 * Parameters:
-* Name			Type	Mandatory	Description
-* recvWindow	ushort	NO			The value cannot be greater than 60000
-* timestamp		long	YES
+* Name			Type			Mandatory	Description
+* recvWindow	ushort			NO			The value cannot be greater than 60000
+* timestamp		UNSGINED SHORT	YES
 */
 void WalletEndpoints::PostWalletDisableFastWithdrawQuery(string& _url, string& _queryString, unsigned short _recvWindow)
 {
@@ -108,9 +108,9 @@ void WalletEndpoints::PostWalletDisableFastWithdrawQuery(string& _url, string& _
 * Weight(IP): 1
 *
 * Parameters:
-* Name			Type	Mandatory	Description
-* recvWindow	ushort	NO			The value cannot be greater than 60000
-* timestamp		long	YES
+* Name			Type			Mandatory	Description
+* recvWindow	ushort			NO			The value cannot be greater than 60000
+* timestamp		UNSGINED SHORT	YES
 */
 void WalletEndpoints::PostWalletEnableFastWithdrawQuery(string& _url, string& _queryString, unsigned short _recvWindow)
 {
@@ -131,17 +131,17 @@ void WalletEndpoints::PostWalletEnableFastWithdrawQuery(string& _url, string& _q
 * Weight(IP): 1
 *
 * Parameters:
-* Name					Type	Mandatory	Description
-* coin					STRING	YES	
-* withdrawOrderId		STRING	NO			client id for withdraw
-* network				STRING	NO	
-* address				STRING	YES	
-* addressTag			STRING	NO			Secondary address identifier for coins like XRP,XMR etc.
-* amount				DECIMAL	YES	
-* transactionFeeFlag	BOOLEAN	NO			When making internal transfer, true for returning the fee to the destination account; false for returning the fee back to the departure account. Default false.
-* name					STRING	NO			Description of the address. Space in name should be encoded into %20.
-* recvWindow			ushort	NO			The value cannot be greater than 60000
-* timestamp				long	YES
+* Name					Type			Mandatory	Description
+* coin					STRING			YES	
+* withdrawOrderId		STRING			NO			client id for withdraw
+* network				STRING			NO	
+* address				STRING			YES	
+* addressTag			STRING			NO			Secondary address identifier for coins like XRP,XMR etc.
+* amount				DECIMAL			YES	
+* transactionFeeFlag	BOOLEAN			NO			When making internal transfer, true for returning the fee to the destination account; false for returning the fee back to the departure account. Default false.
+* name					STRING			NO			Description of the address. Space in name should be encoded into %20.
+* recvWindow			ushort			NO			The value cannot be greater than 60000
+* timestamp				UNSGINED SHORT	YES
 * 
 * If network not send, return with default network of the coin.
 * You can get network and isDefault in networkList of a coin in the response of Get /sapi/v1/capital/config/getall (HMAC SHA256).
@@ -218,15 +218,15 @@ void WalletEndpoints::PostWalletWithdraw(string& _url, string& _queryString, str
 * Weight(IP): 1
 *
 * Parameters:
-* Name					Type	Mandatory	Description
-* coin					STRING	NO	
-* status				INT		NO			0(0:pending,6: credited but cannot withdraw, 1:success)
-* startTime				LONG	NO			Default: 90 days from current timestamp
-* endTime				LONG	NO			Default: present timestamp
-* offset				INT		NO			Default:0
-* limit					INT		NO			Default:1000, Max:1000
-* recvWindow			LONG	NO	
-* timestamp				LONG	YES
+* Name					Type			Mandatory	Description
+* coin					STRING			NO	
+* status				INT				NO			0(0:pending,6: credited but cannot withdraw, 1:success)
+* startTime				UNSGINED SHORT	NO			Default: 90 days from current timestamp
+* endTime				UNSGINED SHORT	NO			Default: present timestamp
+* offset				INT				NO			Default:0
+* limit					INT				NO			Default:1000, Max:1000
+* recvWindow			UNSGINED SHORT	NO	
+* timestamp				UNSGINED SHORT	YES
 *
 * Please notice the default startTime and endTime to make sure that time interval is within 0-90 days.
 * If both startTime and endTime are sent, time between startTime and endTime must be less than 90 days.
@@ -274,16 +274,16 @@ void WalletEndpoints::GetWalletDepositHistory(string& _url, string& _queryString
 * Weight(IP): 1
 *
 * Parameters:
-* Name					Type	Mandatory	Description
-* coin					STRING	NO
-* withdrawOrderId		STRING	NO	
-* status				INT		NO			0(0:Email Sent,1:Cancelled 2:Awaiting Approval 3:Rejected 4:Processing 5:Failure 6:Completed)
-* startTime				LONG	NO			Default: 90 days from current timestamp
-* endTime				LONG	NO			Default: present timestamp
-* offset				INT		NO			Default:0
-* limit					INT		NO			Default:1000, Max:1000
-* recvWindow			LONG	NO
-* timestamp				LONG	YES
+* Name					Type			Mandatory	Description
+* coin					STRING			NO
+* withdrawOrderId		STRING			NO	
+* status				INT				NO			0(0:Email Sent,1:Cancelled 2:Awaiting Approval 3:Rejected 4:Processing 5:Failure 6:Completed)
+* startTime				UNSGINED SHORT	NO			Default: 90 days from current timestamp
+* endTime				UNSGINED SHORT	NO			Default: present timestamp
+* offset				INT				NO			Default:0
+* limit					INT				NO			Default:1000, Max:1000
+* recvWindow			UNSGINED SHORT	NO
+* timestamp				UNSGINED SHORT	YES
 * 
 * network may not be in the response for old withdraw.
 * Please notice the default startTime and endTime to make sure that time interval is within 0-90 days.
@@ -338,11 +338,11 @@ void WalletEndpoints::GetWalletWithdrawtHistory(string& _url, string& _queryStri
 * Weight(IP): 10
 *
 * Parameters:
-* Name					Type	Mandatory	Description
-* coin					STRING	YES	
-* network				STRING	NO	
-* recvWindow			LONG	NO	
-* timestamp				LONG	YES
+* Name					Type			Mandatory	Description
+* coin					STRING			YES	
+* network				STRING			NO	
+* recvWindow			UNSGINED SHORT	NO	
+* timestamp				UNSGINED SHORT	YES
 *
 * If network is not send, return with default network of the coin.
 * You can get network and isDefault in networkList in the response of Get /sapi/v1/capital/config/getall (HMAC SHA256).

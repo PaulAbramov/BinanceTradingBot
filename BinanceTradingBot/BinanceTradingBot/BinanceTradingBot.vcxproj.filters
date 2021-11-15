@@ -155,5 +155,8 @@
     <ClInclude Include="APIHead.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
+    <ClInclude Include="APIEnums.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
