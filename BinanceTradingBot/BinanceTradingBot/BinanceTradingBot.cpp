@@ -61,8 +61,8 @@ int main(int argc, char** argv)
 	ConfigurationManager configManager = ConfigurationManager(logger);
 	Config config = configManager.LoadConfig();
 
-	auto host = config.host.c_str();
-	auto port = config.port.c_str();
+	auto host = BINANCE_HOST;
+	auto port = BINANCE_PORT;
 	auto target = config.target.c_str();
 	auto text = "";
 

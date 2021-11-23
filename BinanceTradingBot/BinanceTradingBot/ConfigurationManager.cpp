@@ -59,8 +59,6 @@ Config ConfigurationManager::CreateConfig()
 
 	Config config;
 
-	jsonObject["host"] = "stream.binance.com";
-	jsonObject["port"] = "9443";
 	jsonObject["target"] = "/ws/bnbbusd@depth@100ms";
 	jsonObject["api_key"] = "";
 	jsonObject["secret_key"] = "";
@@ -87,8 +85,6 @@ void ConfigurationManager::SafeConfig(Config& _config)
 
 void ConfigurationManager::InitializeConfig(Config& _config, const nlohmann::json& _jsonObject)
 {
-	_config.host = _jsonObject["host"];
-	_config.port = _jsonObject["port"];
 	_config.target = _jsonObject["target"];
 	_config.api_key = _jsonObject["api_key"];
 	_config.secret_key = _jsonObject["secret_key"];

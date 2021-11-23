@@ -6,8 +6,6 @@ ApiRequestManager::ApiRequestManager(const Logger& _logger, string _apiKey, stri
 	curl = curl_easy_init();
 	apiKey = _apiKey;
 	secretKey = _secretKey;
-
-	//accountInformation = AccountInformation(_logger);
 }
 
 void ApiRequestManager::CleanUpApiRequestManager()
@@ -18,21 +16,15 @@ void ApiRequestManager::CleanUpApiRequestManager()
 	curl_global_cleanup();
 }
 
-void ApiRequestManager::GetAccountInformation()
-{
-	string post_data = "";
-	string str_result;
-	string action = "GET";
-
-	string url(BINANCE_HOST);
-	string queryString;
-	//accountInformation.GetAccountInformationQuery(url, queryString);
-	//accountInformation.GetAccountSnapshotQuery(url, queryString, SnapshotType::spot, 0, 0);
-	//accountInformation.GetAccountSnapshotQuery(url, queryString, SnapshotType::margin, 0, 0, 5);
-	//accountInformation.GetAccountSnapshotQuery(url, queryString, SnapshotType::futures, 0, 0, 30);
-
-	//CurlAPIWithHeader()
-}
+//void ApiRequestManager::GetAccountInformation()
+//{
+//	string post_data = "";
+//	string str_result;
+//	string action = "GET";
+//
+//	string url(BINANCE_HOST);
+//	string queryString;
+//}
 
 /*
 * make a webrequest

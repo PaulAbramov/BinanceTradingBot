@@ -1,6 +1,8 @@
 #pragma once
 
-#define BINANCE_HOST "https://api.binance.com"
+#define BINANCE_APIENDPOINT "https://api.binance.com"
+#define BINANCE_HOST "stream.binance.com"
+#define BINANCE_PORT "9443"
 
 /*
  * API Endpoints:
@@ -40,5 +42,5 @@ private:
 public:
 	ApiRequestManager(const Logger& _logger, string _apiKey, string _secretKey);
 	void CleanUpApiRequestManager();
-	void GetAccountInformation();
+	//void GetAccountInformation();
 };
