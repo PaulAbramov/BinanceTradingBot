@@ -1,23 +1,23 @@
 #pragma once
 
+#include <iostream>
+
 #include "LoggingFacility.h"
 #include "easylogging++.h"
-
-#include <iostream>
 
 class StandardOutputLogger : public LoggingFacility 
 {
 public:
-    virtual void writeInfoEntry(string_view _entry) override 
+    virtual void writeInfoEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
     {
-        cout << "[INFO] " << _entry << endl;
+        cout << "[INFO] " << _callerFunction << "(): " << _entry << endl;
     }
-    virtual void writeWarnEntry(string_view _entry) override 
+    virtual void writeWarnEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
     {
-        cout << "[WARNING] " << _entry << endl;
+        cout << "[WARNING] " << _callerFunction << "(): " << _entry << endl;
     }
-    virtual void writeErrorEntry(string_view _entry) override 
+    virtual void writeErrorEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
     {
-        cout << "[ERROR] " << _entry << endl;
+        cout << "[ERROR] " << _callerFunction << "(): " << _entry << endl;
     }
 };

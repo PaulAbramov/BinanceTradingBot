@@ -4,7 +4,7 @@
 * Check if the configfile exists and open it
 * If it is not existent then create a new one
 */
-Config ConfigurationManager::Load()
+Config ConfigurationManager::LoadConfig()
 {
 	logger->writeInfoEntry("Load Configuration...");
 	Config config;
@@ -35,7 +35,7 @@ Config ConfigurationManager::Load()
 		}
 		else
 		{
-			return Create();
+			return CreateConfig();
 		}
 	}
 	catch (system_error& e) 
@@ -53,14 +53,12 @@ Config ConfigurationManager::Load()
 /*
 * Create and prefill the config file
 */
-Config ConfigurationManager::Create()
+Config ConfigurationManager::CreateConfig()
 {
 	logger->writeInfoEntry("Create Configuration...");
 
 	Config config;
 
-	jsonObject["host"] = "stream.binance.com";
-	jsonObject["port"] = "9443";
 	jsonObject["target"] = "/ws/bnbbusd@depth@100ms";
 	jsonObject["api_key"] = "";
 	jsonObject["secret_key"] = "";
@@ -80,15 +78,13 @@ Config ConfigurationManager::Create()
 	return config;
 }
 
-void ConfigurationManager::Safe(Config& _config)
+void ConfigurationManager::SafeConfig(Config& _config)
 {
 	Config config;
 }
 
 void ConfigurationManager::InitializeConfig(Config& _config, const nlohmann::json& _jsonObject)
 {
-	_config.host = _jsonObject["host"];
-	_config.port = _jsonObject["port"];
 	_config.target = _jsonObject["target"];
 	_config.api_key = _jsonObject["api_key"];
 	_config.secret_key = _jsonObject["secret_key"];

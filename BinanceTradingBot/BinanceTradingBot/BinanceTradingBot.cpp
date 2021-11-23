@@ -1,28 +1,17 @@
-// BinanceTradingBot.cpp : This file contains the 'main' function. Program execution begins and ends there.
+#include <chrono>
+#include <filesystem>
+#include <iostream>
 
 #include "WebSocketSession.h"
 #include "ConfigurationManager.h"
 #include "FileLogger.h"
 #include "StandardOutputLogger.h"
-
-#include <chrono>
-#include <filesystem>
-#include <iostream>
-
-#define BINANCE_HOST "https://api.binance.com"
+#include "ApiRequestManager.h"
 
 using namespace std;
 using namespace std::chrono;
 
 namespace fs = std::filesystem;
-
-/*
- * API Endpoints:
- * https://api.binance.com
- * https://api1.binance.com
- * https://api2.binance.com
- * https://api3.binance.com
- */
 
 static Logger InitializeLogger()
 {
@@ -70,57 +59,10 @@ int main(int argc, char** argv)
 	logger->writeInfoEntry("Logger initialized");
 
 	ConfigurationManager configManager = ConfigurationManager(logger);
-	Config config = configManager.Load();
+	Config config = configManager.LoadConfig();
 
-		string url(BINANCE_HOST);
-		url += "/api/v3/account?";
-		string action = "GET";
-
-		milliseconds ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-
-		// Wann die Abfrage erstellt worden ist
-		string querystring("timestamp=");
-		querystring.append(to_string(ms.count()));
-
-		// Wie lange die Abfrage aktiv ist
-		//if (recvWindow > 0) {
-		//	querystring.append("&recvWindow=");
-		//	querystring.append(to_string(recvWindow));
-		//}
-
-		unsigned char* digest;
-		digest = HMAC(EVP_sha256(), config.secret_key.c_str(), strlen(config.secret_key.c_str()), (unsigned char*)querystring.c_str(), strlen(querystring.c_str()), NULL, NULL);
-		
-		const static std::string HexCodes = "0123456789abcdef";
-		string HexString;
-		for (int i = 0; i < 32; ++i) {
-			unsigned char BinValue = digest[i];
-			HexString += HexCodes[(BinValue >> 4) & 0x0F];
-			HexString += HexCodes[BinValue & 0x0F];
-		}
-
-		string signature = HexString;
-		querystring.append("&signature=");
-		querystring.append(signature);
-
-		url.append(querystring);
-
-		vector <string> extra_http_header;
-		string header_chunk("X-MBX-APIKEY: ");
-		header_chunk.append(config.api_key);
-		extra_http_header.push_back(header_chunk);
-
-		string post_data = "";
-
-
-	//curl_global_cleanup();
-	//
-	//std::cout << result << endl;
-
-	
-
-	auto host = config.host.c_str();
-	auto port = config.port.c_str();
+	auto host = BINANCE_HOST;
+	auto port = BINANCE_PORT;
 	auto target = config.target.c_str();
 	auto text = "";
 
@@ -151,13 +93,13 @@ int main(int argc, char** argv)
 					[&websocketSession, &ioc, &ctx, host, port, target, logger]
 					{
 						websocketSession = make_shared<WebSocketSession>(ioc, ctx, host, port, target, logger);
-						websocketSession->Start(); //within a thread so doesn't block
+						websocketSession->StartWebSocketSession(); //within a thread so doesn't block
 					});
 			}
 		}
 		else if (inputStr == "s" || inputStr == "x") { //stop & exit
 			if (websocketSession.use_count()) { //running
-				websocketSession->Stop();
+				websocketSession->StopWebSocketSession();
 				t.join();
 				t.~thread();
 				websocketSession.reset();

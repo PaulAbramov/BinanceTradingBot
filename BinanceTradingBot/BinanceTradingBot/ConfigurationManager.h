@@ -25,7 +25,7 @@ private:
 	void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);
 public:
 	ConfigurationManager(const Logger& _logger) : logger(_logger) {}
-	Config Load();
-	Config Create();
-	void Safe(Config& _config);
+	Config LoadConfig();
+	Config CreateConfig();
+	void SafeConfig(Config& _config);
 };

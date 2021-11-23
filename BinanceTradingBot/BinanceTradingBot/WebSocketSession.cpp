@@ -18,7 +18,7 @@ WebSocketSession::WebSocketSession(net::io_context& _ioc,
 {
 }
 
-void WebSocketSession::Start()
+void WebSocketSession::StartWebSocketSession()
 {
 	while (!terminate) 
 	{
@@ -41,7 +41,7 @@ void WebSocketSession::Start()
 	logger->writeInfoEntry("websocketsession finished.");
 }
 
-void WebSocketSession::Stop() 
+void WebSocketSession::StopWebSocketSession()
 {
 	terminate = true;
 }
