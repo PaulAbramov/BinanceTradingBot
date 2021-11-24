@@ -6,12 +6,12 @@
 class SpotAccountEndpoints : public APIHead
 {
 private:
-	const boost::unordered_map<ESide, const char*> eSidesToString = map_list_of
+	boost::unordered_map<ESide, const char*> eSidesToString = map_list_of
 	(ESide::NONE, "NONE")
 	(ESide::BUY, "BUY")
 	(ESide::SELL, "SELL");
 
-	const boost::unordered_map<EOrderType, const char*> eOrderTypeToString = map_list_of
+	boost::unordered_map<EOrderType, const char*> eOrderTypeToString = map_list_of
 	(EOrderType::NONE, "NONE")
 	(EOrderType::LIMIT, "LIMIT")
 	(EOrderType::MARKET, "MARKET")
@@ -21,13 +21,13 @@ private:
 	(EOrderType::TAKEPROFITLIMIT, "TAKE_PROFIT_LIMIT")
 	(EOrderType::LIMITMAKER, "LIMIT_MAKER");
 
-	const boost::unordered_map<ENewOrderResponseType, const char*> eNewOrderResponseTypeToString = map_list_of
+	boost::unordered_map<ENewOrderResponseType, const char*> eNewOrderResponseTypeToString = map_list_of
 	(ENewOrderResponseType::ACK, "ACK")
 	(ENewOrderResponseType::NONE, "NONE")
 	(ENewOrderResponseType::RESULT, "RESULT")
 	(ENewOrderResponseType::FULL, "FULL");
 
-	const boost::unordered_map<ETimeInForce, const char*> eTimeInForceToString = map_list_of
+	boost::unordered_map<ETimeInForce, const char*> eTimeInForceToString = map_list_of
 	(ETimeInForce::NONE, "NONE")
 	(ETimeInForce::GTC, "GTC")
 	(ETimeInForce::IOC, "IOC")

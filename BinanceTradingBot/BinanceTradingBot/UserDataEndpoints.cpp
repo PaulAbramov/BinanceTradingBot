@@ -29,7 +29,7 @@ void UserDataEndpoints::PostUserDataCreateListenKeySpot(string& _url)
 */
 void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& _queryString, string _listenKey)
 {
-	if (_listenKey.length() <= 0)
+	if (_listenKey.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'listenKey'");
 		return;
@@ -58,7 +58,7 @@ void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& 
 */
 void UserDataEndpoints::DeleteUserDataCloseListenKeySpot(string& _url, string& _queryString, string _listenKey)
 {
-	if (_listenKey.length() <= 0)
+	if (_listenKey.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'listenKey'");
 		return;

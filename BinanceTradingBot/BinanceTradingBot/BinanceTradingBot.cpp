@@ -61,6 +61,10 @@ int main(int argc, char** argv)
 	ConfigurationManager configManager = ConfigurationManager(logger);
 	Config config = configManager.LoadConfig();
 
+	ApiRequestManager manager = ApiRequestManager(logger, config.api_key, config.secret_key);
+
+	manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
+
 	auto host = BINANCE_HOST;
 	auto port = BINANCE_PORT;
 	auto target = config.target.c_str();

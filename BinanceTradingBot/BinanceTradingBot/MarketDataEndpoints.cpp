@@ -19,7 +19,7 @@
 */
 void MarketDataEndpoints::GeMarketOrderbookQuery(string& _url, string& _queryString, string _symbol, int _limit)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -50,7 +50,7 @@ void MarketDataEndpoints::GeMarketOrderbookQuery(string& _url, string& _queryStr
 */
 void MarketDataEndpoints::GeMarketRecentTradesListQuery(string& _url, string& _queryString, string _symbol, int _limit)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -84,7 +84,7 @@ void MarketDataEndpoints::GeMarketRecentTradesListQuery(string& _url, string& _q
 */
 void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _queryString, string _symbol, unsigned short _fromId, int _limit)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -126,7 +126,7 @@ void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _que
 */
 void MarketDataEndpoints::GeMarketCandlestickDataQuery(string& _url, string& _queryString, string _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -170,7 +170,7 @@ void MarketDataEndpoints::GeMarketCandlestickDataQuery(string& _url, string& _qu
 */
 void MarketDataEndpoints::GeMarketCurrentAveragePriceQuery(string& _url, string& _queryString, string _symbol)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -205,7 +205,7 @@ void MarketDataEndpoints::GeMarketTickerChangeStatisticQuery(string& _url, strin
 {
 	_url += "/api/v3/ticker/24hr";
 
-	if (_symbol.length() > 0)
+	if (!_symbol.empty())
 	{
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
@@ -235,7 +235,7 @@ void MarketDataEndpoints::GeMarketSymbolPriceTickerQuery(string& _url, string& _
 {
 	_url += "/api/v3/ticker/price";
 
-	if (_symbol.length() > 0)
+	if (!_symbol.empty())
 	{
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
@@ -265,7 +265,7 @@ void MarketDataEndpoints::GeMarketSymbolOrderbookTickerQuery(string& _url, strin
 {
 	_url += "/api/v3/ticker/bookTicker";
 
-	if (_symbol.length() > 0)
+	if (!_symbol.empty())
 	{
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);

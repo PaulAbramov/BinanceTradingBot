@@ -54,7 +54,7 @@
 */
 void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _queryString, string _symbol, ETimeInForce _timeInForce, double _quantity, double _quoteOrderQuantity, double _price, string _newClientOrderId, double _stopPrice, double _icebergQuantity, ENewOrderResponseType _newOrderResponseType, ESide _side, EOrderType _orderType, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -216,7 +216,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 	}
 
 	//	newClientOrderId
-	if (_newClientOrderId.length() > 0)
+	if (!_newClientOrderId.empty())
 	{
 		_queryString.append("&newClientOrderId=");
 		_queryString.append(_newClientOrderId);
@@ -286,12 +286,12 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 */
 void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, string _originalClientOrderId, string _newClientOrderId, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
-	if (_orderId == 0 && _originalClientOrderId.length() == 0)
+	if (_orderId == 0 && _originalClientOrderId.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'orderId' or 'originalCLientOrderId'");
 		return;
@@ -313,14 +313,14 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, strin
 	}
 	
 	//	origClientOrderId
-	if (_originalClientOrderId.length() > 0)
+	if (!_originalClientOrderId.empty())
 	{
 		_queryString.append("&origClientOrderId=");
 		_queryString.append(_originalClientOrderId);
 	}
 	
 	//	newClientOrderId
-	if (_newClientOrderId.length() > 0)
+	if (!_newClientOrderId.empty())
 	{
 		_queryString.append("&newClientOrderId=");
 		_queryString.append(_newClientOrderId);
@@ -344,12 +344,10 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, strin
 * symbol			STRING			YES
 * recvWindow		UNSIGNED SHORT	NO			The value cannot be greater than 60000
 * timestamp			UNSIGNED SHORT	YES
-*
-* Either orderId or origClientOrderId must be sent.
 */
 void SpotAccountEndpoints::DeleteSpotAccountCancelAllOpenOrdersOnSymbolQuery(string& _url, string& _queryString, string _symbol, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -388,12 +386,12 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelAllOpenOrdersOnSymbolQuery(str
 */
 void SpotAccountEndpoints::GetSpotAccountQueryOrderQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, string _originalClientOrderId, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
-	if (_orderId == 0 && _originalClientOrderId.length() == 0)
+	if (_orderId == 0 && _originalClientOrderId.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'orderId' or 'originalCLientOrderId'");
 		return;
@@ -414,7 +412,7 @@ void SpotAccountEndpoints::GetSpotAccountQueryOrderQuery(string& _url, string& _
 	}
 
 	//	origClientOrderId
-	if (_originalClientOrderId.length() > 0)
+	if (!_originalClientOrderId.empty())
 	{
 		_queryString.append("&origClientOrderId=");
 		_queryString.append(_originalClientOrderId);
@@ -447,7 +445,7 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOpenOrdersQuery(string& _url, st
 	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
 
 	//	symbol
-	if (_symbol.length() > 0)
+	if (!_symbol.empty())
 	{
 		_queryString.append("&symbol=");
 		_queryString.append(_symbol);
@@ -481,7 +479,7 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOpenOrdersQuery(string& _url, st
 */
 void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, int _limit, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -564,7 +562,7 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 */
 void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string& _queryString, string _symbol, string _listClientOrderId, double _quantity, string _limitClientOrderId, double _price, double _limitIcebergQuantity, string _stopClientOrderId, double _stopPrice, double _stopLimitPrice, double _stopIcebergQuantity, ETimeInForce _stopLimitTimeInForce, ENewOrderResponseType _newOrderResponseType, ESide _side, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
@@ -604,7 +602,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 	_queryString.append(_symbol);
 
 	// listClientOrderId
-	if (_listClientOrderId.length() > 0)
+	if (!_listClientOrderId.empty())
 	{
 		_queryString.append("&listClientOrderId=");
 		_queryString.append(_listClientOrderId);
@@ -619,7 +617,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 	_queryString.append(to_string(_quantity));
 
 	// limitClientOrderId
-	if (_limitClientOrderId.length() > 0)
+	if (!_limitClientOrderId.empty())
 	{
 		_queryString.append("&limitClientOrderId=");
 		_queryString.append(_limitClientOrderId);
@@ -637,7 +635,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 	}
 
 	// stopClientOrderId
-	if (_stopClientOrderId.length() > 0)
+	if (!_stopClientOrderId.empty())
 	{
 		_queryString.append("&stopClientOrderId=");
 		_queryString.append(_stopClientOrderId);
@@ -701,9 +699,14 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 */
 void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderListId, string _listClientOrderId, string _newClientOrderId, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
+		return;
+	}
+	if (_orderListId == 0 && _listClientOrderId.empty())
+	{
+		logger->writeWarnEntry("Did not set mandatory parameter '_orderListId' or 'listClientOrderId'");
 		return;
 	}
 
@@ -723,14 +726,14 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string&
 	}
 
 	// listClientOrderId
-	if (_listClientOrderId.length() > 0)
+	if (!_listClientOrderId.empty())
 	{
 		_queryString.append("&listClientOrderId=");
 		_queryString.append(_listClientOrderId);
 	}
 	
 	// newClientOrderId
-	if (_newClientOrderId.length() > 0)
+	if (!_newClientOrderId.empty())
 	{
 		_queryString.append("&newClientOrderId=");
 		_queryString.append(_newClientOrderId);
@@ -757,7 +760,7 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string&
 */
 void SpotAccountEndpoints::GetSpotAccountQueryOcoQuery(string& _url, string& _queryString, unsigned short _orderListId, string _originalClientOrderId, unsigned short _recvWindow)
 {
-	if (_orderListId == 0 && _originalClientOrderId.length() > 0)
+	if (_orderListId == 0 && _originalClientOrderId.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'orderListId' or 'originalClientOrderId'");
 		return;
@@ -775,7 +778,7 @@ void SpotAccountEndpoints::GetSpotAccountQueryOcoQuery(string& _url, string& _qu
 	}
 
 	// origClientOrderId
-	if (_originalClientOrderId.length() > 0)
+	if (!_originalClientOrderId.empty())
 	{
 		_queryString.append("&origClientOrderId=");
 		_queryString.append(_originalClientOrderId);
@@ -909,7 +912,7 @@ void SpotAccountEndpoints::GetSpotAccountInformationQuery(string& _url, string& 
 */
 void SpotAccountEndpoints::GetSpotAccountTradeListQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, unsigned short _fromId, int _limit, unsigned short _recvWindow)
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
 		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
