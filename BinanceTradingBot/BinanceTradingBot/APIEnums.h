@@ -2,9 +2,9 @@
 
 enum class EIntervals
 {
-	NONE,
-	ONEMINUTE,
-	THREEMINUTES,
+	NONE = 1,
+	ONEMINUTE = 2,
+	THREEMINUTES = 3,
 	FIVEMINUTES,
 	FIFTEENMINUTES,
 	THIRTYMINUTES,
@@ -68,4 +68,19 @@ enum class ETimeInForce
 	GTC,
 	IOC,
 	FOK,
+};
+
+enum class EFrequency
+{
+	NONE = 0,
+	HUNDREDMILI = 100,
+	THOUSANDMILI = 1000
+};
+
+enum class EDepthLevel
+{
+	NONE = 0,
+	FIVE = 5,
+	TEN = 10,
+	TWENTY = 20
 };

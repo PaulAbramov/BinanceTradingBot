@@ -27,11 +27,11 @@ void UserDataEndpoints::PostUserDataCreateListenKeySpot(string& _url)
 * Name				Type			Mandatory	Description
 * listenKey			STRING			YES
 */
-void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& _queryString, string _listenKey)
+void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& _queryString, const string _listenKey) const
 {
 	if (_listenKey.empty())
 	{
-		logger->writeWarnEntry("Did not set mandatory parameter 'listenKey'");
+		logger->WriteWarnEntry("Did not set mandatory parameter 'listenKey'");
 		return;
 	}
 
@@ -40,7 +40,7 @@ void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& 
 	_queryString.append("&listenKey=");
 	_queryString.append(_listenKey);
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -56,11 +56,11 @@ void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& 
 * Name				Type			Mandatory	Description
 * listenKey			STRING			YES
 */
-void UserDataEndpoints::DeleteUserDataCloseListenKeySpot(string& _url, string& _queryString, string _listenKey)
+void UserDataEndpoints::DeleteUserDataCloseListenKeySpot(string& _url, string& _queryString, const string _listenKey) const
 {
 	if (_listenKey.empty())
 	{
-		logger->writeWarnEntry("Did not set mandatory parameter 'listenKey'");
+		logger->WriteWarnEntry("Did not set mandatory parameter 'listenKey'");
 		return;
 	}
 
@@ -69,5 +69,5 @@ void UserDataEndpoints::DeleteUserDataCloseListenKeySpot(string& _url, string& _
 	_queryString.append("&listenKey=");
 	_queryString.append(_listenKey);
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }

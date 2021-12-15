@@ -3,9 +3,9 @@
 /*
 * Set timestamp and recvWindow in querystring
 */
-string APIHead::SetTimeStampAndRecvWindow(unsigned short _recvWindow)
+string APIHead::SetTimeStampAndRecvWindow(const unsigned short _recvWindow) const
 {
-	chrono::milliseconds ms = duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
+	const chrono::milliseconds ms = duration_cast<chrono::milliseconds>(chrono::system_clock::now().time_since_epoch());
 
 	// When the request got created
 	string querystring("timestamp=");

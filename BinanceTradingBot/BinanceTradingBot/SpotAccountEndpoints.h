@@ -37,18 +37,25 @@ public:
 	SpotAccountEndpoints() = default;
 	SpotAccountEndpoints(const Logger& _logger) : APIHead(_logger) {}
 
-	void PostSpotAccountNewOrderQuery(string& _url, string& _queryString, string _symbol, ETimeInForce _timeInForce, double _quantity, double _quoteOrderQuantity, double _price, string _newClientOrderId, double _stopPrice, double _icebergQuantity, ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, ESide _side = ESide::NONE, EOrderType _orderType = EOrderType::NONE, unsigned short _recvWindow = 0);
-	void DeleteSpotAccountCancelOrderQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, string _originalClientOrderId, string _newClientOrderId, unsigned short _recvWindow = 0);
-	void DeleteSpotAccountCancelAllOpenOrdersOnSymbolQuery(string& _url, string& _queryString, string _symbol, unsigned short _recvWindow = 0);
-	void GetSpotAccountQueryOrderQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, string _originalClientOrderId, unsigned short _recvWindow = 0);
-	void GetSpotAccountCurrentOpenOrdersQuery(string& _url, string& _queryString, string _symbol, unsigned short _recvWindow = 0);
-	void GetSpotAccountAllOrdersQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, int _limit = 500, unsigned short _recvWindow = 0);
-	void PostSpotAccountNewOcoOrderQuery(string& _url, string& _queryString, string _symbol, string _listClientOrderId, double _quantity, string _limitClientOrderId, double _price, double _limitIcebergQuantity, string _stopClientOrderId, double _stopPrice, double _stopLimitPrice, double _stopIcebergQuantity, ETimeInForce _stopLimitTimeInForce, ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, ESide _side = ESide::NONE, unsigned short _recvWindow = 0);
-	void DeleteSpotAccountCancelOcoQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderListId, string _listClientOrderId, string _newClientOrderId, unsigned short _recvWindow = 0);
-	void GetSpotAccountQueryOcoQuery(string& _url, string& _queryString, unsigned short _orderListId, string _originalClientOrderId, unsigned short _recvWindow = 0);
-	void GetSpotAccountQueryAllOcoQuery(string& _url, string& _queryString, unsigned short _fromId, time_t _startTime, time_t _endTime, int _limit = 500, unsigned short _recvWindow = 0);
-	void GetSpotAccountQueryOpenOcoQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0);
-	void GetSpotAccountInformationQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0);
-	void GetSpotAccountTradeListQuery(string& _url, string& _queryString, string _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, unsigned short _fromId, int _limit = 500, unsigned short _recvWindow = 0);
-	void GetSpotAccountCurrentOrderCountUsageQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0);
+	void PostSpotAccountNewOrderQuery(string& _url, string& _queryString, const string& _symbol, ETimeInForce _timeInForce, double _quantity, double _quoteOrderQuantity, double _price,
+	                                  const string& _newClientOrderId, double _stopPrice, double _icebergQuantity, ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, ESide _side = ESide::NONE, EOrderType _orderType = EOrderType::NONE, unsigned short _recvWindow = 0);
+	void DeleteSpotAccountCancelOrderQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _orderId,
+	                                       const string& _originalClientOrderId, const string& _newClientOrderId, unsigned short _recvWindow = 0) const;
+	void DeleteSpotAccountCancelAllOpenOrdersOnSymbolQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountQueryOrderQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _orderId,
+	                                   const string& _originalClientOrderId, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountCurrentOpenOrdersQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountAllOrdersQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, int _limit = 500, unsigned short _recvWindow = 0) const;
+	void PostSpotAccountNewOcoOrderQuery(string& _url, string& _queryString, const string& _symbol, const string&
+	                                     _listClientOrderId, double _quantity, const string& _limitClientOrderId, double _price, double _limitIcebergQuantity,
+	                                     const string& _stopClientOrderId, double _stopPrice, double _stopLimitPrice, double _stopIcebergQuantity, ETimeInForce _stopLimitTimeInForce, ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, ESide _side = ESide::NONE, unsigned short _recvWindow = 0);
+	void DeleteSpotAccountCancelOcoQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _orderListId,
+	                                     const string& _listClientOrderId, const string& _newClientOrderId, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountQueryOcoQuery(string& _url, string& _queryString, unsigned short _orderListId, const string&
+	                                 _originalClientOrderId, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountQueryAllOcoQuery(string& _url, string& _queryString, unsigned short _fromId, time_t _startTime, time_t _endTime, int _limit = 500, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountQueryOpenOcoQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountInformationQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountTradeListQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, unsigned short _fromId, int _limit = 500, unsigned short _recvWindow = 0) const;
+	void GetSpotAccountCurrentOrderCountUsageQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0) const;
 };

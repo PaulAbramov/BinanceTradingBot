@@ -4,16 +4,16 @@ ApiRequestManager::ApiRequestManager(const Logger& _logger, string _apiKey, stri
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	curl = curl_easy_init();
-	apiKey = _apiKey;
-	secretKey = _secretKey;
+	apiKey = std::move(_apiKey);
+	secretKey = std::move(_secretKey);
 
 	walletEndpoints = WalletEndpoints(_logger);
 	spotAccountEndpoints = SpotAccountEndpoints(_logger);
 }
 
-void ApiRequestManager::CleanUpApiRequestManager()
+void ApiRequestManager::CleanUpApiRequestManager() const
 {
-	logger->writeInfoEntry("Cleaning up the ApiRequestManager.");
+	logger->WriteInfoEntry("Cleaning up the ApiRequestManager.");
 
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
@@ -23,11 +23,11 @@ void ApiRequestManager::CleanUpApiRequestManager()
 /*
 * Displays the user's current order count usage for all intervals.
 */
-void ApiRequestManager::GetSpotAccountCurrentOrderCountUsage()
+void ApiRequestManager::GetSpotAccountCurrentOrderCountUsage() const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -49,25 +49,25 @@ void ApiRequestManager::GetSpotAccountCurrentOrderCountUsage()
 * 
 * If fromId is set, it will get id >= that fromId. Otherwise most recent trades are returned.
 */
-void ApiRequestManager::GetSpotAccountTradeList(string _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, unsigned short _fromId, int _limit)
+void ApiRequestManager::GetSpotAccountTradeList(const string& _symbol, const unsigned short _orderId, const time_t _startTime, const time_t _endTime, const unsigned short _fromId, const int _limit) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
 
-	spotAccountEndpoints.GetSpotAccountTradeListQuery(url, queryString, _symbol, _orderId, _startTime, _endTime, 0, _limit, 60000);
+	spotAccountEndpoints.GetSpotAccountTradeListQuery(url, queryString, _symbol, _orderId, _startTime, _endTime, _fromId, _limit, 60000);
 
 	CurlAPIWithHeader(url, strResult, postData, action, queryString, true);
 }
 
-void ApiRequestManager::GetSpotAccountInformation()
+void ApiRequestManager::GetSpotAccountInformation() const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -77,11 +77,11 @@ void ApiRequestManager::GetSpotAccountInformation()
 	CurlAPIWithHeader(url, strResult, postData, action, queryString, true);
 }
 
-void ApiRequestManager::GetSpotAccountQueryOpenOco()
+void ApiRequestManager::GetSpotAccountQueryOpenOco() const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -101,11 +101,11 @@ void ApiRequestManager::GetSpotAccountQueryOpenOco()
 * endTime			LONG			NO	
 * limit				INT				NO			Default Value: 500; Max Value: 1000
 */
-void ApiRequestManager::GetSpotAccountQueryAllOco(unsigned short _fromId, time_t _startTime, time_t _endTime, int _limit)
+void ApiRequestManager::GetSpotAccountQueryAllOco(const unsigned short _fromId, const time_t _startTime, const time_t _endTime, const int _limit) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -123,11 +123,11 @@ void ApiRequestManager::GetSpotAccountQueryAllOco(unsigned short _fromId, time_t
 * orderListId			UNSIGNED SHORT	NO			Either orderListId or origClientOrderId must be provided
 * origClientOrderId		STRING			NO			Either orderListId or origClientOrderId must be provided
 */
-void ApiRequestManager::GetSpotAccountQueryOco(unsigned short _orderListId, string _originalClientOrderId)
+void ApiRequestManager::GetSpotAccountQueryOco(const unsigned short _orderListId, const string& _originalClientOrderId) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -150,11 +150,12 @@ void ApiRequestManager::GetSpotAccountQueryOco(unsigned short _orderListId, stri
 * Additional notes:
 * Canceling an individual leg will cancel the entire OCO
 */
-void ApiRequestManager::DeleteSpotAccountCancelOco(string _symbol, unsigned short _orderListId, string _listClientOrderId, string _newClientOrderId)
+void ApiRequestManager::DeleteSpotAccountCancelOco(const string& _symbol, const unsigned short _orderListId,
+                                                   const string& _listClientOrderId, const string& _newClientOrderId) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "DELETE";
+	const string action = "DELETE";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -192,14 +193,14 @@ void ApiRequestManager::DeleteSpotAccountCancelOco(string _symbol, unsigned shor
 * Order Rate Limit
 * OCO counts as 2 orders against the order rate limit.
 */
-void ApiRequestManager::PostSpotAccountNewOcoOrder(string _symbol, string _listClientOrderId, double _quantity,
-	string _limitClientOrderId, double _price, double _limitIcebergQuantity, string _stopClientOrderId,
-	double _stopPrice, double _stopLimitPrice, double _stopIcebergQuantity, ETimeInForce _stopLimitTimeInForce,
-	ENewOrderResponseType _newOrderResponseType, ESide _side)
+void ApiRequestManager::PostSpotAccountNewOcoOrder(const string& _symbol, const string& _listClientOrderId, const double _quantity,
+                                                   const string& _limitClientOrderId, const double _price, const double _limitIcebergQuantity,
+                                                   const string& _stopClientOrderId, const double _stopPrice, const double _stopLimitPrice, const double _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce,
+                                                   const ENewOrderResponseType _newOrderResponseType, const ESide _side)
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "POST";
+	const string action = "POST";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -224,11 +225,11 @@ void ApiRequestManager::PostSpotAccountNewOcoOrder(string _symbol, string _listC
 * For some historical orders cummulativeQuoteQty will be < 0, meaning the data is not available at this time.
 * If startTime and/or endTime provided, orderId is not required.
 */
-void ApiRequestManager::GetSpotAccountAllOrders(string _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, int _limit)
+void ApiRequestManager::GetSpotAccountAllOrders(const string& _symbol, const unsigned short _orderId, const time_t _startTime, const time_t _endTime, const int _limit) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -247,11 +248,11 @@ void ApiRequestManager::GetSpotAccountAllOrders(string _symbol, unsigned short _
 *
 * If the symbol is not sent, orders for all symbols will be returned in an array.
 */
-void ApiRequestManager::GetSpotAccountCurrentOpenOrders(string _symbol)
+void ApiRequestManager::GetSpotAccountCurrentOpenOrders(const string& _symbol) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -273,11 +274,11 @@ void ApiRequestManager::GetSpotAccountCurrentOpenOrders(string _symbol)
 * Either orderId or origClientOrderId must be sent.
 * For some historical orders cummulativeQuoteQty will be < 0, meaning the data is not available at this time.
 */
-void ApiRequestManager::GetSpotAccountQueryOrder(string _symbol, unsigned short _orderId, string _originalClientOrderId)
+void ApiRequestManager::GetSpotAccountQueryOrder(const string& _symbol, const unsigned short _orderId, const string& _originalClientOrderId) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -297,11 +298,11 @@ void ApiRequestManager::GetSpotAccountQueryOrder(string _symbol, unsigned short 
 * Name				Type			Mandatory	Description
 * symbol			STRING			YES
 */
-void ApiRequestManager::DeleteSpotAccountCancelAllOpenOrdersOnSymbol(string _symbol)
+void ApiRequestManager::DeleteSpotAccountCancelAllOpenOrdersOnSymbol(const string& _symbol) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "DELETE";
+	const string action = "DELETE";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -321,11 +322,11 @@ void ApiRequestManager::DeleteSpotAccountCancelAllOpenOrdersOnSymbol(string _sym
 *
 * Either orderId or origClientOrderId must be sent.
 */
-void ApiRequestManager::DeleteSpotAccountCancelOrder(string _symbol, unsigned short _orderId, string _originalClientOrderId, string _newClientOrderId)
+void ApiRequestManager::DeleteSpotAccountCancelOrder(const string& _symbol, const unsigned short _orderId, const string& _originalClientOrderId, const string& _newClientOrderId) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "DELETE";
+	const string action = "DELETE";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -380,13 +381,13 @@ void ApiRequestManager::DeleteSpotAccountCancelOrder(string _symbol, unsigned sh
 * Price above market price: STOP_LOSS BUY, TAKE_PROFIT SELL
 * Price below market price: STOP_LOSS SELL, TAKE_PROFIT BUY
 */
-void ApiRequestManager::PostSpotAccountNewOrder(string _symbol, ETimeInForce _timeInForce, double _quantity,
-	double _quoteOrderQuantity, double _price, string _newClientOrderId, double _stopPrice, double _icebergQuantity,
-	ENewOrderResponseType _newOrderResponseType, ESide _side, EOrderType _orderType)
+void ApiRequestManager::PostSpotAccountNewOrder(const string& _symbol, const ETimeInForce _timeInForce, const double _quantity,
+                                                const double _quoteOrderQuantity, const double _price, const string& _newClientOrderId, const double _stopPrice, const double _icebergQuantity,
+                                                const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType)
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "POST";
+	const string action = "POST";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -394,8 +395,6 @@ void ApiRequestManager::PostSpotAccountNewOrder(string _symbol, ETimeInForce _ti
 	spotAccountEndpoints.PostSpotAccountNewOrderQuery(url, queryString, _symbol, _timeInForce, _quantity, _quoteOrderQuantity, _price, _newClientOrderId, _stopPrice, _icebergQuantity, _newOrderResponseType, _side, _orderType);
 
 	CurlAPIWithHeader(url, strResult, postData, action, queryString, true);
-
-	logger->writeInfoEntry(strResult);
 }
 #pragma endregion
 
@@ -403,11 +402,11 @@ void ApiRequestManager::PostSpotAccountNewOrder(string _symbol, ETimeInForce _ti
 /*
 * Get information of coins (available for deposit and withdraw) for user.
 */
-void ApiRequestManager::GetWalletAllCoinsInformation()
+void ApiRequestManager::GetWalletAllCoinsInformation() const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -429,11 +428,11 @@ void ApiRequestManager::GetWalletAllCoinsInformation()
 * endTime		UNSGINED SHORT	NO
 * limit			INT				NO			min 5, max 30, default 5
 */
-void ApiRequestManager::GetWalletDailyAccountSnapshot(SnapshotType _snapshotType, time_t _startTime, time_t _endTime, int _limit)
+void ApiRequestManager::GetWalletDailyAccountSnapshot(const ESnapshotType _snapshotType, const time_t _startTime, const time_t _endTime, const int _limit) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -464,16 +463,16 @@ void ApiRequestManager::GetWalletDailyAccountSnapshot(SnapshotType _snapshotType
 * If network not send, return with default network of the coin.
 * You can get network and isDefault in networkList of a coin in the response of Get /sapi/v1/capital/config/getall (HMAC SHA256).
 */
-void ApiRequestManager::PostWalletWithdraw(string _coin, string _withdrawOrderId, string _network, string _address, string _addressTag, double _amount, string _name, bool _transactionFeeFlag)
+void ApiRequestManager::PostWalletWithdraw(const string& _coin, const string& _withdrawOrderId, const string& _network, const string& _address, const string& _addressTag, const double _amount, const string& _name, const bool _transactionFeeFlag) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "POST";
+	const string action = "POST";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
 
-	walletEndpoints.PostWalletWithdrawQuery(url, queryString, _coin, _withdrawOrderId, _network, _address, _addressTag, _amount, _name, _transactionFeeFlag);
+	walletEndpoints.PostWalletWithdrawQuery(url, queryString, _coin, _withdrawOrderId, _network,_address, _addressTag, _amount, _name, _transactionFeeFlag);
 
 	CurlAPIWithHeader(url, strResult, postData, action, queryString, true);
 }
@@ -497,11 +496,11 @@ void ApiRequestManager::PostWalletWithdraw(string _coin, string _withdrawOrderId
 * Please notice the default startTime and endTime to make sure that time interval is within 0-90 days.
 * If both startTime and endTime are sent, time between startTime and endTime must be less than 90 days.
 */
-void ApiRequestManager::GetWalletDepositHistory(string _coin, int _status, time_t _startTime, time_t _endTime, int _offset, int _limit)
+void ApiRequestManager::GetWalletDepositHistory(const string& _coin, const int _status, const time_t _startTime, const time_t _endTime, const int _offset, const int _limit) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -532,11 +531,11 @@ void ApiRequestManager::GetWalletDepositHistory(string _coin, int _status, time_
 * Please notice the default startTime and endTime to make sure that time interval is within 0-90 days.
 * If both startTime and endTime are sent, time between startTime and endTime must be less than 90 days.
 */
-void ApiRequestManager::GetWalletWithdrawtHistory(string _coin, string _withdrawOrderId, int _status, time_t _startTime, time_t _endTime, int _offset, int _limit)
+void ApiRequestManager::GetWalletWithdrawtHistory(const string& _coin, const string& _withdrawOrderId, const int _status, const time_t _startTime, const time_t _endTime, const int _offset, const int _limit) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -561,11 +560,11 @@ void ApiRequestManager::GetWalletWithdrawtHistory(string _coin, string _withdraw
 * If network is not send, return with default network of the coin.
 * You can get network and isDefault in networkList in the response of Get /sapi/v1/capital/config/getall (HMAC SHA256).
 */
-void ApiRequestManager::GetWalletDepositAddress(string _coin, string _network)
+void ApiRequestManager::GetWalletDepositAddress(const string& _coin, const string& _network) const
 {
-	string postData = "";
+	string postData;
 	string strResult;
-	string action = "GET";
+	const string action = "GET";
 
 	string url(BINANCE_APIENDPOINT);
 	string queryString;
@@ -579,28 +578,26 @@ void ApiRequestManager::GetWalletDepositAddress(string _coin, string _network)
 /*
 * make a webrequest
 */
-void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _strResult,  string& _postData, string& _action, string _queryString, bool _setSecretAndApiKey)
+void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _strResult, string& _postData, const string& _action, const string& _queryString, const bool _setSecretAndApiKey) const
 {
 	if (apiKey.empty() || secretKey.empty())
 	{
-		logger->writeWarnEntry("API Key or/and Secret Key has not been set.");
+		logger->WriteWarnEntry("API Key or/and Secret Key has not been set.");
 		return;
 	}
-	
-	CURLcode res;
 
 	if (curl)
 	{
-		vector <string> extra_http_header;
+		vector <string> extraHttpHeader;
 		if(_setSecretAndApiKey)
 		{
 			if(_queryString.empty())
 			{
-				SetSecretAndApiKeyInPostData(extra_http_header, _postData);
+				SetSecretAndApiKeyInPostData(extraHttpHeader, _postData);
 			}
 			else
 			{
-				SetSecretAndApiKeyInUrl(_url, extra_http_header, _queryString);
+				SetSecretAndApiKeyInUrl(_url, extraHttpHeader, _queryString);
 			}
 		}
 		else
@@ -608,24 +605,24 @@ void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _strResult,  str
 			_url.append(_queryString);
 		}
 
-		logger->writeInfoEntry("making cUrl call to " + _url);
+		logger->WriteInfoEntry("making cUrl call to " + _url);
 
 		curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ApiRequestManager::WebRequestCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &_strResult);
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
 
-		if (extra_http_header.size() > 0)
+		if (!extraHttpHeader.empty())
 		{
-			struct curl_slist* chunk = NULL;
-			for (int i = 0; i < extra_http_header.size(); i++)
+			struct curl_slist* chunk = nullptr;
+			for (auto& i : extraHttpHeader)
 			{
-				chunk = curl_slist_append(chunk, extra_http_header[i].c_str());
+				chunk = curl_slist_append(chunk, i.c_str());
 			}
 			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 		}
 
-		if (_postData.size() > 0 || _action == "POST" || _action == "PUT" || _action == "DELETE") 
+		if (!_postData.empty() || _action == "POST" || _action == "PUT" || _action == "DELETE") 
 		{
 			if (_action == "PUT" || _action == "DELETE") 
 			{
@@ -635,24 +632,22 @@ void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _strResult,  str
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, _postData.c_str());
 		}
 
-		res = curl_easy_perform(curl);
-
 		/* Check for errors */
-		if (res != CURLE_OK) 
+		if (const CURLcode res = curl_easy_perform(curl); res != CURLE_OK) 
 		{
-			logger->writeErrorEntry(curl_easy_strerror(res));
+			logger->WriteErrorEntry(curl_easy_strerror(res));
 			cerr << "CURL error: " << res << endl;
 		}
 	}
 	else
 	{
-		logger->writeErrorEntry("Could not initialize cURL.");
+		logger->WriteErrorEntry("Could not initialize cURL.");
 	}
 }
 
-void ApiRequestManager::SetSecretAndApiKeyInUrl(string& _url, vector <string>& _extraHttpHeader, string _querystring)
+void ApiRequestManager::SetSecretAndApiKeyInUrl(string& _url, vector <string>& _extraHttpHeader, string _querystring) const
 {
-	string signature = HmacSha256(secretKey, _querystring);
+	const string signature = HmacSha256(_querystring);
 	_querystring.append("&signature=");
 	_querystring.append(signature);
 
@@ -663,9 +658,9 @@ void ApiRequestManager::SetSecretAndApiKeyInUrl(string& _url, vector <string>& _
 	_extraHttpHeader.push_back(header_chunk);
 }
 
-void ApiRequestManager::SetSecretAndApiKeyInPostData(vector<string>& _extraHttpHeader, string& _postData)
+void ApiRequestManager::SetSecretAndApiKeyInPostData(vector<string>& _extraHttpHeader, string& _postData) const
 {
-	string signature = HmacSha256(secretKey, _postData);
+	const string signature = HmacSha256(_postData);
 	_postData.append("&signature=");
 	_postData.append(signature);
 
@@ -677,29 +672,41 @@ void ApiRequestManager::SetSecretAndApiKeyInPostData(vector<string>& _extraHttpH
 /*
 * Callbackfunction to retrieve the webrequest
 */
-size_t ApiRequestManager::WebRequestCallback(void* _content, size_t _size, size_t _nmemb, string* _buffer)
+size_t ApiRequestManager::WebRequestCallback(void* _content, const size_t _size, const size_t _nmemb, string* _buffer)
 {
-	size_t totalsize = _size * _nmemb;
-	_buffer->append((char*)_content, totalsize);
+	const size_t totalsize = _size * _nmemb;
+	_buffer->append(static_cast<char*>(_content), totalsize);
+
+	//TODO JSON result
+	//try {
+	//	Json::Reader reader;
+	//	json_result.clear();
+	//	reader.parse(str_result, json_result);
+	//
+	//}
+	//catch (exception& e) {
+	//	BinaCPP_logger::write_log("<BinaCPP::withdraw> Error ! %s", e.what());
+	//}
 
 	return totalsize;
 }
 
-string ApiRequestManager::HmacSha256(const string _secretKey, const string _querystring)
+string ApiRequestManager::HmacSha256(const string& _querystring) const
 {
-	unsigned char* digest;
-	digest = HMAC(EVP_sha256(), secretKey.c_str(), strlen(secretKey.c_str()), (unsigned char*)_querystring.c_str(), strlen(_querystring.c_str()), NULL, NULL);
-	return B2AHex((char*)digest, 32);
+	unsigned char* digest = HMAC(EVP_sha256(), secretKey.c_str(), strlen(secretKey.c_str()),
+	                             (unsigned char*) _querystring.c_str(), strlen(_querystring.c_str()), nullptr, nullptr);
+	return B2AHex(reinterpret_cast<char*>(digest), 32);
 }
 
-string ApiRequestManager::B2AHex(char* _byteArray, int _n)
+string ApiRequestManager::B2AHex(const char* _byteArray, int _n)
 {
 	const static string hexCodes = "0123456789abcdef";
 	string hexString;
-	for (int i = 0; i < 32; ++i) {
-		unsigned char BinValue = _byteArray[i];
-		hexString += hexCodes[(BinValue >> 4) & 0x0F];
-		hexString += hexCodes[BinValue & 0x0F];
+	for (int i = 0; i < 32; ++i) 
+	{
+		unsigned char binValue = _byteArray[i];
+		hexString += hexCodes[(binValue >> 4) & 0x0F];
+		hexString += hexCodes[binValue & 0x0F];
 	}
 
 	return hexString;

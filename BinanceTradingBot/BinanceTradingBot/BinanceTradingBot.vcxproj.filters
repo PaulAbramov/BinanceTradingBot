@@ -78,11 +78,11 @@
     <ClCompile Include="UserDataEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
-    <ClCompile Include="WebSocketMarketEndpoints.cpp">
-      <Filter>Source Files\API\Endpoints</Filter>
-    </ClCompile>
     <ClCompile Include="WalletEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="WebSocketCollection.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,14 +149,14 @@
     <ClInclude Include="WalletEndpoints.h">
       <Filter>Header Files\API\Endpoints</Filter>
     </ClInclude>
-    <ClInclude Include="WebSocketMarketEndpoints.h">
-      <Filter>Header Files\API\Endpoints</Filter>
-    </ClInclude>
     <ClInclude Include="APIHead.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
     <ClInclude Include="APIEnums.h">
       <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="WebSocketCollection.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

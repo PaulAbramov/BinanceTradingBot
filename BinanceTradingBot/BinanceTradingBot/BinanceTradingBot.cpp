@@ -1,12 +1,14 @@
 #include <chrono>
 #include <filesystem>
+#include <future>
 #include <iostream>
 
-#include "WebSocketSession.h"
+#include "WebSocketCollection.h"
 #include "ConfigurationManager.h"
 #include "FileLogger.h"
 #include "StandardOutputLogger.h"
 #include "ApiRequestManager.h"
+#include "APIEnums.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -16,10 +18,9 @@ namespace fs = std::filesystem;
 static Logger InitializeLogger()
 {
 	string filename = "Logger.conf";
-	ifstream filestream(filename);
 
 	// if configuration file exists - use FilesystemLogger
-	if (filestream.good())
+	if (ifstream filestream(filename); filestream.good())
 	{
 		//Check if logs directory exists, if not create it
 		if(!fs::exists("logs"))
@@ -33,7 +34,7 @@ static Logger InitializeLogger()
 		el::Loggers::reconfigureAllLoggers(config);
 
 		// Get the current date
-		struct tm newtime;
+		struct tm newtime{};
 		time_t now = std::time(nullptr);
 		localtime_s(&newtime, &now);
 
@@ -56,61 +57,85 @@ static Logger InitializeLogger()
 int main(int argc, char** argv)
 {
 	Logger logger = InitializeLogger();
-	logger->writeInfoEntry("Logger initialized");
+	logger->WriteInfoEntry("Logger initialized");
 
 	ConfigurationManager configManager = ConfigurationManager(logger);
 	Config config = configManager.LoadConfig();
 
 	ApiRequestManager manager = ApiRequestManager(logger, config.api_key, config.secret_key);
 
-	manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
-
-	auto host = BINANCE_HOST;
-	auto port = BINANCE_PORT;
-	auto target = config.target.c_str();
-	auto text = "";
+	//manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
+	//manager.GetAggregatedTradeStreams({"test"});
 
 	// The io_context is required for all I/O
 	net::io_context ioc;
-	// The SSL context is required, and holds certificates
-	ssl::context ctx{ ssl::context::tlsv12_client };
-	ctx.set_verify_mode(ssl::verify_none);
-	// This holds the root certificate used for verification
-	load_root_certificates(ctx);
 
-	// Run the I/O service. The call will return when
-	// the socket is closed.
+	WebSocketCollection websocketCollection{ ioc, BINANCE_HOST, BINANCE_PORT, logger };
+
+	std::vector<string> symbols{"BNBBUSD"};
+	auto tradebnbHandle = websocketCollection.DiffBookDepth(symbols, EFrequency::HUNDREDMILI,
+		[_logger = logger](auto _answer)
+		{
+			_logger->WriteInfoEntry(_answer.c_str());
+
+			return true;
+		});
+
 	ioc.run();
 
-	string inputStr;
-	thread t;
+	// wird einmal ausgeführt und man kann über post noch Tasks anhängen
+	//ioc.poll();
+	//ioc.post();
 
-	shared_ptr<WebSocketSession> websocketSession;
+	//string inputStr;
+	//while (inputStr != "x") 
+	//{
+	//	if (ioc.stopped()) 
+	//	{
+	//		ioc.restart();
+	//	}
+	//	if (!ioc.poll()) 
+	//	{
+	//		cin >> inputStr;
+	//
+	//		if (inputStr == "s")
+	//		{
+	//			ioc.poll();
+	//		}
+	//		else {
+	//			std::this_thread::sleep_for(std::chrono::milliseconds(3));
+	//		}
+	//	}
+	//}
 
-	while (inputStr != "x") {
-		cout << "Press 'r' to run. Press 's' to stop. Press 'x' to Exit." << endl;
-		cin >> inputStr;
+	//auto futureLambda = std::async([](WebSocketCollection _webSocketCollection)
+	//	{
+	//		string inputStr;
+	//		while (inputStr != "x") {
+	//			cout << "Press 's' to stop. Press 'x' to Exit." << endl;
+	//			cin >> inputStr;
+	//
+	//			if (inputStr == "s" || inputStr == "x")
+	//			{ //stop & exit
+	//				_webSocketCollection.UnsubscribeAllChannels();
+	//			}
+	//		}
+	//	}, websocketCollection);
+	//
+	//futureLambda.get();
 
-		if (inputStr == "r") { //run
-			if (websocketSession.use_count() == 0) { //should not run twice
-				t = thread(
-					[&websocketSession, &ioc, &ctx, host, port, target, logger]
-					{
-						websocketSession = make_shared<WebSocketSession>(ioc, ctx, host, port, target, logger);
-						websocketSession->StartWebSocketSession(); //within a thread so doesn't block
-					});
-			}
+
+	/*while (true) {
+		try {
+			ioctx.run();
+			break;
 		}
-		else if (inputStr == "s" || inputStr == "x") { //stop & exit
-			if (websocketSession.use_count()) { //running
-				websocketSession->StopWebSocketSession();
-				t.join();
-				t.~thread();
-				websocketSession.reset();
-			}
-			
+		catch (const std::exception& ex) {
+			std::cerr << "std::exception: what: " << ex.what() << std::endl;
+
+			ioctx.restart();
 		}
-	}
+	}*/
 	
 	return EXIT_SUCCESS;
 }
