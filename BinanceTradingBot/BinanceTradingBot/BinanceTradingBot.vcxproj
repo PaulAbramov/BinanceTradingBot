@@ -129,6 +129,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Programmierung\magic_enum-master\include;C:\Programmierung\Logger;C:\Programmierung\curl-7.79.1\x64 debug\include;C:\Programmierung\Beast\beast-master\include;C:\Programmierung\Boost\boost_1_76_0;C:\Program Files\OpenSSL\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -172,7 +173,7 @@
     <ClCompile Include="Sub-AccountEndpoints.cpp" />
     <ClCompile Include="UserDataEndpoints.cpp" />
     <ClCompile Include="WalletEndpoints.cpp" />
-    <ClCompile Include="WebSocketMarketEndpoints.cpp" />
+    <ClCompile Include="WebSocketCollection.cpp" />
     <ClCompile Include="WebSocketSession.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -201,7 +202,7 @@
     <ClInclude Include="Sub-AccountEndpoints.h" />
     <ClInclude Include="UserDataEndpoints.h" />
     <ClInclude Include="WalletEndpoints.h" />
-    <ClInclude Include="WebSocketMarketEndpoints.h" />
+    <ClInclude Include="WebSocketCollection.h" />
     <ClInclude Include="WebSocketSession.h" />
     <ClInclude Include="root_certificates.h" />
   </ItemGroup>

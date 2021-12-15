@@ -5,18 +5,18 @@
 
 INITIALIZE_EASYLOGGINGPP
 
-class FileLogger : public LoggingFacility
+class FileLogger final : public LoggingFacility
 {
 public:
-    virtual void writeInfoEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
+    virtual void WriteInfoEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
     {
         LOG(INFO) << _callerFunction << "(): " << _entry << endl;
     }
-    virtual void writeWarnEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
+    virtual void WriteWarnEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
     {
         LOG(WARNING) << _callerFunction << "(): " << _entry << endl;
     }
-    virtual void writeErrorEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
+    virtual void WriteErrorEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
     {
         LOG(ERROR) << _callerFunction << "(): " << _entry << endl;
     }

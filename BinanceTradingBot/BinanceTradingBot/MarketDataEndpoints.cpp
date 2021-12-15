@@ -17,11 +17,11 @@
 * symbol		STRING	YES	
 * limit			INT		NO			Default 100; max 5000. Valid limits:[5, 10, 20, 50, 100, 500, 1000, 5000]
 */
-void MarketDataEndpoints::GeMarketOrderbookQuery(string& _url, string& _queryString, string _symbol, int _limit)
+void MarketDataEndpoints::GetMarketOrderbookQuery(string& _url, string& _queryString, const string& _symbol, const int _limit) const
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
-		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
+		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -33,7 +33,7 @@ void MarketDataEndpoints::GeMarketOrderbookQuery(string& _url, string& _queryStr
 	_queryString.append("&limit=");
 	_queryString.append(to_string(_limit));
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -48,11 +48,11 @@ void MarketDataEndpoints::GeMarketOrderbookQuery(string& _url, string& _queryStr
 * symbol		STRING	YES
 * limit			INT		NO			Default 500; max 1000
 */
-void MarketDataEndpoints::GeMarketRecentTradesListQuery(string& _url, string& _queryString, string _symbol, int _limit)
+void MarketDataEndpoints::GetMarketRecentTradesListQuery(string& _url, string& _queryString, const string& _symbol, const int _limit) const
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
-		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
+		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -64,7 +64,7 @@ void MarketDataEndpoints::GeMarketRecentTradesListQuery(string& _url, string& _q
 	_queryString.append("&limit=");
 	_queryString.append(to_string(_limit));
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -82,11 +82,11 @@ void MarketDataEndpoints::GeMarketRecentTradesListQuery(string& _url, string& _q
 * limit			INT				NO			Default 500; max 1000
 * fromId		UNSGINED SHORT	NO			Trade id to fetch from. Default gets most recent trades.
 */
-void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _queryString, string _symbol, unsigned short _fromId, int _limit)
+void MarketDataEndpoints::GetMarketOldTradeLookupQuery(string& _url, string& _queryString, const string& _symbol, const unsigned short _fromId, const int _limit) const
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
-		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
+		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -101,7 +101,7 @@ void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _que
 	_queryString.append("&fromId=");
 	_queryString.append(to_string(_fromId));
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -124,11 +124,11 @@ void MarketDataEndpoints::GeMarketOldTradeLookupQuery(string& _url, string& _que
 * 
 * If startTime and endTime are not sent, the most recent klines are returned.
 */
-void MarketDataEndpoints::GeMarketCandlestickDataQuery(string& _url, string& _queryString, string _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit)
+void MarketDataEndpoints::GetMarketCandlestickDataQuery(string& _url, string& _queryString, const string& _symbol, const EIntervals _interval, const time_t _startTime, const time_t _endTime, const int _limit) const
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
-		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
+		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -152,7 +152,7 @@ void MarketDataEndpoints::GeMarketCandlestickDataQuery(string& _url, string& _qu
 		_queryString.append(to_string(_endTime));
 	}
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -168,11 +168,11 @@ void MarketDataEndpoints::GeMarketCandlestickDataQuery(string& _url, string& _qu
 * Name			Type	Mandatory	Description
 * symbol		STRING	YES
 */
-void MarketDataEndpoints::GeMarketCurrentAveragePriceQuery(string& _url, string& _queryString, string _symbol)
+void MarketDataEndpoints::GetMarketCurrentAveragePriceQuery(string& _url, string& _queryString, const string& _symbol) const
 {
-	if (!_symbol.length() > 0)
+	if (_symbol.empty())
 	{
-		logger->writeWarnEntry("Did not set mandatory parameter 'symbol'");
+		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -181,7 +181,7 @@ void MarketDataEndpoints::GeMarketCurrentAveragePriceQuery(string& _url, string&
 	_queryString.append("symbol=");
 	_queryString.append(_symbol);
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -201,17 +201,17 @@ void MarketDataEndpoints::GeMarketCurrentAveragePriceQuery(string& _url, string&
 * 
 * If the symbol is not sent, tickers for all symbols will be returned in an array.
 */
-void MarketDataEndpoints::GeMarketTickerChangeStatisticQuery(string& _url, string& _queryString, string _symbol)
+void MarketDataEndpoints::GetMarketTickerChangeStatisticQuery(string& _url, string& _queryString, const string& _symbol) const
 {
 	_url += "/api/v3/ticker/24hr";
 
-	if (_symbol.length() > 0)
+	if (!_symbol.empty())
 	{
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
 	}
 	
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -231,17 +231,17 @@ void MarketDataEndpoints::GeMarketTickerChangeStatisticQuery(string& _url, strin
 *
 * If the symbol is not sent, tickers for all symbols will be returned in an array.
 */
-void MarketDataEndpoints::GeMarketSymbolPriceTickerQuery(string& _url, string& _queryString, string _symbol)
+void MarketDataEndpoints::GetMarketSymbolPriceTickerQuery(string& _url, string& _queryString, const string& _symbol) const
 {
 	_url += "/api/v3/ticker/price";
 
-	if (_symbol.length() > 0)
+	if (!_symbol.empty())
 	{
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
 	}
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -261,15 +261,15 @@ void MarketDataEndpoints::GeMarketSymbolPriceTickerQuery(string& _url, string& _
 *
 * If the symbol is not sent, tickers for all symbols will be returned in an array.
 */
-void MarketDataEndpoints::GeMarketSymbolOrderbookTickerQuery(string& _url, string& _queryString, string _symbol)
+void MarketDataEndpoints::GetMarketSymbolOrderbookTickerQuery(string& _url, string& _queryString, const string& _symbol) const
 {
 	_url += "/api/v3/ticker/bookTicker";
 
-	if (_symbol.length() > 0)
+	if (!_symbol.empty())
 	{
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
 	}
 
-	logger->writeInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }

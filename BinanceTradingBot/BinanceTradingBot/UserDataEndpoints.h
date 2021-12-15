@@ -42,7 +42,7 @@ public:
 	UserDataEndpoints() = default;
 	UserDataEndpoints(const Logger& _logger) : APIHead(_logger) {}
 
-	void PostUserDataCreateListenKeySpot(string& _url);
-	void PutUserDataKeepAliveListenKeySpot(string& _url, string& _queryString, string _listenKey);
-	void DeleteUserDataCloseListenKeySpot(string& _url, string& _queryString, string _listenKey);
+	static void PostUserDataCreateListenKeySpot(string& _url);
+	void PutUserDataKeepAliveListenKeySpot(string& _url, string& _queryString, string _listenKey) const;
+	void DeleteUserDataCloseListenKeySpot(string& _url, string& _queryString, string _listenKey) const;
 };

@@ -6,7 +6,7 @@
 */
 Config ConfigurationManager::LoadConfig()
 {
-	logger->writeInfoEntry("Load Configuration...");
+	logger->WriteInfoEntry("Load Configuration...");
 	Config config;
 	
 	//throw these errors
@@ -30,7 +30,7 @@ Config ConfigurationManager::LoadConfig()
 
 			InitializeConfig(config, jsonObject);
 
-			logger->writeInfoEntry("Configuration successfully loaded.");
+			logger->WriteInfoEntry("Configuration successfully loaded.");
 			configFile.close();
 		}
 		else
@@ -44,7 +44,7 @@ Config ConfigurationManager::LoadConfig()
 		enum { BUFFER_SIZE = 200 };
 		char buffer[BUFFER_SIZE];
 		cerr << "Error: " << strerror_s(buffer, errno) << endl;
-		logger->writeErrorEntry(e.what());
+		logger->WriteErrorEntry(e.what());
 	}
 
 	return config;
@@ -55,7 +55,7 @@ Config ConfigurationManager::LoadConfig()
 */
 Config ConfigurationManager::CreateConfig()
 {
-	logger->writeInfoEntry("Create Configuration...");
+	logger->WriteInfoEntry("Create Configuration...");
 
 	Config config;
 
@@ -74,7 +74,7 @@ Config ConfigurationManager::CreateConfig()
 
 	InitializeConfig(config, jsonObject);
 
-	logger->writeInfoEntry("Configuration successfully created.");
+	logger->WriteInfoEntry("Configuration successfully created.");
 	return config;
 }
 
