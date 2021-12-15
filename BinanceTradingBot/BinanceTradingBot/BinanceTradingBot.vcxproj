@@ -127,13 +127,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Programmierung\Logger;C:\Programmierung\curl-7.79.1\x64 debug\include;C:\Programmierung\Beast\beast-master\include;C:\Programmierung\Boost\boost_1_76_0;C:\Program Files\OpenSSL\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Programmierung\magic_enum-master\include;C:\Programmierung\Logger;C:\Programmierung\curl-7.79.1\x64 debug\include;C:\Programmierung\Beast\beast-master\include;C:\Programmierung\Boost\boost_1_76_0;C:\Program Files\OpenSSL\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Programmierung\Logger;C:\Programmierung\Boost\boost_1_76_0\stage\lib;C:\Program Files\OpenSSL\OpenSSL-Win64\lib;C:\Programmierung\curlpp-0.8.1\include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Programmierung\magic_enum-master\include;C:\Programmierung\Logger;C:\Programmierung\Boost\boost_1_76_0\stage\lib;C:\Program Files\OpenSSL\OpenSSL-Win64\lib;C:\Programmierung\curlpp-0.8.1\include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl.lib;libcrypto.lib;C:\Programmierung\curl-7.79.1\x64 debug\lib\libcurl_a_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -157,9 +158,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Logger\easylogging++.cc" />
+    <ClCompile Include="APIHead.cpp" />
     <ClCompile Include="ApiRequestManager.cpp" />
+    <ClCompile Include="BinanceSwapEndpoints.cpp" />
     <ClCompile Include="BinanceTradingBot.cpp" />
     <ClCompile Include="ConfigurationManager.cpp" />
+    <ClCompile Include="FiatEndpoints.cpp" />
+    <ClCompile Include="FuturesEndpoints.cpp" />
+    <ClCompile Include="MarginAccountEndpoints.cpp" />
+    <ClCompile Include="MarketDataEndpoints.cpp" />
+    <ClCompile Include="MiningEndpoints.cpp" />
+    <ClCompile Include="SavingsEndpoints.cpp" />
+    <ClCompile Include="SpotAccountEndpoints.cpp" />
+    <ClCompile Include="Sub-AccountEndpoints.cpp" />
+    <ClCompile Include="UserDataEndpoints.cpp" />
+    <ClCompile Include="WalletEndpoints.cpp" />
+    <ClCompile Include="WebSocketCollection.cpp" />
     <ClCompile Include="WebSocketSession.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,12 +183,26 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="APIEnums.h" />
+    <ClInclude Include="APIHead.h" />
     <ClInclude Include="ApiRequestManager.h" />
+    <ClInclude Include="BinanceSwapEndpoints.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigurationManager.h" />
+    <ClInclude Include="FiatEndpoints.h" />
     <ClInclude Include="FileLogger.h" />
+    <ClInclude Include="FuturesEndpoint.h" />
     <ClInclude Include="LoggingFacility.h" />
+    <ClInclude Include="MarginAccountEndpoints.h" />
+    <ClInclude Include="MarketDataEndpoints.h" />
+    <ClInclude Include="MiningEndpoints.h" />
+    <ClInclude Include="SavingsEndpoints.h" />
+    <ClInclude Include="SpotAccountEndpoints.h" />
     <ClInclude Include="StandardOutputLogger.h" />
+    <ClInclude Include="Sub-AccountEndpoints.h" />
+    <ClInclude Include="UserDataEndpoints.h" />
+    <ClInclude Include="WalletEndpoints.h" />
+    <ClInclude Include="WebSocketCollection.h" />
     <ClInclude Include="WebSocketSession.h" />
     <ClInclude Include="root_certificates.h" />
   </ItemGroup>

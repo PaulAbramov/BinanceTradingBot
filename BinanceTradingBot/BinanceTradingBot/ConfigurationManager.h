@@ -22,10 +22,10 @@ private:
 	fstream configFile;
 	Logger logger;
 
-	void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);
+	static void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);
 public:
-	ConfigurationManager(const Logger& _logger) : logger(_logger) {}
-	Config Load();
-	Config Create();
-	void Safe(Config& _config);
+	ConfigurationManager(const shared_ptr<LoggingFacility>& _logger) : logger(_logger) {}
+	Config LoadConfig();
+	Config CreateConfig();
+	void SafeConfig(Config& _config);
 };

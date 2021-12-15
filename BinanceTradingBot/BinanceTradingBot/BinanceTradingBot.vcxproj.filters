@@ -16,6 +16,18 @@
     <Filter Include="Header Files\Logging">
       <UniqueIdentifier>{264222da-862e-42f5-8297-f78488b63d64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\API">
+      <UniqueIdentifier>{b3abb807-e0e4-47ed-898b-8c5f859b0476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\API">
+      <UniqueIdentifier>{1cfab598-729e-4482-adb8-f7dfe0ee8ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\API\Endpoints">
+      <UniqueIdentifier>{075c4ff9-c2f3-4805-81c4-a5b50bfa8ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\API\Endpoints">
+      <UniqueIdentifier>{b4cd7128-b19a-4d1d-8fb6-7cef018a59d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinanceTradingBot.cpp">
@@ -31,6 +43,45 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Logger\easylogging++.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="APIHead.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="BinanceSwapEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="FiatEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="FuturesEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="MarginAccountEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="MarketDataEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="MiningEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="SavingsEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotAccountEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="Sub-AccountEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="UserDataEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="WalletEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
+    </ClCompile>
+    <ClCompile Include="WebSocketCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -64,6 +115,48 @@
     </ClInclude>
     <ClInclude Include="FileLogger.h">
       <Filter>Header Files\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="BinanceSwapEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="FiatEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="FuturesEndpoint.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="MarginAccountEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="MarketDataEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="MiningEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="SavingsEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotAccountEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="Sub-AccountEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="UserDataEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="WalletEndpoints.h">
+      <Filter>Header Files\API\Endpoints</Filter>
+    </ClInclude>
+    <ClInclude Include="APIHead.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="APIEnums.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="WebSocketCollection.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
