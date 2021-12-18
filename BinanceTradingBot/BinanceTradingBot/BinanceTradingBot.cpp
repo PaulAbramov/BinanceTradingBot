@@ -10,6 +10,8 @@
 #include "ApiRequestManager.h"
 #include "APIEnums.h"
 
+#include "SQLAPI.h"
+
 using namespace std;
 using namespace std::chrono;
 
@@ -56,6 +58,26 @@ static Logger InitializeLogger()
 
 int main(int argc, char** argv)
 {
+	SAConnection connection;
+
+	try 
+	{
+		connection.Connect(_TSA("localhost@Binance"), _TSA(""), _TSA(""), SA_SQLServer_Client);
+		printf("We are connected!\n");
+
+		/*
+		The rest of the tutorial goes here!
+		*/
+
+		connection.Disconnect();
+		printf("We are disconnected!\n");
+	}
+	catch (SAException& x) 
+	{
+		connection.Rollback();
+		printf("%s\n", x.ErrText().GetMultiByteChars());
+	}
+
 	Logger logger = InitializeLogger();
 	logger->WriteInfoEntry("Logger initialized");
 
@@ -64,6 +86,9 @@ int main(int argc, char** argv)
 
 	ApiRequestManager manager = ApiRequestManager(logger, config.api_key, config.secret_key);
 
+	auto test = manager.GetSpotAccountTradeList("BNBBUSD", 0, 0, 0, 0);
+
+	auto test2 = nlohmann::json::parse(test);
 	//manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
 	//manager.GetAggregatedTradeStreams({"test"});
 
