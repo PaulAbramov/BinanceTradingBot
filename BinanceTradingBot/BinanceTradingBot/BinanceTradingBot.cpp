@@ -56,28 +56,24 @@ static Logger InitializeLogger()
 	}
 }
 
+std::string LongToString(int64_t longDate) {
+	char buff[128];
+
+	std::chrono::duration<int64_t, std::milli> dur(longDate);
+	auto tp = std::chrono::system_clock::time_point(
+		std::chrono::duration_cast<std::chrono::system_clock::duration>(dur));
+	std::time_t in_time_t = std::chrono::system_clock::to_time_t(tp);
+	struct tm newtime {};
+	localtime_s(&newtime, &in_time_t);
+	strftime(buff, 128, "%Y-%m-%d %H:%M:%S", &newtime);
+	std::string resDate(buff);
+
+	return resDate;
+
+}
+
 int main(int argc, char** argv)
 {
-	SAConnection connection;
-
-	try 
-	{
-		connection.Connect(_TSA("localhost@Binance"), _TSA(""), _TSA(""), SA_SQLServer_Client);
-		printf("We are connected!\n");
-
-		/*
-		The rest of the tutorial goes here!
-		*/
-
-		connection.Disconnect();
-		printf("We are disconnected!\n");
-	}
-	catch (SAException& x) 
-	{
-		connection.Rollback();
-		printf("%s\n", x.ErrText().GetMultiByteChars());
-	}
-
 	Logger logger = InitializeLogger();
 	logger->WriteInfoEntry("Logger initialized");
 
@@ -86,27 +82,115 @@ int main(int argc, char** argv)
 
 	ApiRequestManager manager = ApiRequestManager(logger, config.api_key, config.secret_key);
 
-	auto test = manager.GetSpotAccountTradeList("BNBBUSD", 0, 0, 0, 0);
+	SAConnection connection;
 
-	auto test2 = nlohmann::json::parse(test);
+	try 
+	{
+		// The io_context is required for all I/O
+		net::io_context ioc;
+
+		// TODO create connectionspool
+		connection.Connect(_TSA("localhost@Binance"), _TSA(""), _TSA(""), SA_SQLServer_Client);
+
+		WebSocketCollection websocketCollection{ ioc, BINANCE_HOST, BINANCE_PORT, logger };
+
+		std::vector<string> symbols{ "BTCUSDT", "BNBBUSD", "ETHUSDT", "BUSDUSDT"};
+		auto oneMinuteCandlestickHandle = websocketCollection.KlineCandleStick(symbols, EIntervals::ONEMINUTE,
+			[_logger = logger, _connection = &connection](auto _answer)
+			{
+				_logger->WriteInfoEntry(_answer.c_str());
+
+				auto jsonResult = nlohmann::json::parse(_answer);
+
+				if(jsonResult.contains("data"))
+				{
+					jsonResult = jsonResult["data"];
+				}
+
+				const string symbol = jsonResult["s"];
+				const string interval = jsonResult["k"]["i"];
+				const time_t candleCloseTime = jsonResult["k"]["T"];
+				const string open = jsonResult["k"]["o"];
+				const string high = jsonResult["k"]["h"];
+				const string low = jsonResult["k"]["l"];
+				const string close = jsonResult["k"]["c"];
+
+				const string dateTime = LongToString(candleCloseTime);
+
+				try
+				{
+					SACommand select(_connection, _TSA("SELECT ASSET, DATETIME FROM ASSETS WHERE DateTime = :1"));
+
+					select.Param(1).setAsDateTime() = _TSA(dateTime.c_str());
+					select.Execute();
+
+					bool existingEntry = false;
+					while (select.FetchNext())
+					{
+						string getSymbol = select[1].asString().GetMultiByteChars();
+						getSymbol.erase(ranges::remove(getSymbol, ' ').begin(), getSymbol.end());
+						if(getSymbol == symbol)
+						{
+							existingEntry = true;
+
+							SACommand update(_connection, _TSA("UPDATE ASSETS SET CandleHigh = :1, CandleLow = :2, CandleClose = :3 WHERE DateTime = :4 AND Asset = :5; "));
+
+							update.Param(1).setAsDouble() = stod(high);
+							update.Param(2).setAsDouble() = stod(low);
+							update.Param(3).setAsDouble() = stod(close);
+							update.Param(4).setAsDateTime() = _TSA(dateTime.c_str());
+							update.Param(5).setAsString() = _TSA(symbol.c_str());
+							update.Execute();
+						}
+
+						break;
+					}
+
+					if(!existingEntry)
+					{
+						SACommand insert(_connection, _TSA("INSERT INTO ASSETS(Asset, Interval, DateTime, CandleOpen, CandleHigh, CandleLow, CandleClose) VALUES(:1, :2, :3, :4, :5, :6, :7)"));
+
+						insert.Param(1).setAsString() = _TSA(symbol.c_str());
+						insert.Param(2).setAsString() = _TSA(interval.c_str());
+						insert.Param(3).setAsDateTime() = _TSA(dateTime.c_str());
+						insert.Param(4).setAsDouble() = stod(open);
+						insert.Param(5).setAsDouble() = stod(high);
+						insert.Param(6).setAsDouble() = stod(low);
+						insert.Param(7).setAsDouble() = stod(close);
+
+						insert.Execute();
+					}
+					
+				}
+				catch (SAException& exception2)
+				{
+					_connection->Rollback();
+					_logger->WriteErrorEntry(exception2.ErrText().GetMultiByteChars());
+					//return false;
+				}
+				
+				return true;
+			});
+
+		ioc.run();
+
+		connection.Disconnect();
+	}
+	catch (SAException& exception) 
+	{
+		connection.Rollback();
+		logger->WriteErrorEntry(exception.ErrText().GetMultiByteChars());
+	}
+
+	
+	//auto test = manager.GetSpotAccountTradeList("BNBBUSD", 0, 0, 0, 0);
+	//
+	//auto test2 = nlohmann::json::parse(test);
 	//manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
 	//manager.GetAggregatedTradeStreams({"test"});
 
-	// The io_context is required for all I/O
-	net::io_context ioc;
 
-	WebSocketCollection websocketCollection{ ioc, BINANCE_HOST, BINANCE_PORT, logger };
-
-	std::vector<string> symbols{"BNBBUSD"};
-	auto tradebnbHandle = websocketCollection.DiffBookDepth(symbols, EFrequency::HUNDREDMILI,
-		[_logger = logger](auto _answer)
-		{
-			_logger->WriteInfoEntry(_answer.c_str());
-
-			return true;
-		});
-
-	ioc.run();
+	
 
 	// wird einmal ausgeführt und man kann über post noch Tasks anhängen
 	//ioc.poll();
