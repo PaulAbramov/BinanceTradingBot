@@ -28,6 +28,12 @@
     <Filter Include="Source Files\API\Endpoints">
       <UniqueIdentifier>{b4cd7128-b19a-4d1d-8fb6-7cef018a59d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Connections">
+      <UniqueIdentifier>{7ecce2a6-395f-4789-8d85-f4537b4d4156}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Connections">
+      <UniqueIdentifier>{7ae8012f-4deb-48dd-92ef-79a4db9cc463}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinanceTradingBot.cpp">
@@ -83,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="WebSocketCollection.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLConnectionFactory.cpp">
+      <Filter>Source Files\Connections</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +166,18 @@
     </ClInclude>
     <ClInclude Include="WebSocketCollection.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionFactory.h">
+      <Filter>Header Files\Connections</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionPoolStats.h">
+      <Filter>Header Files\Connections</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectionPool.h">
+      <Filter>Header Files\Connections</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLConnectionFactory.h">
+      <Filter>Header Files\Connections</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
