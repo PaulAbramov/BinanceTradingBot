@@ -9,8 +9,10 @@
 #include "StandardOutputLogger.h"
 #include "ApiRequestManager.h"
 #include "APIEnums.h"
+#include "ConnectionPool.h"
 
 #include "SQLAPI.h"
+#include "SQLConnectionFactory.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -82,58 +84,61 @@ int main(int argc, char** argv)
 
 	ApiRequestManager manager = ApiRequestManager(logger, config.api_key, config.secret_key);
 
-	SAConnection connection;
+	std::vector<string> symbols{ "BTCUSDT", "BNBBUSD", "ETHUSDT", "BUSDUSDT" };
 
-	try 
-	{
-		// The io_context is required for all I/O
-		net::io_context ioc;
+	shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory("localhost@Binance;MARS Connection=True;", "", ""));
+	shared_ptr<ConnectionPool<SAConnection>> pool(new ConnectionPool<SAConnection>(symbols.size(), connectionFactory));
+	ConnectionPoolStats stats = pool->GetStats();
 
-		// TODO create connectionspool
-		connection.Connect(_TSA("localhost@Binance"), _TSA(""), _TSA(""), SA_SQLServer_Client);
+	// The io_context is required for all I/O
+	net::io_context ioc;
 
-		WebSocketCollection websocketCollection{ ioc, BINANCE_HOST, BINANCE_PORT, logger };
+	WebSocketCollection websocketCollection{ ioc, BINANCE_HOST, BINANCE_PORT, logger };
 
-		std::vector<string> symbols{ "BTCUSDT", "BNBBUSD", "ETHUSDT", "BUSDUSDT"};
-		auto oneMinuteCandlestickHandle = websocketCollection.KlineCandleStick(symbols, EIntervals::ONEMINUTE,
-			[_logger = logger, _connection = &connection](auto _answer)
+	auto oneMinuteCandlestickHandle = websocketCollection.KlineCandleStick(symbols, EIntervals::ONEMINUTE,
+		[_logger = logger, _pool = pool](auto _answer)
+		{
+			_logger->WriteInfoEntry(_answer.c_str());
+
+			auto jsonResult = nlohmann::json::parse(_answer);
+
+			if(jsonResult.contains("data"))
 			{
-				_logger->WriteInfoEntry(_answer.c_str());
+				jsonResult = jsonResult["data"];
+			}
 
-				auto jsonResult = nlohmann::json::parse(_answer);
+			const string symbol = jsonResult["s"];
+			const string interval = jsonResult["k"]["i"];
+			const time_t candleCloseTime = jsonResult["k"]["T"];
+			const string open = jsonResult["k"]["o"];
+			const string high = jsonResult["k"]["h"];
+			const string low = jsonResult["k"]["l"];
+			const string close = jsonResult["k"]["c"];
 
-				if(jsonResult.contains("data"))
-				{
-					jsonResult = jsonResult["data"];
-				}
+			const string dateTime = LongToString(candleCloseTime);
 
-				const string symbol = jsonResult["s"];
-				const string interval = jsonResult["k"]["i"];
-				const time_t candleCloseTime = jsonResult["k"]["T"];
-				const string open = jsonResult["k"]["o"];
-				const string high = jsonResult["k"]["h"];
-				const string low = jsonResult["k"]["l"];
-				const string close = jsonResult["k"]["c"];
+			auto connection = _pool->Borrow();
 
-				const string dateTime = LongToString(candleCloseTime);
+			bool existingEntry = false;
+			try
+			{
+				SACommand select(&(*connection), _TSA("SELECT ASSET, DATETIME FROM ASSETS WHERE DateTime = :1 AND Asset = :2"));
+
+				select.Param(1).setAsDateTime() = _TSA(dateTime.c_str());
+				select.Param(2).setAsString() = _TSA(symbol.c_str());
+				select.Execute();
 
 				try
 				{
-					SACommand select(_connection, _TSA("SELECT ASSET, DATETIME FROM ASSETS WHERE DateTime = :1"));
-
-					select.Param(1).setAsDateTime() = _TSA(dateTime.c_str());
-					select.Execute();
-
-					bool existingEntry = false;
 					while (select.FetchNext())
 					{
 						string getSymbol = select[1].asString().GetMultiByteChars();
 						getSymbol.erase(ranges::remove(getSymbol, ' ').begin(), getSymbol.end());
-						if(getSymbol == symbol)
+						if (getSymbol == symbol)
 						{
 							existingEntry = true;
 
-							SACommand update(_connection, _TSA("UPDATE ASSETS SET CandleHigh = :1, CandleLow = :2, CandleClose = :3 WHERE DateTime = :4 AND Asset = :5; "));
+							SACommand update(&(*connection), _TSA("UPDATE ASSETS SET CandleHigh = :1, CandleLow = :2, CandleClose = :3 WHERE DateTime = :4 AND Asset = :5; "));
 
 							update.Param(1).setAsDouble() = stod(high);
 							update.Param(2).setAsDouble() = stod(low);
@@ -145,42 +150,56 @@ int main(int argc, char** argv)
 
 						break;
 					}
-
-					if(!existingEntry)
-					{
-						SACommand insert(_connection, _TSA("INSERT INTO ASSETS(Asset, Interval, DateTime, CandleOpen, CandleHigh, CandleLow, CandleClose) VALUES(:1, :2, :3, :4, :5, :6, :7)"));
-
-						insert.Param(1).setAsString() = _TSA(symbol.c_str());
-						insert.Param(2).setAsString() = _TSA(interval.c_str());
-						insert.Param(3).setAsDateTime() = _TSA(dateTime.c_str());
-						insert.Param(4).setAsDouble() = stod(open);
-						insert.Param(5).setAsDouble() = stod(high);
-						insert.Param(6).setAsDouble() = stod(low);
-						insert.Param(7).setAsDouble() = stod(close);
-
-						insert.Execute();
-					}
-					
 				}
-				catch (SAException& exception2)
+				catch (SAException& exception)
 				{
-					_connection->Rollback();
-					_logger->WriteErrorEntry(exception2.ErrText().GetMultiByteChars());
-					//return false;
+					(&(*connection))->Rollback();
+					_logger->WriteErrorEntry("inner exception");
+					_logger->WriteErrorEntry(exception.ErrText().GetMultiByteChars());
+					_pool->Unborrow(connection);
+					return true;
 				}
-				
+			}
+			catch (SAException& exception2)
+			{
+				(&(*connection))->Rollback();
+				_logger->WriteErrorEntry("outer exception");
+				_logger->WriteErrorEntry(exception2.ErrText().GetMultiByteChars());
+				_pool->Unborrow(connection);
 				return true;
-			});
+			}
 
-		ioc.run();
+			try
+			{
+				if (!existingEntry)
+				{
+					SACommand insert(&(*connection), _TSA("INSERT INTO ASSETS(Asset, Interval, DateTime, CandleOpen, CandleHigh, CandleLow, CandleClose) VALUES(:1, :2, :3, :4, :5, :6, :7)"));
 
-		connection.Disconnect();
-	}
-	catch (SAException& exception) 
-	{
-		connection.Rollback();
-		logger->WriteErrorEntry(exception.ErrText().GetMultiByteChars());
-	}
+					insert.Param(1).setAsString() = _TSA(symbol.c_str());
+					insert.Param(2).setAsString() = _TSA(interval.c_str());
+					insert.Param(3).setAsDateTime() = _TSA(dateTime.c_str());
+					insert.Param(4).setAsDouble() = stod(open);
+					insert.Param(5).setAsDouble() = stod(high);
+					insert.Param(6).setAsDouble() = stod(low);
+					insert.Param(7).setAsDouble() = stod(close);
+
+					insert.Execute();
+				}
+			}
+			catch (exception& exc)
+			{
+				(&(*connection))->Rollback();
+				_logger->WriteErrorEntry("third exception");
+				_logger->WriteErrorEntry(exc.what());
+				_pool->Unborrow(connection);
+				//return false;
+			}
+
+
+			return true;
+		});
+
+	ioc.run();
 
 	
 	//auto test = manager.GetSpotAccountTradeList("BNBBUSD", 0, 0, 0, 0);

@@ -171,6 +171,7 @@
     <ClCompile Include="MiningEndpoints.cpp" />
     <ClCompile Include="SavingsEndpoints.cpp" />
     <ClCompile Include="SpotAccountEndpoints.cpp" />
+    <ClCompile Include="SQLConnectionFactory.cpp" />
     <ClCompile Include="Sub-AccountEndpoints.cpp" />
     <ClCompile Include="UserDataEndpoints.cpp" />
     <ClCompile Include="WalletEndpoints.cpp" />
@@ -190,6 +191,9 @@
     <ClInclude Include="BinanceSwapEndpoints.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigurationManager.h" />
+    <ClInclude Include="ConnectionFactory.h" />
+    <ClInclude Include="ConnectionPool.h" />
+    <ClInclude Include="ConnectionPoolStats.h" />
     <ClInclude Include="FiatEndpoints.h" />
     <ClInclude Include="FileLogger.h" />
     <ClInclude Include="FuturesEndpoint.h" />
@@ -199,6 +203,7 @@
     <ClInclude Include="MiningEndpoints.h" />
     <ClInclude Include="SavingsEndpoints.h" />
     <ClInclude Include="SpotAccountEndpoints.h" />
+    <ClInclude Include="SQLConnectionFactory.h" />
     <ClInclude Include="StandardOutputLogger.h" />
     <ClInclude Include="Sub-AccountEndpoints.h" />
     <ClInclude Include="UserDataEndpoints.h" />
