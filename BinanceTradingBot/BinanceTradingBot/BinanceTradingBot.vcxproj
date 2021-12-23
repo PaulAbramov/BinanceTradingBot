@@ -84,9 +84,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Programmierung\SQLAPI\include;C:\Programmierung\Logger;C:\Programmierung\NLohmannJson;C:\Program Files\OpenSSL\OpenSSL-Win64\include;C:\Programmierung\Boost\boost_1_76_0;C:\Programmierung\Beast\beast-master\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Programmierung\SQLAPI\lib;C:\Program Files\OpenSSL\OpenSSL-Win64\lib;C:\Programmierung\Boost\boost_1_76_0\stage\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>C:\Programmierung\SQLAPI\bin;$(SourcePath)</SourcePath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -128,14 +128,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\SQLAPI\include;C:\Programmierung\magic_enum-master\include;C:\Programmierung\Logger;C:\Programmierung\curl-7.79.1\x64 debug\include;C:\Programmierung\Beast\beast-master\include;C:\Programmierung\Boost\boost_1_76_0;C:\Program Files\OpenSSL\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\SQLAPI\include;$(SolutionDir)Dependencies\magic_enum-master\include;$(SolutionDir)Dependencies\Logger;$(SolutionDir)Dependencies\curl-7.79.1\x64 debug\include;$(SolutionDir)Dependencies\Beast\beast-master\include;C:\Programmierung\Boost\boost_1_76_0;C:\Program Files\OpenSSL\OpenSSL-Win64\include;$(SolutionDir)Dependencies\NLohmannJson;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\SQLAPI\vs2019\x86_64\lib;C:\Programmierung\magic_enum-master\include;C:\Programmierung\Logger;C:\Programmierung\Boost\boost_1_76_0\stage\lib;C:\Program Files\OpenSSL\OpenSSL-Win64\lib;C:\Programmierung\curlpp-0.8.1\include;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\SQLAPI\vs2019\x86_64\lib;C:\Programmierung\Boost\boost_1_76_0\stage\lib;C:\Program Files\OpenSSL\OpenSSL-Win64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl.lib;libcrypto.lib;C:\Programmierung\curl-7.79.1\x64 debug\lib\libcurl_a_debug.lib;sqlapid.lib;sqlapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
