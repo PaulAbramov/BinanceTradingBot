@@ -117,7 +117,15 @@ int main(int argc, char** argv)
 
 			const string dateTime = LongToString(candleCloseTime);
 
-			auto connection = _pool->Borrow();
+			shared_ptr<SAConnection> connection;
+			try
+			{
+				connection = _pool->Borrow();
+			}
+			catch(ConnectionUnavailable& exception)
+			{
+				return true;
+			}
 
 			bool existingEntry = false;
 			try
@@ -157,7 +165,7 @@ int main(int argc, char** argv)
 					_logger->WriteErrorEntry("inner exception");
 					_logger->WriteErrorEntry(exception.ErrText().GetMultiByteChars());
 					_pool->Unborrow(connection);
-					return true;
+					return false;
 				}
 			}
 			catch (SAException& exception2)
@@ -166,7 +174,7 @@ int main(int argc, char** argv)
 				_logger->WriteErrorEntry("outer exception");
 				_logger->WriteErrorEntry(exception2.ErrText().GetMultiByteChars());
 				_pool->Unborrow(connection);
-				return true;
+				return false;
 			}
 
 			try
@@ -186,15 +194,16 @@ int main(int argc, char** argv)
 					insert.Execute();
 				}
 			}
-			catch (exception& exc)
+			catch (SAException& exc)
 			{
 				(&(*connection))->Rollback();
 				_logger->WriteErrorEntry("third exception");
-				_logger->WriteErrorEntry(exc.what());
+				_logger->WriteErrorEntry(exc.ErrText().GetMultiByteChars());
 				_pool->Unborrow(connection);
-				//return false;
+				return false;
 			}
 
+			_pool->Unborrow(connection);
 
 			return true;
 		});
