@@ -58,20 +58,19 @@ static Logger InitializeLogger()
 	}
 }
 
-std::string LongToString(int64_t longDate) {
+std::string LongToString(const int64_t _longDate)
+{
 	char buff[128];
 
-	std::chrono::duration<int64_t, std::milli> dur(longDate);
-	auto tp = std::chrono::system_clock::time_point(
-		std::chrono::duration_cast<std::chrono::system_clock::duration>(dur));
-	std::time_t in_time_t = std::chrono::system_clock::to_time_t(tp);
+	const duration<int64_t, std::milli> duration (_longDate);
+	const auto timePoint = system_clock::time_point(duration_cast<system_clock::duration>(duration));
+	const std::time_t inTimeT = system_clock::to_time_t(timePoint);
 	struct tm newtime {};
-	localtime_s(&newtime, &in_time_t);
+	localtime_s(&newtime, &inTimeT);
 	strftime(buff, 128, "%Y-%m-%d %H:%M:%S", &newtime);
 	std::string resDate(buff);
 
 	return resDate;
-
 }
 
 int main(int argc, char** argv)
@@ -88,10 +87,11 @@ int main(int argc, char** argv)
 
 	shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory("localhost@Binance;MARS Connection=True;", "", ""));
 	shared_ptr<ConnectionPool<SAConnection>> pool(new ConnectionPool<SAConnection>(symbols.size(), connectionFactory));
-	ConnectionPoolStats stats = pool->GetStats();
 
 	// The io_context is required for all I/O
 	net::io_context ioc;
+
+	vector<void*> handles;
 
 	WebSocketCollection websocketCollection{ ioc, BINANCE_HOST, BINANCE_PORT, logger };
 
@@ -208,71 +208,45 @@ int main(int argc, char** argv)
 			return true;
 		});
 
-	ioc.run();
+	handles.emplace_back(oneMinuteCandlestickHandle);
 
-	
-	//auto test = manager.GetSpotAccountTradeList("BNBBUSD", 0, 0, 0, 0);
-	//
-	//auto test2 = nlohmann::json::parse(test);
-	//manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
-	//manager.GetAggregatedTradeStreams({"test"});
-
-
-	
-
-	// wird einmal ausgeführt und man kann über post noch Tasks anhängen
-	//ioc.poll();
-	//ioc.post();
-
-	//string inputStr;
-	//while (inputStr != "x") 
-	//{
-	//	if (ioc.stopped()) 
-	//	{
-	//		ioc.restart();
-	//	}
-	//	if (!ioc.poll()) 
-	//	{
-	//		cin >> inputStr;
-	//
-	//		if (inputStr == "s")
-	//		{
-	//			ioc.poll();
-	//		}
-	//		else {
-	//			std::this_thread::sleep_for(std::chrono::milliseconds(3));
-	//		}
-	//	}
-	//}
-
-	//auto futureLambda = std::async([](WebSocketCollection _webSocketCollection)
-	//	{
-	//		string inputStr;
-	//		while (inputStr != "x") {
-	//			cout << "Press 's' to stop. Press 'x' to Exit." << endl;
-	//			cin >> inputStr;
-	//
-	//			if (inputStr == "s" || inputStr == "x")
-	//			{ //stop & exit
-	//				_webSocketCollection.UnsubscribeAllChannels();
-	//			}
-	//		}
-	//	}, websocketCollection);
-	//
-	//futureLambda.get();
-
-
-	/*while (true) {
-		try {
-			ioctx.run();
-			break;
+	int counter = 0;
+	while (!handles.empty()) 
+	{
+		if (ioc.stopped()) 
+		{
+			ioc.restart();
 		}
-		catch (const std::exception& ex) {
-			std::cerr << "std::exception: what: " << ex.what() << std::endl;
+		if (!ioc.poll())
+		{
+			// TODO create messagelist to send commands or attach websockets to ioc
+			if (counter > 1000) 
+			{
+				ioc.post([_logger = logger, _manager = manager]()
+					{
+						auto test = _manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
 
-			ioctx.restart();
+						_logger->WriteInfoEntry(test);
+
+					});
+
+				ioc.post([_logger = logger, _manager = manager]()
+					{
+						auto test = _manager.GetSpotAccountCurrentOrderCountUsage ();
+
+						_logger->WriteInfoEntry(test);
+
+					});
+
+				counter = 0;
+			}
+			else 
+			{
+				counter++;
+				std::this_thread::sleep_for(milliseconds(3));
+			}
 		}
-	}*/
-	
+	}
+
 	return EXIT_SUCCESS;
 }
