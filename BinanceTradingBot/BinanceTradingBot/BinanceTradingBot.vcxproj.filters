@@ -93,6 +93,9 @@
     <ClCompile Include="SQLConnectionFactory.cpp">
       <Filter>Source Files\Connections</Filter>
     </ClCompile>
+    <ClCompile Include="Bot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="SQLConnectionFactory.h">
       <Filter>Header Files\Connections</Filter>
+    </ClInclude>
+    <ClInclude Include="Bot.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
