@@ -7,6 +7,7 @@ ApiRequestManager::ApiRequestManager(const Logger& _logger, string _apiKey, stri
 	apiKey = std::move(_apiKey);
 	secretKey = std::move(_secretKey);
 
+	marketDataEndpoints = MarketDataEndpoints(_logger);
 	walletEndpoints = WalletEndpoints(_logger);
 	spotAccountEndpoints = SpotAccountEndpoints(_logger);
 }
@@ -18,6 +19,40 @@ void ApiRequestManager::CleanUpApiRequestManager() const
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
 }
+
+#pragma region MarketData
+string ApiRequestManager::GetMarketDataCandlestick(const string& _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit) const
+{
+	string postData;
+	string strResult;
+	const string action = "GET";
+
+	string url(BINANCE_APIENDPOINT);
+	string queryString;
+
+	marketDataEndpoints.GetMarketCandlestickDataQuery(url, queryString, _symbol, _interval, _startTime, _endTime, _limit);
+
+	CurlAPIWithHeader(url, strResult, postData, action, queryString, false);
+
+	return strResult;
+}
+
+string ApiRequestManager::GetMarketDataSymbolPriceTicker(const string& _symbol) const
+{
+	string postData;
+	string strResult;
+	const string action = "GET";
+
+	string url(BINANCE_APIENDPOINT);
+	string queryString;
+
+	marketDataEndpoints.GetMarketSymbolPriceTickerQuery(url, queryString, _symbol);
+
+	CurlAPIWithHeader(url, strResult, postData, action, queryString, false);
+
+	return strResult;
+}
+#pragma endregion
 
 #pragma region SpotAccount
 /*
@@ -210,7 +245,7 @@ string ApiRequestManager::DeleteSpotAccountCancelOco(const string& _symbol, cons
 string ApiRequestManager::PostSpotAccountNewOcoOrder(const string& _symbol, const string& _listClientOrderId, const double _quantity,
                                                    const string& _limitClientOrderId, const double _price, const double _limitIcebergQuantity,
                                                    const string& _stopClientOrderId, const double _stopPrice, const double _stopLimitPrice, const double _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce,
-                                                   const ENewOrderResponseType _newOrderResponseType, const ESide _side)
+                                                   const ENewOrderResponseType _newOrderResponseType, const ESide _side) const
 {
 	string postData;
 	string strResult;
@@ -409,7 +444,7 @@ string ApiRequestManager::DeleteSpotAccountCancelOrder(const string& _symbol, co
 */
 string ApiRequestManager::PostSpotAccountNewOrder(const string& _symbol, const ETimeInForce _timeInForce, const double _quantity,
                                                 const double _quoteOrderQuantity, const double _price, const string& _newClientOrderId, const double _stopPrice, const double _icebergQuantity,
-                                                const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType)
+                                                const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType) const
 {
 	string postData;
 	string strResult;
@@ -739,4 +774,28 @@ string ApiRequestManager::B2AHex(const char* _byteArray, int _n)
 	}
 
 	return hexString;
+}
+
+void ApiRequestManager::CurlAPI(const string& _url, string& _stringResult) const
+{
+	if (curl)
+	{
+		logger->WriteInfoEntry("making cUrl call to " + _url);
+
+		curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ApiRequestManager::WebRequestCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &_stringResult);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+
+		/* Check for errors */
+		if (const CURLcode res = curl_easy_perform(curl); res != CURLE_OK)
+		{
+			logger->WriteErrorEntry(curl_easy_strerror(res));
+			cerr << "CURL error: " << res << endl;
+		}
+	}
+	else
+	{
+		logger->WriteErrorEntry("Could not initialize cURL.");
+	}
 }

@@ -38,6 +38,7 @@ private:
 	string apiKey;
 	string secretKey;
 
+	MarketDataEndpoints marketDataEndpoints;
 	WalletEndpoints walletEndpoints;
 	SpotAccountEndpoints spotAccountEndpoints;
 
@@ -52,8 +53,11 @@ public:
 	ApiRequestManager(const Logger& _logger, string _apiKey, string _secretKey);
 	void CleanUpApiRequestManager() const;
 
-#pragma region MarketData
+	void CurlAPI(const string& _url, string& _stringResult) const;
 
+#pragma region MarketData
+	string GetMarketDataCandlestick(const string& _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit = 500) const;
+	string GetMarketDataSymbolPriceTicker(const string& _symbol) const;
 #pragma endregion
 
 #pragma region SpotAccount
@@ -67,7 +71,7 @@ public:
 	string PostSpotAccountNewOcoOrder(const string& _symbol, const string& _listClientOrderId, double _quantity,
 	                                const string& _limitClientOrderId, double _price, double _limitIcebergQuantity,
 	                                const string& _stopClientOrderId, double _stopPrice, double _stopLimitPrice, double _stopIcebergQuantity, ETimeInForce _stopLimitTimeInForce, 
-									ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, ESide _side = ESide::NONE);
+									ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, ESide _side = ESide::NONE) const;
 	string GetSpotAccountAllOrders(const string& _symbol, unsigned short _orderId, time_t _startTime, time_t _endTime, int _limit = 500) const;
 	string GetSpotAccountCurrentOpenOrders(const string& _symbol) const;
 	string GetSpotAccountQueryOrder(const string& _symbol, unsigned short _orderId, const string& _originalClientOrderId) const;
@@ -75,7 +79,7 @@ public:
 	string DeleteSpotAccountCancelOrder(const string& _symbol, unsigned short _orderId, const string& _originalClientOrderId, const string& _newClientOrderId) const;
 	string PostSpotAccountNewOrder(const string& _symbol, ETimeInForce _timeInForce, double _quantity, double _quoteOrderQuantity, double _price,
 	                             const string& _newClientOrderId, double _stopPrice, double _icebergQuantity, ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, 
-	                             ESide _side = ESide::NONE, EOrderType _orderType = EOrderType::NONE);
+	                             ESide _side = ESide::NONE, EOrderType _orderType = EOrderType::NONE) const;
 #pragma endregion
 
 #pragma region Wallet
