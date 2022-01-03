@@ -6,7 +6,103 @@ Bot::Bot(const Logger& _logger, const Config& _config): manager(_logger, _config
 	config = _config;
 }
 
-bool Bot::Run()
+bool Bot::Run() const
+{
+	AutomaticRun();
+
+	logger->WriteWarnEntry("Closing Programm.");
+
+	return EXIT_SUCCESS;
+}
+
+void Bot::AutomaticRun() const
+{
+	net::io_context ioc;
+
+	clock_t start = clock();
+
+	while (true)
+	{
+		if (ioc.stopped())
+		{
+			ioc.restart();
+		}
+		if (!ioc.poll())
+		{
+			// TODO create messagelist to send commands or attach websockets to ioc
+			// 15sekunden wegen api warten
+			// Free:	 1 API request / 15 seconds
+			// Basic:	 5 API requests / 15 seconds
+			// Pro :	30 API requests / 15 seconds
+			// Expert : 75 API requests / 15 seconds
+			if (((static_cast<float>(clock()) - start) / CLOCKS_PER_SEC) > 15)
+			{
+				ioc.post([this, &start, _logger = logger, _manager = manager, _config = config]()
+					{
+						string result;
+						string url = "https://api.taapi.io/stochrsi?secret=";
+						url += _config.taapi_secret;
+						url += "&exchange=binance&symbol=BTC/USDT&interval=1m&backtracks=10";
+
+						_manager.CurlAPI(url, result);
+
+						//_logger->WriteInfoEntry(result);
+
+						auto jsonResult = nlohmann::json::parse(result);
+
+						if(jsonResult[0]["valueFastK"] > 20 && jsonResult[1]["valueFastK"] < 20)
+						{
+							//_logger->WriteInfoEntry("BTCUSDT jetzt KAUFEN");
+							//auto test = _manager.GetMarketDataSymbolPriceTicker("BTCUSDT");
+							//_logger->WriteInfoEntry(test);
+
+							auto trade = _manager.PostSpotAccountNewOrder("BTCBUSD", ETimeInForce::NONE, 0, 20, 0, "1", 0, 0, ENewOrderResponseType::FULL, ESide::BUY, EOrderType::MARKET);
+
+							auto jsonResultTrade = nlohmann::json::parse(trade);
+
+
+						}
+
+						if (jsonResult[0]["valueFastK"] > 80 && jsonResult[1]["valueFastK"] < 80)
+						{
+							_logger->WriteInfoEntry("BTCUSDT jetzt VERKAUFEN");
+							auto test = _manager.GetMarketDataSymbolPriceTicker("BTCUSDT");
+							_logger->WriteInfoEntry(test);
+						}
+
+
+
+
+						//const string symbol = jsonResult["s"];
+						//const string interval = jsonResult["k"]["i"];
+						//const time_t candleCloseTime = jsonResult["k"]["T"];
+						//const string open = jsonResult["k"]["o"];
+						//const string high = jsonResult["k"]["h"];
+						//const string low = jsonResult["k"]["l"];
+						//const string close = jsonResult["k"]["c"];
+
+						//const string dateTime = LongToString(candleCloseTime);
+
+						start = clock();
+					});
+
+				//ioc.post([_logger = logger, _manager = manager]()
+				//	{
+				//		auto test = _manager.GetSpotAccountCurrentOrderCountUsage();
+				//
+				//		_logger->WriteInfoEntry(test);
+				//
+				//	});
+			}
+			else
+			{
+				std::this_thread::sleep_for(milliseconds(3));
+			}
+		}
+	}
+}
+
+void Bot::ManualRun()
 {
 	const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory("localhost@Binance;MARS Connection=True;", "", ""));
 	shared_ptr<ConnectionPool<SAConnection>> pool(new ConnectionPool<SAConnection>(symbols.size(), connectionFactory));
@@ -39,7 +135,7 @@ bool Bot::Run()
 	handles.emplace_back(oneHourCandlestickHandle);
 	handles.emplace_back(oneDayCandlestickHandle);
 
-	int counter = 0;
+	clock_t start = clock();
 	while (!handles.empty())
 	{
 		if (ioc.stopped())
@@ -49,37 +145,42 @@ bool Bot::Run()
 		if (!ioc.poll())
 		{
 			// TODO create messagelist to send commands or attach websockets to ioc
-			if (counter > 1000)
+			// 15sekunden wegen api warten
+			// Free:	 1 API request / 15 seconds
+			// Basic:	 5 API requests / 15 seconds
+			// Pro :	30 API requests / 15 seconds
+			// Expert : 75 API requests / 15 seconds
+			if (((static_cast<float>(clock()) - start) / CLOCKS_PER_SEC) > 15)
 			{
-				ioc.post([_logger = logger, _manager = manager]()
+				ioc.post([this, &start, _logger = logger, _manager = manager, _config = config]()
 					{
-						auto test = _manager.GetWalletWithdrawtHistory("", "", 6, 0, 0, 0);
+						string result;
+						string url = "https://api.taapi.io/rsi?secret=";
+						url += _config.taapi_secret;
+						url += "&exchange=binance&symbol=BTC/USDT&interval=1h&backtracks=10";
 
-						_logger->WriteInfoEntry(test);
+						_manager.CurlAPI(url, result);
 
+						_logger->WriteInfoEntry(result);
+
+						start = clock();
 					});
 
-				ioc.post([_logger = logger, _manager = manager]()
+				ioc.post([this, &start, _logger = logger, _manager = manager]()
 					{
 						auto test = _manager.GetSpotAccountCurrentOrderCountUsage();
 
 						_logger->WriteInfoEntry(test);
-
 					});
 
-				counter = 0;
 			}
 			else
 			{
-				counter++;
 				std::this_thread::sleep_for(milliseconds(3));
 			}
 		}
 	}
-
-	return EXIT_SUCCESS;
 }
-
 
 bool Bot::HandleRequest(const shared_ptr<ConnectionPool<SAConnection>>& _pool, const string& _answer) const
 {

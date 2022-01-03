@@ -22,7 +22,10 @@ private:
 	bool HandleRequest(const shared_ptr<ConnectionPool<SAConnection>>& _pool, const string& _answer) const;
 	string LongToString(const int64_t _longDate) const;
 
+	void ManualRun();
+	void AutomaticRun() const;
+
 public:
 	Bot(const Logger& _logger, const Config& _config);
-	bool Run();
+	bool Run() const;
 };
