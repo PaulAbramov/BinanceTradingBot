@@ -34,6 +34,9 @@
     <Filter Include="Source Files\Connections">
       <UniqueIdentifier>{7ae8012f-4deb-48dd-92ef-79a4db9cc463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Gnuplot">
+      <UniqueIdentifier>{580367af-2ee8-4b2c-bbaf-a970fdcebfe1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinanceTradingBot.cpp">
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="Bot.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GnuplotIoStream.h">
+      <Filter>Header Files\Gnuplot</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -199,6 +199,7 @@
     <ClInclude Include="FiatEndpoints.h" />
     <ClInclude Include="FileLogger.h" />
     <ClInclude Include="FuturesEndpoint.h" />
+    <ClInclude Include="GnuplotIoStream.h" />
     <ClInclude Include="LoggingFacility.h" />
     <ClInclude Include="MarginAccountEndpoints.h" />
     <ClInclude Include="MarketDataEndpoints.h" />
