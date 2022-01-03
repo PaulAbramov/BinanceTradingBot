@@ -52,7 +52,7 @@
 * Price above market price: STOP_LOSS BUY, TAKE_PROFIT SELL
 * Price below market price: STOP_LOSS SELL, TAKE_PROFIT BUY
 */
-void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _queryString, const string& _symbol, const ETimeInForce _timeInForce, const double _quantity, const double _quoteOrderQuantity, const double _price, const string& _newClientOrderId, const double _stopPrice, const double _icebergQuantity, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType, const unsigned short _recvWindow)
+void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _queryString, const string& _symbol, const ETimeInForce _timeInForce, const double _quantity, const double _quoteOrderQuantity, const double _price, const string& _newClientOrderId, const double _stopPrice, const double _icebergQuantity, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType, const unsigned short _recvWindow) const
 {
 	if (_symbol.empty())
 	{
@@ -72,6 +72,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 	case EOrderType::NONE:
 		logger->WriteWarnEntry("Did not set mandatory parameter 'orderType'");
 		return;
+		break;
 	case EOrderType::LIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
@@ -88,12 +89,14 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::MARKET:
-		if (_quantity == 0 || _quoteOrderQuantity == 0)
+		if (_quantity == 0 && _quoteOrderQuantity == 0)
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' or 'quoteOrderQuantity' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::STOPLOSS:
 		if (_quantity == 0)
 		{
@@ -105,6 +108,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::STOPLOSSLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
@@ -126,6 +130,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::TAKEPROFIT:
 		if (_quantity == 0)
 		{
@@ -137,6 +142,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::TAKEPROFITLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
@@ -158,6 +164,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::LIMITMAKER:
 		if (_quantity == 0)
 		{
@@ -169,6 +176,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
+		break;
 	}
 
 	_url += "/api/v3/order?";
@@ -560,7 +568,7 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 * Order Rate Limit
 * OCO counts as 2 orders against the order rate limit.
 */
-void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string& _queryString, const string& _symbol, const string& _listClientOrderId, const double _quantity, const string& _limitClientOrderId, const double _price, const double _limitIcebergQuantity, const string& _stopClientOrderId, const double _stopPrice, const double _stopLimitPrice, const double _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const unsigned short _recvWindow)
+void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string& _queryString, const string& _symbol, const string& _listClientOrderId, const double _quantity, const string& _limitClientOrderId, const double _price, const double _limitIcebergQuantity, const string& _stopClientOrderId, const double _stopPrice, const double _stopLimitPrice, const double _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const unsigned short _recvWindow) const
 {
 	if (_symbol.empty())
 	{
