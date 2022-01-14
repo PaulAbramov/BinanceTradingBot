@@ -1,7 +1,0 @@
-{
-    "api_key": "UnE1dv2sIFCCypHgFvnigXBQFaco9r0VG9xHsrZFl5jwrOQ1N8psPSuJHIJaMJKi",
-    "host": "stream.binance.com",
-    "port": "9443",
-    "secret_key": "RlUDnjjheAciLFnr1qWg1NGquDkzbMWrYaM7APvoE1KqgAOsrQVE2FOmE8gxV9sO",
-    "target": "/ws/bnbbusd@depth@100ms"
-}

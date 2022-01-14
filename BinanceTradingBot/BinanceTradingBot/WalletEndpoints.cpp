@@ -148,7 +148,7 @@ void WalletEndpoints::PostWalletEnableFastWithdrawQuery(string& _url, string& _q
 * If network not send, return with default network of the coin.
 * You can get network and isDefault in networkList of a coin in the response of Get /sapi/v1/capital/config/getall (HMAC SHA256).
 */
-void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString, const string& _coin, const string& _withdrawOrderId, const string& _network, const string& _address, const string& _addressTag, const double _amount, const string& _name, const bool _transactionFeeFlag, const unsigned short _recvWindow ) const
+void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString, const string& _coin, const string& _withdrawOrderId, const string& _network, const string& _address, const string& _addressTag, const string& _amount, const string& _name, const bool _transactionFeeFlag, const unsigned short _recvWindow ) const
 {
 	if (_coin.empty())
 	{
@@ -160,7 +160,7 @@ void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString
 		logger->WriteWarnEntry("Did not set mandatory parameter 'address'");
 		return;
 	}
-	if (_amount == 0)
+	if (_amount.empty())
 	{
 		logger->WriteWarnEntry("Did not set mandatory parameter 'amount'");
 		return;
@@ -195,9 +195,8 @@ void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString
 	}
 
 	_queryString.append("&amount=");
-	_queryString.append(to_string(_amount));
+	_queryString.append(_amount);
 
-	// TODO test this
 	_queryString.append("&transactionFeeFlag=");
 	_queryString.append(to_string(_transactionFeeFlag));
 

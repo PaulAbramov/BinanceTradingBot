@@ -6,7 +6,7 @@
 class MarketDataEndpoints : public APIHead
 {
 private:
-	const boost::unordered_map<EIntervals, const char*> eIntervalsToString = map_list_of
+	boost::unordered_map<EIntervals, const char*> eIntervalsToString = map_list_of
 	(EIntervals::ONEMINUTE, "1m")
 	(EIntervals::THREEMINUTES, "3m")
 	(EIntervals::FIVEMINUTES, "5m")

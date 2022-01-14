@@ -19,9 +19,9 @@ Config ConfigurationManager::LoadConfig()
 			configFile.open(configFileName, ios::in);
 
 			string configText;
-			char buffer[100];
+			char buffer[200];
 
-			while (configFile.peek() != EOF && configFile.getline(buffer, 100))
+			while (configFile.peek() != EOF && configFile.getline(buffer, 200))
 			{
 				configText.append(buffer);
 			}
@@ -59,9 +59,10 @@ Config ConfigurationManager::CreateConfig()
 
 	Config config;
 
-	jsonObject["target"] = "/ws/bnbbusd@depth@100ms";
+	jsonObject["taapi_secret"] = "";
 	jsonObject["api_key"] = "";
 	jsonObject["secret_key"] = "";
+	jsonObject["gnuplot_path"] = "";
 
 	configFile.open(configFileName, ios::out);
 	if (!configFile.is_open())
@@ -85,7 +86,8 @@ void ConfigurationManager::SafeConfig(Config& _config)
 
 void ConfigurationManager::InitializeConfig(Config& _config, const nlohmann::json& _jsonObject)
 {
-	_config.target = _jsonObject["target"];
+	_config.taapi_secret = _jsonObject["taapi_secret"];
 	_config.api_key = _jsonObject["api_key"];
 	_config.secret_key = _jsonObject["secret_key"];
+	_config.gnuplot_path = _jsonObject["gnuplot_path"];
 }
