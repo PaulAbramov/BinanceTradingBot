@@ -4,18 +4,18 @@ CREATE TABLE dbo.Trades
 	(
 	Id int NOT NULL,
 	OrderID bigint NOT NULL,
-	BotName nchar(10) NOT NULL,
-	InvestedAmount float(53) NOT NULL,
-	EntryPrice float(53) NOT NULL,
+	BotName varchar(10) NOT NULL,
+	InvestedAmount decimal(16,8) NOT NULL,
+	EntryPrice decimal(16,8) NOT NULL,
 	EntryTime datetime2(7) NOT NULL,
-	Asset nchar(10) NOT NULL,
-	Amount float(53) NOT NULL,
-	StopLoss float(53),
-	TakeProfit float(53),
-	ExitPrice float(53),
+	Asset varchar(10) NOT NULL,
+	Amount decimal(16,8) NOT NULL,
+	StopLoss decimal(16,8),
+	TakeProfit decimal(16,8),
+	ExitPrice decimal(16,8),
 	ExitTime datetime2(7),
-	Earnings float(53),
-	WinLoss float(53)
+	Earnings decimal(16,8),
+	WinLoss decimal(16,8)
 	)
 
 ALTER TABLE Trades DROP COLUMN ID 

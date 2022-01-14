@@ -209,6 +209,7 @@
     <ClInclude Include="SQLConnectionFactory.h" />
     <ClInclude Include="StandardOutputLogger.h" />
     <ClInclude Include="Sub-AccountEndpoints.h" />
+    <ClInclude Include="Trade.h" />
     <ClInclude Include="UserDataEndpoints.h" />
     <ClInclude Include="WalletEndpoints.h" />
     <ClInclude Include="WebSocketCollection.h" />

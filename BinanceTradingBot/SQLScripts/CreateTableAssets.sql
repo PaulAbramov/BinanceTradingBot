@@ -3,13 +3,13 @@ DROP TABLE IF EXISTS [dbo].[Assets];
 CREATE TABLE dbo.Assets
 	(
 	Id int NOT NULL,
-	Asset nchar(10) NOT NULL,
-	Interval nchar(10) NOT NULL,
+	Asset varchar(10) NOT NULL,
+	Interval varchar(10) NOT NULL,
 	DateTime datetime2(7) NOT NULL,
-	CandleOpen float(53) NOT NULL,
-	CandleHigh float(53) NOT NULL,
-	CandleLow float(53) NOT NULL,
-	CandleClose float(53) NOT NULL
+	CandleOpen decimal(10,8) NOT NULL,
+	CandleHigh decimal(10,8) NOT NULL,
+	CandleLow decimal(10,8) NOT NULL,
+	CandleClose decimal(10,8) NOT NULL
 	)
 
 ALTER TABLE Assets DROP COLUMN ID 

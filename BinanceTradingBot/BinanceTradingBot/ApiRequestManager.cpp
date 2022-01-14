@@ -3,7 +3,6 @@
 ApiRequestManager::ApiRequestManager(const Logger& _logger, string _apiKey, string _secretKey) : logger(_logger)
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
-	curl = curl_easy_init();
 	apiKey = std::move(_apiKey);
 	secretKey = std::move(_secretKey);
 
@@ -16,7 +15,6 @@ void ApiRequestManager::CleanUpApiRequestManager() const
 {
 	logger->WriteInfoEntry("Cleaning up the ApiRequestManager.");
 
-	curl_easy_cleanup(curl);
 	curl_global_cleanup();
 }
 
@@ -242,9 +240,9 @@ string ApiRequestManager::DeleteSpotAccountCancelOco(const string& _symbol, cons
 * Order Rate Limit
 * OCO counts as 2 orders against the order rate limit.
 */
-string ApiRequestManager::PostSpotAccountNewOcoOrder(const string& _symbol, const string& _listClientOrderId, const double _quantity,
-                                                   const string& _limitClientOrderId, const double _price, const double _limitIcebergQuantity,
-                                                   const string& _stopClientOrderId, const double _stopPrice, const double _stopLimitPrice, const double _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce,
+string ApiRequestManager::PostSpotAccountNewOcoOrder(const string& _symbol, const string& _listClientOrderId, const string& _quantity,
+                                                   const string& _limitClientOrderId, const string& _price, const string& _limitIcebergQuantity,
+                                                   const string& _stopClientOrderId, const string& _stopPrice, const string& _stopLimitPrice, const string& _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce,
                                                    const ENewOrderResponseType _newOrderResponseType, const ESide _side) const
 {
 	string postData;
@@ -442,8 +440,8 @@ string ApiRequestManager::DeleteSpotAccountCancelOrder(const string& _symbol, co
 * Price above market price: STOP_LOSS BUY, TAKE_PROFIT SELL
 * Price below market price: STOP_LOSS SELL, TAKE_PROFIT BUY
 */
-string ApiRequestManager::PostSpotAccountNewOrder(const string& _symbol, const ETimeInForce _timeInForce, const double _quantity,
-                                                const double _quoteOrderQuantity, const double _price, const string& _newClientOrderId, const double _stopPrice, const double _icebergQuantity,
+string ApiRequestManager::PostSpotAccountNewOrder(const string& _symbol, const ETimeInForce _timeInForce, const string& _quantity,
+                                                const string& _quoteOrderQuantity, const string& _price, const string& _newClientOrderId, const string& _stopPrice, const string& _icebergQuantity,
                                                 const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType) const
 {
 	string postData;
@@ -530,7 +528,7 @@ string ApiRequestManager::GetWalletDailyAccountSnapshot(const ESnapshotType _sna
 * If network not send, return with default network of the coin.
 * You can get network and isDefault in networkList of a coin in the response of Get /sapi/v1/capital/config/getall (HMAC SHA256).
 */
-string ApiRequestManager::PostWalletWithdraw(const string& _coin, const string& _withdrawOrderId, const string& _network, const string& _address, const string& _addressTag, const double _amount, const string& _name, const bool _transactionFeeFlag) const
+string ApiRequestManager::PostWalletWithdraw(const string& _coin, const string& _withdrawOrderId, const string& _network, const string& _address, const string& _addressTag, const string& _amount, const string& _name, const bool _transactionFeeFlag) const
 {
 	string postData;
 	string strResult;
@@ -661,7 +659,7 @@ void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _strResult, stri
 		return;
 	}
 
-	if (curl)
+	if (CURL* curl = curl_easy_init())
 	{
 		vector <string> extraHttpHeader;
 		if(_setSecretAndApiKey)
@@ -680,12 +678,7 @@ void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _strResult, stri
 			_url.append(_queryString);
 		}
 
-		logger->WriteInfoEntry("making cUrl call to " + _url);
-
-		curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ApiRequestManager::WebRequestCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &_strResult);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+		SetCurlOptions(curl, _url, _strResult);
 
 		if (!extraHttpHeader.empty())
 		{
@@ -707,12 +700,9 @@ void ApiRequestManager::CurlAPIWithHeader(string& _url, string& _strResult, stri
 			curl_easy_setopt(curl, CURLOPT_POSTFIELDS, _postData.c_str());
 		}
 
-		/* Check for errors */
-		if (const CURLcode res = curl_easy_perform(curl); res != CURLE_OK) 
-		{
-			logger->WriteErrorEntry(curl_easy_strerror(res));
-			cerr << "CURL error: " << res << endl;
-		}
+		PerformCurl(curl);
+
+		curl_easy_cleanup(curl);
 	}
 	else
 	{
@@ -778,24 +768,35 @@ string ApiRequestManager::B2AHex(const char* _byteArray, int _n)
 
 void ApiRequestManager::CurlAPI(const string& _url, string& _stringResult) const
 {
-	if (curl)
+	if (CURL* curl = curl_easy_init())
 	{
-		logger->WriteInfoEntry("making cUrl call to " + _url);
+		SetCurlOptions(curl, _url, _stringResult);
 
-		curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ApiRequestManager::WebRequestCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &_stringResult);
-		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+		PerformCurl(curl);
 
-		/* Check for errors */
-		if (const CURLcode res = curl_easy_perform(curl); res != CURLE_OK)
-		{
-			logger->WriteErrorEntry(curl_easy_strerror(res));
-			cerr << "CURL error: " << res << endl;
-		}
+		curl_easy_cleanup(curl);
 	}
 	else
 	{
 		logger->WriteErrorEntry("Could not initialize cURL.");
+	}
+}
+
+void ApiRequestManager::SetCurlOptions(CURL* _curl, const string _url, string& _strResult)
+{
+	//logger->WriteInfoEntry("making cUrl call to " + _url);
+
+	curl_easy_setopt(_curl, CURLOPT_URL, _url.c_str());
+	curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, ApiRequestManager::WebRequestCallback);
+	curl_easy_setopt(_curl, CURLOPT_WRITEDATA, &_strResult);
+	curl_easy_setopt(_curl, CURLOPT_SSL_VERIFYPEER, false);
+}
+
+void ApiRequestManager::PerformCurl(CURL* _curl) const
+{
+	if (const CURLcode res = curl_easy_perform(_curl); res != CURLE_OK)
+	{
+		logger->WriteErrorEntry(curl_easy_strerror(res));
+		cerr << "CURL error: " << res << endl;
 	}
 }
