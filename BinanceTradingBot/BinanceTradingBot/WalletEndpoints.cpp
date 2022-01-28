@@ -55,13 +55,15 @@ void WalletEndpoints::GetWalletDailyAccountSnapshotQuery(string& _url, string& _
 	_queryString.append("&type=");
 	switch (_snapshotType)
 	{
-	case ESnapshotType::SPOT:
+		using enum ESnapshotType;
+
+	case SPOT:
 		_queryString.append("SPOT");
 		break;
-	case ESnapshotType::MARGIN:
+	case MARGIN:
 		_queryString.append("MARGIN");
 		break;
-	case ESnapshotType::FUTURES:
+	case FUTURES:
 		_queryString.append("FUTURES");
 		break;
 	default:

@@ -22,52 +22,54 @@ WebSocketCollection::handle WebSocketCollection::KlineCandleStick(const std::vec
     string type;
     switch(_interval)
     {
-    case EIntervals::ONEMINUTE:
+        using enum EIntervals;
+
+    case ONEMINUTE:
         type = "kline_1m";
         break;
-    case EIntervals::THREEMINUTES:
+    case THREEMINUTES:
         type = "kline_3m";
         break;
-    case EIntervals::FIVEMINUTES:
+    case FIVEMINUTES:
         type = "kline_5m";
         break;
-    case EIntervals::FIFTEENMINUTES:
+    case FIFTEENMINUTES:
         type = "kline_15m";
         break;
-    case EIntervals::THIRTYMINUTES:
+    case THIRTYMINUTES:
         type = "kline_30m";
         break;
-    case EIntervals::ONEHOUR:
+    case ONEHOUR:
         type = "kline_1h";
         break;
-    case EIntervals::TWOHOURS:
+    case TWOHOURS:
         type = "kline_2h";
         break;
-    case EIntervals::FOURHOURS:
+    case FOURHOURS:
         type = "kline_4h";
         break;
-    case EIntervals::SIXHOURS:
+    case SIXHOURS:
         type = "kline_6h";
         break;
-    case EIntervals::EIGHTHOURS:
+    case EIGHTHOURS:
         type = "kline_8h";
         break;
-    case EIntervals::TWELVEHOURS:
+    case TWELVEHOURS:
         type = "kline_12h";
         break;
-    case EIntervals::ONEDAY:
+    case ONEDAY:
         type = "kline_1d";
         break;
-    case EIntervals::THREEDAYS:
+    case THREEDAYS:
         type = "kline_3d";
         break;
-    case EIntervals::ONEWEEK:
+    case ONEWEEK:
         type = "kline_1w";
         break;
-    case EIntervals::ONEMONTH:
+    case ONEMONTH:
         type = "kline_1M";
         break;
-    case EIntervals::NONE:
+    case NONE:
         type = "";
     	break;
     default: 
