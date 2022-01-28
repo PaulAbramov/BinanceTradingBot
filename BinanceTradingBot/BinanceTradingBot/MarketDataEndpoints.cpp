@@ -1,5 +1,10 @@
 #include "MarketDataEndpoints.h"
 
+void MarketDataEndpoints::GetMarketTimeQuery(string& _url) const
+{
+	_url += "/api/v3/time";
+}
+
 /*
 * Order Book
 *
@@ -32,8 +37,6 @@ void MarketDataEndpoints::GetMarketOrderbookQuery(string& _url, string& _querySt
 
 	_queryString.append("&limit=");
 	_queryString.append(to_string(_limit));
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -63,8 +66,6 @@ void MarketDataEndpoints::GetMarketRecentTradesListQuery(string& _url, string& _
 
 	_queryString.append("&limit=");
 	_queryString.append(to_string(_limit));
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -100,8 +101,6 @@ void MarketDataEndpoints::GetMarketOldTradeLookupQuery(string& _url, string& _qu
 
 	_queryString.append("&fromId=");
 	_queryString.append(to_string(_fromId));
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -151,8 +150,6 @@ void MarketDataEndpoints::GetMarketCandlestickDataQuery(string& _url, string& _q
 		_queryString.append("&endTime=");
 		_queryString.append(to_string(_endTime));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -180,8 +177,6 @@ void MarketDataEndpoints::GetMarketCurrentAveragePriceQuery(string& _url, string
 
 	_queryString.append("symbol=");
 	_queryString.append(_symbol);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -210,8 +205,6 @@ void MarketDataEndpoints::GetMarketTickerChangeStatisticQuery(string& _url, stri
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
 	}
-	
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -240,8 +233,6 @@ void MarketDataEndpoints::GetMarketSymbolPriceTickerQuery(string& _url, string& 
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -270,6 +261,4 @@ void MarketDataEndpoints::GetMarketSymbolOrderbookTickerQuery(string& _url, stri
 		_queryString.append("?symbol=");
 		_queryString.append(_symbol);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }

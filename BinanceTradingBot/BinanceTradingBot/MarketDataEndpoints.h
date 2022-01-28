@@ -6,7 +6,7 @@
 class MarketDataEndpoints : public APIHead
 {
 private:
-	const boost::unordered_map<EIntervals, const char*> eIntervalsToString = map_list_of
+	boost::unordered_map<EIntervals, const char*> eIntervalsToString{ map_list_of
 	(EIntervals::ONEMINUTE, "1m")
 	(EIntervals::THREEMINUTES, "3m")
 	(EIntervals::FIVEMINUTES, "5m")
@@ -21,12 +21,13 @@ private:
 	(EIntervals::ONEDAY, "1d")
 	(EIntervals::THREEDAYS, "3d")
 	(EIntervals::ONEWEEK, "1w")
-	(EIntervals::ONEMONTH, "1M");
+	(EIntervals::ONEMONTH, "1M") };
 
 public:
 	MarketDataEndpoints() = default;
 	MarketDataEndpoints(const Logger& _logger) : APIHead(_logger) {}
 
+	void GetMarketTimeQuery(string& _url) const;
 	void GetMarketOrderbookQuery(string& _url, string& _queryString, const string& _symbol, int _limit = 100) const;
 	void GetMarketRecentTradesListQuery(string& _url, string& _queryString, const string& _symbol, int _limit = 500) const;
 	void GetMarketOldTradeLookupQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _fromId, int _limit = 500) const;

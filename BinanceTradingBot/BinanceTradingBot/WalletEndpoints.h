@@ -22,7 +22,7 @@ public:
 	void PostWalletDisableFastWithdrawQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0) const;
 	void PostWalletEnableFastWithdrawQuery(string& _url, string& _queryString, unsigned short _recvWindow = 0) const;
 	void PostWalletWithdrawQuery(string& _url, string& _queryString, const string& _coin, const string& _withdrawOrderId,
-	                             const string& _network, const string& _address, const string& _addressTag, double _amount,
+	                             const string& _network, const string& _address, const string& _addressTag, const string& _amount,
 	                             const string& _name, bool _transactionFeeFlag = false, unsigned short _recvWindow = 0) const;
 	void GetWalletDepositHistoryQuery(string& _url, string& _queryString, const string& _coin, int _status, time_t _startTime, time_t _endTime, int _offset, int _limit = 1000, unsigned short _recvWindow = 0) const;
 	void GetWalletWithdrawtHistoryQuery(string& _url, string& _queryString, const string& _coin, const string&

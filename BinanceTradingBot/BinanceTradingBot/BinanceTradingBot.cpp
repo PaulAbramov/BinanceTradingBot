@@ -1,3 +1,6 @@
+#define ELPP_THREAD_SAFE
+#define ELPP_FORCE_USE_STD_THREAD
+
 #include <chrono>
 #include <filesystem>
 #include <future>
@@ -8,6 +11,8 @@
 #include "StandardOutputLogger.h"
 #include "Bot.h"
 
+#include "GnuplotIoStream.h"
+
 using namespace std;
 using namespace std::chrono;
 
@@ -15,7 +20,7 @@ namespace fs = std::filesystem;
 
 static Logger InitializeLogger()
 {
-	string filename = "Logger.conf";
+	string filename{ "Logger.conf" };
 
 	// if configuration file exists - use FilesystemLogger
 	if (ifstream filestream(filename); filestream.good())
@@ -33,7 +38,7 @@ static Logger InitializeLogger()
 
 		// Get the current date
 		struct tm newtime{};
-		time_t now = std::time(nullptr);
+		time_t now{ std::time(nullptr) };
 		localtime_s(&newtime, &now);
 
 		// Make a string with the current date
@@ -54,15 +59,54 @@ static Logger InitializeLogger()
 
 int main()
 {
-	Logger logger = InitializeLogger();
+	Logger logger{ InitializeLogger() };
 	logger->WriteInfoEntry("Logger initialized");
 
-	ConfigurationManager configManager = ConfigurationManager(logger);
-	Config config = configManager.LoadConfig();
+	ConfigurationManager configManager{ ConfigurationManager(logger) };
+	Config config{ configManager.LoadConfig() };
 
-	Bot firstBot = Bot(logger, config);
+	string path{ "\"" };
+	path += config.gnuplot_path;
+	path += "\"";
+
+	Gnuplot gp(path);
+	//Gnuplot gp("\"..\\..\\gnuplot\\bin\\gnuplot.exe\"");
+
+	Bot firstBot{ Bot(logger, config) };
 
 	return firstBot.Run();
 
 	return EXIT_SUCCESS;
 }
+
+/*
+ * Use Gnuplot:
+ *
+ * std::random_device rd;
+ *	std::mt19937 mt(rd());
+ *	std::normal_distribution<double> normdist(0., 1.);
+ *
+ *	std::vector<double> v0, v1;
+ *
+ *	for(int i = 0; i < 1000; i++)
+ *	{
+ *		v0.push_back(normdist(mt));
+ *		v1.push_back(normdist(mt));
+ *	}
+ *
+ *	std::partial_sum(v0.begin(), v0.end(), v0.begin());
+ *	std::partial_sum(v1.begin(), v1.end(), v1.begin());
+ *
+ *	// The dashes "-" are datainput, so gnuplot knows there is somethin incoming (standard input)
+ *	// "\n" has to be set, else it throws an error (linebreak)
+ *	// gp object has to have the exact path
+ *
+ *	gp << "set title 'Graph of two random lines'\n";
+ *	gp << "plot '-' with lines title 'v0',"
+ *	<< "'-' with lines title 'v1'\n";
+ *
+ *	gp.send(v0);
+ *	gp.send(v1);
+ *
+ *	std::cin.get();
+ */

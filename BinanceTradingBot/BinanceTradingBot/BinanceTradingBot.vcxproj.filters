@@ -34,6 +34,12 @@
     <Filter Include="Source Files\Connections">
       <UniqueIdentifier>{7ae8012f-4deb-48dd-92ef-79a4db9cc463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Gnuplot">
+      <UniqueIdentifier>{580367af-2ee8-4b2c-bbaf-a970fdcebfe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Connections\Models">
+      <UniqueIdentifier>{934e46a7-e88d-494f-be11-e7eef89348c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinanceTradingBot.cpp">
@@ -51,9 +57,6 @@
     <ClCompile Include="..\..\..\Logger\easylogging++.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="APIHead.cpp">
-      <Filter>Source Files\API</Filter>
-    </ClCompile>
     <ClCompile Include="BinanceSwapEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
@@ -67,9 +70,6 @@
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
     <ClCompile Include="MarketDataEndpoints.cpp">
-      <Filter>Source Files\API\Endpoints</Filter>
-    </ClCompile>
-    <ClCompile Include="MiningEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
     <ClCompile Include="SavingsEndpoints.cpp">
@@ -95,6 +95,12 @@
     </ClCompile>
     <ClCompile Include="Bot.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MiningEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -183,6 +189,15 @@
       <Filter>Header Files\Connections</Filter>
     </ClInclude>
     <ClInclude Include="Bot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GnuplotIoStream.h">
+      <Filter>Header Files\Gnuplot</Filter>
+    </ClInclude>
+    <ClInclude Include="Trade.h">
+      <Filter>Header Files\Connections\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

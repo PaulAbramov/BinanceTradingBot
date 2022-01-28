@@ -1,6 +1,8 @@
 #include "WebSocketCollection.h"
 
-WebSocketCollection::WebSocketCollection(net::io_context& _ioc, char const* _host, char const* _port, const shared_ptr<LoggingFacility>& _logger)
+#include <utility>
+
+WebSocketCollection::WebSocketCollection(net::io_context& _ioc, char const* _host, char const* _port, const Logger& _logger)
 	: ioContext(_ioc), host(_host), port(_port), logger(_logger)
 {
 }
@@ -95,7 +97,7 @@ WebSocketCollection::handle WebSocketCollection::PartialBookDepth(const std::vec
 	const EDepthLevel _depthLevel, const EFrequency _frequency,
 	const std::function<bool(const string&)>& _callbackFunction)
 {
-    string type = "depth";
+    string type{ "depth" };
     type += eDepthLevelToString.at(_depthLevel);
     type += "@";
     type += eFrequencyToString.at(_frequency);
@@ -107,7 +109,7 @@ WebSocketCollection::handle WebSocketCollection::DiffBookDepth(const std::vector
 	const EFrequency _frequency,
 	const std::function<bool(const string&)>& _callbackFunction)
 {
-    string type = "depth@";
+    string type{ "depth@" };
 	type += eFrequencyToString.at(_frequency);
 
     return StartChannel(_symbols, type, _callbackFunction);
@@ -122,11 +124,11 @@ WebSocketCollection::handle WebSocketCollection::DiffBookDepth(const std::vector
 /// <returns></returns>
 WebSocketCollection::handle WebSocketCollection::StartChannel(const std::vector<string>& _symbols, const string& _type, const std::function<bool(const string&)>& _callbackFunction)
 {
-	auto webSocketSession = std::make_shared<WebSocketSession>(ioContext, host, port, logger);
-	auto *websocketHandle = webSocketSession.get();
+    auto webSocketSession{ std::make_shared<WebSocketSession>(ioContext, host, port, logger) };
+    auto* websocketHandle{ webSocketSession.get() };
 	std::weak_ptr<WebSocketSession> weakPointerWebSocketSession{ webSocketSession };
 
-	const std::string channelToConnect = MakeChannel(_symbols, _type);
+    const std::string channelToConnect{ MakeChannel(_symbols, _type) };
 
     websocketHandle->StartWebSocketSession(channelToConnect, _callbackFunction, std::move(webSocketSession));
 
@@ -188,13 +190,13 @@ string WebSocketCollection::CreateChannelString(const string& _symbol, const str
 /// <param name="_websocketHandle"></param>
 void WebSocketCollection::UnsubscribeChannel(handle _websocketHandle)
 {
-	const auto iterator = map.find(_websocketHandle);
+    const auto iterator{ map.find(_websocketHandle) };
     if(iterator == map.end())
     {
         return;
     }
 
-    if(const auto websocketSession = iterator->second.lock())
+    if (const auto websocketSession{ iterator->second.lock() })
     {
         websocketSession->StopWebSocketSession();
     }
@@ -210,9 +212,9 @@ void WebSocketCollection::UnsubscribeChannel(handle _websocketHandle)
 /// </summary>
 void WebSocketCollection::UnsubscribeAllChannels()
 {
-    for (auto iterator = map.begin(); iterator != map.end();) 
+    for (auto iterator{ map.begin() }; iterator != map.end();)
     {
-        if (const auto websocketSession = iterator->second.lock()) 
+        if (const auto websocketSession{ iterator->second.lock() })
         {
             websocketSession->StopWebSocketSession();
         }
@@ -230,7 +232,7 @@ void WebSocketCollection::UnsubscribeAllChannels()
 /// </summary>
 void WebSocketCollection::RemoveDeadWebsockets()
 {
-    for(auto iterator = map.begin(); iterator != map.end();)
+    for (auto iterator{ map.begin() }; iterator != map.end();)
     {
 	    if(!iterator->second.lock())
 	    {

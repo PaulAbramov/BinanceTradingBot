@@ -18,9 +18,11 @@ void WalletEndpoints::GetWalletAllCoinsInformationQuery(string& _url, string& _q
 {
 	_url += "/sapi/v1/capital/config/getall?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }
 
 /*
@@ -43,7 +45,11 @@ void WalletEndpoints::GetWalletDailyAccountSnapshotQuery(string& _url, string& _
 {
 	_url += "/sapi/v1/accountSnapshot?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// Which type we want to have
 	_queryString.append("&type=");
@@ -77,8 +83,6 @@ void WalletEndpoints::GetWalletDailyAccountSnapshotQuery(string& _url, string& _
 		_queryString.append("&endTime=");
 		_queryString.append(to_string(_endTime));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -97,9 +101,11 @@ void WalletEndpoints::PostWalletDisableFastWithdrawQuery(string& _url, string& _
 {
 	_url += "/sapi/v1/account/disableFastWithdrawSwitch?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }
 
 /*
@@ -118,9 +124,11 @@ void WalletEndpoints::PostWalletEnableFastWithdrawQuery(string& _url, string& _q
 {
 	_url += "/sapi/v1/account/enableFastWithdrawSwitch?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }
 
 /*
@@ -148,7 +156,7 @@ void WalletEndpoints::PostWalletEnableFastWithdrawQuery(string& _url, string& _q
 * If network not send, return with default network of the coin.
 * You can get network and isDefault in networkList of a coin in the response of Get /sapi/v1/capital/config/getall (HMAC SHA256).
 */
-void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString, const string& _coin, const string& _withdrawOrderId, const string& _network, const string& _address, const string& _addressTag, const double _amount, const string& _name, const bool _transactionFeeFlag, const unsigned short _recvWindow ) const
+void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString, const string& _coin, const string& _withdrawOrderId, const string& _network, const string& _address, const string& _addressTag, const string& _amount, const string& _name, const bool _transactionFeeFlag, const unsigned short _recvWindow ) const
 {
 	if (_coin.empty())
 	{
@@ -160,7 +168,7 @@ void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString
 		logger->WriteWarnEntry("Did not set mandatory parameter 'address'");
 		return;
 	}
-	if (_amount == 0)
+	if (_amount.empty())
 	{
 		logger->WriteWarnEntry("Did not set mandatory parameter 'amount'");
 		return;
@@ -168,7 +176,11 @@ void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString
 
 	_url += "/sapi/v1/capital/withdraw/apply?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	_queryString.append("&coin=");
 	_queryString.append(_coin);
@@ -195,9 +207,8 @@ void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString
 	}
 
 	_queryString.append("&amount=");
-	_queryString.append(to_string(_amount));
+	_queryString.append(_amount);
 
-	// TODO test this
 	_queryString.append("&transactionFeeFlag=");
 	_queryString.append(to_string(_transactionFeeFlag));
 
@@ -206,8 +217,6 @@ void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString
 		_queryString.append("&name=");
 		_queryString.append(_name);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -237,7 +246,11 @@ void WalletEndpoints::GetWalletDepositHistoryQuery(string& _url, string& _queryS
 {
 	_url += "/sapi/v1/capital/deposit/hisrec?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	if (!_coin.empty())
 	{
@@ -269,8 +282,6 @@ void WalletEndpoints::GetWalletDepositHistoryQuery(string& _url, string& _queryS
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -302,7 +313,11 @@ void WalletEndpoints::GetWalletWithdrawtHistoryQuery(string& _url, string& _quer
 {
 	_url += "/sapi/v1/capital/withdraw/history?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	if (!_coin.empty())
 	{
@@ -339,8 +354,6 @@ void WalletEndpoints::GetWalletWithdrawtHistoryQuery(string& _url, string& _quer
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -372,7 +385,11 @@ void WalletEndpoints::GetWalletDepositAddressQuery(string& _url, string& _queryS
 
 	_url += "/sapi/v1/capital/deposit/address?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	_queryString.append("&coin=");
 	_queryString.append(_coin);
@@ -382,6 +399,4 @@ void WalletEndpoints::GetWalletDepositAddressQuery(string& _url, string& _queryS
 		_queryString.append("&network=");
 		_queryString.append(_network);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }

@@ -52,7 +52,7 @@
 * Price above market price: STOP_LOSS BUY, TAKE_PROFIT SELL
 * Price below market price: STOP_LOSS SELL, TAKE_PROFIT BUY
 */
-void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _queryString, const string& _symbol, const ETimeInForce _timeInForce, const double _quantity, const double _quoteOrderQuantity, const double _price, const string& _newClientOrderId, const double _stopPrice, const double _icebergQuantity, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType, const unsigned short _recvWindow)
+void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _queryString, const string& _symbol, const ETimeInForce _timeInForce, const string& _quantity, const string& _quoteOrderQuantity, const string& _price, const string& _newClientOrderId, const string& _stopPrice, const string& _icebergQuantity, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const EOrderType _orderType, const unsigned short _recvWindow) const
 {
 	if (_symbol.empty())
 	{
@@ -65,115 +65,127 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 		return;
 	}
 
-	const string orderType = eOrderTypeToString.at(_orderType);
+	const string orderType{ eOrderTypeToString.at(_orderType) };
 
 	switch (_orderType)
 	{
 	case EOrderType::NONE:
 		logger->WriteWarnEntry("Did not set mandatory parameter 'orderType'");
 		return;
+		break;
 	case EOrderType::LIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
 			return;
 		}
-		if (_quantity == 0)
+		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
-		if (_price == 0)
+		if (_price.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::MARKET:
-		if (_quantity == 0 || _quoteOrderQuantity == 0)
+		if (_quantity.empty() && _quoteOrderQuantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' or 'quoteOrderQuantity' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::STOPLOSS:
-		if (_quantity == 0)
+		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
-		if (_stopPrice == 0)
+		if (_stopPrice.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::STOPLOSSLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
 			return;
 		}
-		if (_quantity == 0)
+		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
-		if (_price == 0)
+		if (_price.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
-		if (_stopPrice == 0)
+		if (_stopPrice.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::TAKEPROFIT:
-		if (_quantity == 0)
+		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
-		if (_stopPrice == 0)
+		if (_stopPrice.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::TAKEPROFITLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
 			return;
 		}
-		if (_quantity == 0)
+		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
-		if (_price == 0)
+		if (_price.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
-		if (_stopPrice == 0)
+		if (_stopPrice.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
+		break;
 	case EOrderType::LIMITMAKER:
-		if (_quantity == 0)
+		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
-		if (_price == 0)
+		if (_price.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
+		break;
 	}
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
@@ -195,24 +207,24 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 	}
 
 	//	quantity
-	if (_quantity > 0)
+	if (!_quantity.empty())
 	{
 		_queryString.append("&quantity=");
-		_queryString.append(to_string(_quantity));
+		_queryString.append(_quantity);
 	}
 	
 	//	quoteOrderQty
-	if (_quoteOrderQuantity > 0)
+	if (!_quoteOrderQuantity.empty())
 	{
 		_queryString.append("&quoteOrderQty=");
-		_queryString.append(to_string(_quoteOrderQuantity));
+		_queryString.append(_quoteOrderQuantity);
 	}
 
 	//	price
-	if (_price > 0)
+	if (!_price.empty())
 	{
 		_queryString.append("&price=");
-		_queryString.append(to_string(_price));
+		_queryString.append(_price);
 	}
 
 	//	newClientOrderId
@@ -224,7 +236,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 	
 	// stopPrice
 	// Used with STOP_LOSS, STOP_LOSS_LIMIT, TAKE_PROFIT, and TAKE_PROFIT_LIMIT orders.
-	if (_stopPrice > 0)
+	if (!_stopPrice.empty())
 	{
 		switch (_orderType)
 		{
@@ -234,14 +246,14 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 		case EOrderType::TAKEPROFITLIMIT:
 
 			_queryString.append("&stopPrice=");
-			_queryString.append(to_string(_stopPrice));
+			_queryString.append(_stopPrice);
 			break;
 		}
 	}
 	
 	// icebergQty
 	// Used with LIMIT, STOP_LOSS_LIMIT, and TAKE_PROFIT_LIMIT to create an iceberg order.
-	if (_icebergQuantity > 0)
+	if (!_icebergQuantity.empty())
 	{
 		switch (_orderType)
 		{
@@ -250,7 +262,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 		case EOrderType::TAKEPROFITLIMIT:
 
 			_queryString.append("&icebergQty=");
-			_queryString.append(to_string(_icebergQuantity));
+			_queryString.append(_icebergQuantity);
 			break;
 		}
 		
@@ -262,8 +274,6 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 		_queryString.append("&newOrderRespType=");
 		_queryString.append(eNewOrderResponseTypeToString.at(_newOrderResponseType));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -299,7 +309,11 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, strin
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
@@ -325,8 +339,6 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, strin
 		_queryString.append("&newClientOrderId=");
 		_queryString.append(_newClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -355,13 +367,15 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelAllOpenOrdersOnSymbolQuery(str
 
 	_url += "/api/v3/openOrders?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
 	_queryString.append(_symbol);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -399,7 +413,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryOrderQuery(string& _url, string& _
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
@@ -417,8 +435,6 @@ void SpotAccountEndpoints::GetSpotAccountQueryOrderQuery(string& _url, string& _
 		_queryString.append("&origClientOrderId=");
 		_queryString.append(_originalClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -442,7 +458,11 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOpenOrdersQuery(string& _url, st
 {
 	_url += "/api/v3/openOrders?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	if (!_symbol.empty())
@@ -450,8 +470,6 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOpenOrdersQuery(string& _url, st
 		_queryString.append("&symbol=");
 		_queryString.append(_symbol);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -492,7 +510,11 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 
 	_url += "/api/v3/allOrders?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	_queryString.append("&symbol=");
 	_queryString.append(_symbol);
@@ -520,8 +542,6 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -560,7 +580,7 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 * Order Rate Limit
 * OCO counts as 2 orders against the order rate limit.
 */
-void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string& _queryString, const string& _symbol, const string& _listClientOrderId, const double _quantity, const string& _limitClientOrderId, const double _price, const double _limitIcebergQuantity, const string& _stopClientOrderId, const double _stopPrice, const double _stopLimitPrice, const double _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const unsigned short _recvWindow)
+void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string& _queryString, const string& _symbol, const string& _listClientOrderId, const string& _quantity, const string& _limitClientOrderId, const string& _price, const string& _limitIcebergQuantity, const string& _stopClientOrderId, const string& _stopPrice, const string& _stopLimitPrice, const string& _stopIcebergQuantity, const ETimeInForce _stopLimitTimeInForce, const ENewOrderResponseType _newOrderResponseType, const ESide _side, const unsigned short _recvWindow) const
 {
 	if (_symbol.empty())
 	{
@@ -572,22 +592,22 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 		logger->WriteWarnEntry("Did not set mandatory parameter 'side'");
 		return;
 	}
-	if (_quantity == 0)
+	if (_quantity.empty())
 	{
 		logger->WriteWarnEntry("Did not set mandatory parameter 'quantity'");
 		return;
 	}
-	if (_price == 0)
+	if (_price.empty())
 	{
 		logger->WriteWarnEntry("Did not set mandatory parameter 'price'");
 		return;
 	}
-	if (_stopPrice == 0)
+	if (_stopPrice.empty())
 	{
 		logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice'");
 		return;
 	}
-	if (_stopLimitPrice != 0 && _stopLimitTimeInForce == ETimeInForce::NONE)
+	if (!_stopLimitPrice.empty() && _stopLimitTimeInForce == ETimeInForce::NONE)
 	{
 		logger->WriteWarnEntry("Did not set mandatory parameter 'stopLimitTimeInForce' with 'stopLimitPrice'");
 		return;
@@ -595,7 +615,11 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// symbol
 	_queryString.append("&symbol=");
@@ -614,7 +638,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 
 	// quantity
 	_queryString.append("&quantity=");
-	_queryString.append(to_string(_quantity));
+	_queryString.append(_quantity);
 
 	// limitClientOrderId
 	if (!_limitClientOrderId.empty())
@@ -625,13 +649,13 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 
 	// price
 	_queryString.append("&price=");
-	_queryString.append(to_string(_price));
+	_queryString.append(_price);
 
 	// limitIcebergQty
-	if (_limitIcebergQuantity > 0)
+	if (!_limitIcebergQuantity.empty())
 	{
 		_queryString.append("&limitIcebergQty=");
-		_queryString.append(to_string(_limitIcebergQuantity));
+		_queryString.append(_limitIcebergQuantity);
 	}
 
 	// stopClientOrderId
@@ -643,20 +667,20 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 
 	//	stopPrice
 	_queryString.append("&stopPrice=");
-	_queryString.append(to_string(_stopPrice));
+	_queryString.append(_stopPrice);
 
 	//	stopLimitPrice
-	if (_stopLimitPrice > 0)
+	if (!_stopLimitPrice.empty())
 	{
 		_queryString.append("&stopLimitPrice=");
-		_queryString.append(to_string(_stopLimitPrice));
+		_queryString.append(_stopLimitPrice);
 	}
 
 	//	stopIcebergQty
-	if (_stopIcebergQuantity > 0)
+	if (!_stopIcebergQuantity.empty())
 	{
 		_queryString.append("&stopIcebergQty=");
-		_queryString.append(to_string(_stopIcebergQuantity));
+		_queryString.append(_stopIcebergQuantity);
 	}
 
 	//	stopLimitTimeInForce
@@ -672,8 +696,6 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 		_queryString.append("&newOrderRespType=");
 		_queryString.append(eNewOrderResponseTypeToString.at(_newOrderResponseType));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -712,7 +734,11 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string&
 
 	_url += "/api/v3/orderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// symbol
 	_queryString.append("&symbol=");
@@ -738,8 +764,6 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string&
 		_queryString.append("&newClientOrderId=");
 		_queryString.append(_newClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -768,7 +792,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryOcoQuery(string& _url, string& _qu
 
 	_url += "/api/v3/orderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// orderListId
 	if (_orderListId > 0)
@@ -783,8 +811,6 @@ void SpotAccountEndpoints::GetSpotAccountQueryOcoQuery(string& _url, string& _qu
 		_queryString.append("&origClientOrderId=");
 		_queryString.append(_originalClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -815,7 +841,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryAllOcoQuery(string& _url, string& 
 
 	_url += "/api/v3/allOrderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// fromId
 	if (_fromId > 0)
@@ -844,8 +874,6 @@ void SpotAccountEndpoints::GetSpotAccountQueryAllOcoQuery(string& _url, string& 
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -864,9 +892,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryOpenOcoQuery(string& _url, string&
 {
 	_url += "/api/v3/openOrderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }
 
 /*
@@ -885,9 +915,11 @@ void SpotAccountEndpoints::GetSpotAccountInformationQuery(string& _url, string& 
 {
 	_url += "/api/v3/account?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }
 
 /*
@@ -920,7 +952,11 @@ void SpotAccountEndpoints::GetSpotAccountTradeListQuery(string& _url, string& _q
 
 	_url += "/api/v3/myTrades?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// symbol
 	_queryString.append("&symbol=");
@@ -960,8 +996,6 @@ void SpotAccountEndpoints::GetSpotAccountTradeListQuery(string& _url, string& _q
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -982,7 +1016,9 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOrderCountUsageQuery(string& _ur
 {
 	_url += "/api/v3/rateLimit/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }

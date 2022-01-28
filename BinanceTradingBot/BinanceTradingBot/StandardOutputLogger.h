@@ -7,17 +7,25 @@
 
 class StandardOutputLogger final : public LoggingFacility 
 {
+private:
+    std::mutex mu;
 public:
-    virtual void WriteInfoEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
+    virtual void WriteInfoEntry(string_view _entry, const source_location& _where) override
     {
-        cout << "[INFO] " << _callerFunction << "(): " << _entry << endl;
+        mu.lock();
+        cout << "[INFO] " << _where.function_name() << "(): " << _entry << endl;
+        mu.unlock();
     }
-    virtual void WriteWarnEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
+    virtual void WriteWarnEntry(string_view _entry, const source_location& _where) override
     {
-        cout << "[WARNING] " << _callerFunction << "(): " << _entry << endl;
+        mu.lock();
+        cout << "[WARNING] " << _where.function_name() << "(): " << _entry << endl;
+        mu.unlock();
     }
-    virtual void WriteErrorEntry(string_view _entry, const char* _callerFunction = __builtin_FUNCTION()) override
+    virtual void WriteErrorEntry(string_view _entry, const source_location& _where) override
     {
-        cout << "[ERROR] " << _callerFunction << "(): " << _entry << endl;
+        mu.lock();
+        cout << "[ERROR] " << _where.function_name() << "(): " << _entry << endl;
+        mu.unlock();
     }
 };
