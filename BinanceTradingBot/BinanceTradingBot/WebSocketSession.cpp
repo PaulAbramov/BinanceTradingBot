@@ -4,13 +4,13 @@
 WebSocketSession::WebSocketSession(net::io_context& _ioc,
 	string _host,
 	string _port,
-	const shared_ptr<LoggingFacility>& _logger)
+	const Logger& _logger)
 	: ioContext(_ioc),
 	sslContext( ssl::context::tlsv12_client ),
 	tcpResolver(ioContext),
 	ws(ioContext, sslContext),
-	host(_host),
-	port(_port),
+	host(std::move(_host)),
+	port(std::move(_port)),
 	logger(_logger)
 {
 }
@@ -63,7 +63,7 @@ void WebSocketSession::ConnectWebSocketSession(string _target, const boost::asio
 {
 	if(!SSL_set_tlsext_host_name(ws.next_layer().native_handle(), host.c_str()))
 	{
-		const auto errorCode = boost::beast::error_code(static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category());
+		const auto errorCode{ boost::beast::error_code(static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category()) };
 
 		logger->WriteErrorEntry(errorCode.message());
 
@@ -172,8 +172,7 @@ void WebSocketSession::OnReadWebSocketSession(boost::system::error_code _errorCo
 		return;
 	}
 
-	const auto size = buffer.size();
-	assert(size == _readData);
+	const auto size{ buffer.size() };
 
 	std::string strbuf;
 	strbuf.reserve(size);
@@ -184,7 +183,7 @@ void WebSocketSession::OnReadWebSocketSession(boost::system::error_code _errorCo
 	}
 	buffer.consume(buffer.size());
 
-	if (const bool ok = _callbackFunction(strbuf); !ok) {
+	if (!_callbackFunction(strbuf)) {
 		StopWebSocketSession();
 	}
 	else {

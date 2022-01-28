@@ -65,7 +65,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 		return;
 	}
 
-	const string orderType = eOrderTypeToString.at(_orderType);
+	const string orderType{ eOrderTypeToString.at(_orderType) };
 
 	switch (_orderType)
 	{
@@ -181,7 +181,11 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
@@ -270,8 +274,6 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 		_queryString.append("&newOrderRespType=");
 		_queryString.append(eNewOrderResponseTypeToString.at(_newOrderResponseType));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -307,7 +309,11 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, strin
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
@@ -333,8 +339,6 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, strin
 		_queryString.append("&newClientOrderId=");
 		_queryString.append(_newClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -363,13 +367,15 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelAllOpenOrdersOnSymbolQuery(str
 
 	_url += "/api/v3/openOrders?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
 	_queryString.append(_symbol);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -407,7 +413,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryOrderQuery(string& _url, string& _
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	_queryString.append("&symbol=");
@@ -425,8 +435,6 @@ void SpotAccountEndpoints::GetSpotAccountQueryOrderQuery(string& _url, string& _
 		_queryString.append("&origClientOrderId=");
 		_queryString.append(_originalClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -450,7 +458,11 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOpenOrdersQuery(string& _url, st
 {
 	_url += "/api/v3/openOrders?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	//	symbol
 	if (!_symbol.empty())
@@ -458,8 +470,6 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOpenOrdersQuery(string& _url, st
 		_queryString.append("&symbol=");
 		_queryString.append(_symbol);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -500,7 +510,11 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 
 	_url += "/api/v3/allOrders?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	_queryString.append("&symbol=");
 	_queryString.append(_symbol);
@@ -528,8 +542,6 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -603,7 +615,11 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 
 	_url += "/api/v3/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// symbol
 	_queryString.append("&symbol=");
@@ -680,8 +696,6 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 		_queryString.append("&newOrderRespType=");
 		_queryString.append(eNewOrderResponseTypeToString.at(_newOrderResponseType));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -720,7 +734,11 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string&
 
 	_url += "/api/v3/orderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// symbol
 	_queryString.append("&symbol=");
@@ -746,8 +764,6 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string&
 		_queryString.append("&newClientOrderId=");
 		_queryString.append(_newClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -776,7 +792,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryOcoQuery(string& _url, string& _qu
 
 	_url += "/api/v3/orderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// orderListId
 	if (_orderListId > 0)
@@ -791,8 +811,6 @@ void SpotAccountEndpoints::GetSpotAccountQueryOcoQuery(string& _url, string& _qu
 		_queryString.append("&origClientOrderId=");
 		_queryString.append(_originalClientOrderId);
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -823,7 +841,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryAllOcoQuery(string& _url, string& 
 
 	_url += "/api/v3/allOrderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// fromId
 	if (_fromId > 0)
@@ -852,8 +874,6 @@ void SpotAccountEndpoints::GetSpotAccountQueryAllOcoQuery(string& _url, string& 
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -872,9 +892,11 @@ void SpotAccountEndpoints::GetSpotAccountQueryOpenOcoQuery(string& _url, string&
 {
 	_url += "/api/v3/openOrderList?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }
 
 /*
@@ -893,9 +915,11 @@ void SpotAccountEndpoints::GetSpotAccountInformationQuery(string& _url, string& 
 {
 	_url += "/api/v3/account?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }
 
 /*
@@ -928,7 +952,11 @@ void SpotAccountEndpoints::GetSpotAccountTradeListQuery(string& _url, string& _q
 
 	_url += "/api/v3/myTrades?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 
 	// symbol
 	_queryString.append("&symbol=");
@@ -968,8 +996,6 @@ void SpotAccountEndpoints::GetSpotAccountTradeListQuery(string& _url, string& _q
 		_queryString.append("&limit=");
 		_queryString.append(to_string(_limit));
 	}
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -990,7 +1016,9 @@ void SpotAccountEndpoints::GetSpotAccountCurrentOrderCountUsageQuery(string& _ur
 {
 	_url += "/api/v3/rateLimit/order?";
 
-	_queryString = SetTimeStampAndRecvWindow(_recvWindow);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
+	if (_recvWindow > 0)
+	{
+		_queryString.append("recvWindow=");
+		_queryString.append(to_string(_recvWindow));
+	}
 }

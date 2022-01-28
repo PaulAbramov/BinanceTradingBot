@@ -159,7 +159,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Logger\easylogging++.cc" />
-    <ClCompile Include="APIHead.cpp" />
     <ClCompile Include="ApiRequestManager.cpp" />
     <ClCompile Include="BinanceSwapEndpoints.cpp" />
     <ClCompile Include="BinanceTradingBot.cpp" />
@@ -173,6 +172,7 @@
     <ClCompile Include="SavingsEndpoints.cpp" />
     <ClCompile Include="SpotAccountEndpoints.cpp" />
     <ClCompile Include="SQLConnectionFactory.cpp" />
+    <ClCompile Include="SQLManager.cpp" />
     <ClCompile Include="Sub-AccountEndpoints.cpp" />
     <ClCompile Include="UserDataEndpoints.cpp" />
     <ClCompile Include="WalletEndpoints.cpp" />
@@ -207,6 +207,7 @@
     <ClInclude Include="SavingsEndpoints.h" />
     <ClInclude Include="SpotAccountEndpoints.h" />
     <ClInclude Include="SQLConnectionFactory.h" />
+    <ClInclude Include="SQLManager.h" />
     <ClInclude Include="StandardOutputLogger.h" />
     <ClInclude Include="Sub-AccountEndpoints.h" />
     <ClInclude Include="Trade.h" />

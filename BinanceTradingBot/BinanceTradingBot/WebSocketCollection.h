@@ -13,16 +13,16 @@ private:
 	//pointer to a method
 	using handle = void*;
 
-	boost::unordered_map<EDepthLevel, const char*> eDepthLevelToString = boost::assign::map_list_of
+	boost::unordered_map<EDepthLevel, const char*> eDepthLevelToString{ boost::assign::map_list_of
 	(EDepthLevel::NONE, "")
 	(EDepthLevel::FIVE, "5")
 	(EDepthLevel::TEN, "10")
-	(EDepthLevel::TWENTY, "20");
+	(EDepthLevel::TWENTY, "20") };
 
-	boost::unordered_map<EFrequency, const char*> eFrequencyToString = boost::assign::map_list_of
+	boost::unordered_map<EFrequency, const char*> eFrequencyToString{ boost::assign::map_list_of
 	(EFrequency::NONE, "")
 	(EFrequency::HUNDREDMILI, "100ms")
-	(EFrequency::THOUSANDMILI, "1000ms");
+	(EFrequency::THOUSANDMILI, "1000ms") };
 
 	net::io_context& ioContext;
 	string host;
