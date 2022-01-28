@@ -43,9 +43,9 @@ private:
 
 	void SetSecretAndApiKeyInUrl(string& _url, vector <string>& _extraHttpHeader, string _querystring) const;
 	void SetSecretAndApiKeyInPostData(vector <string>& _extraHttpHeader, string& _postData) const;
-	void CurlAPIWithHeader(string& _url, string& _strResult, string& _postData, const string& _action, const string& _queryString, bool _setSecretAndApiKey = false) const;
+	void CurlAPIWithHeader(string& _url, string& _strResult, string& _postData, const string& _action, string& _queryString, bool _setSecretAndApiKey = false, bool _getServerTime = true) const;
 	string HmacSha256(const string& _querystring) const;
-	static string B2AHex(const char* _byteArray, int _n);
+	static string B2AHex(const unsigned char* _byteArray, int _n);
 	static size_t WebRequestCallback(void* _content, size_t _size, size_t _nmemb, string* _buffer);
 
 	static void SetCurlOptions(CURL* _curl, const string _url, string& _strResult);
@@ -55,9 +55,10 @@ public:
 	ApiRequestManager(const Logger& _logger, string _apiKey, string _secretKey);
 	void CleanUpApiRequestManager() const;
 
-	void CurlAPI(const string& _url, string& _stringResult) const;
+	void CurlAPI(string& _url, string& _stringResult, bool _getServerTime = true) const;
 
 #pragma region MarketData
+	string GetMarketDataTime() const;
 	string GetMarketDataCandlestick(const string& _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit = 500) const;
 	string GetMarketDataSymbolPriceTicker(const string& _symbol) const;
 #pragma endregion

@@ -57,9 +57,6 @@
     <ClCompile Include="..\..\..\Logger\easylogging++.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="APIHead.cpp">
-      <Filter>Source Files\API</Filter>
-    </ClCompile>
     <ClCompile Include="BinanceSwapEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
@@ -73,9 +70,6 @@
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
     <ClCompile Include="MarketDataEndpoints.cpp">
-      <Filter>Source Files\API\Endpoints</Filter>
-    </ClCompile>
-    <ClCompile Include="MiningEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
     <ClCompile Include="SavingsEndpoints.cpp">
@@ -101,6 +95,12 @@
     </ClCompile>
     <ClCompile Include="Bot.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MiningEndpoints.cpp">
+      <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="Trade.h">
       <Filter>Header Files\Connections\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

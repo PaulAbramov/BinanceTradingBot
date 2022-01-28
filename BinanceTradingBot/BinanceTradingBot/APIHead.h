@@ -3,6 +3,7 @@
 #include <chrono>
 #include <boost/assign/list_of.hpp>
 #include <boost/unordered_map.hpp>
+#include <utility>
 
 #include "magic_enum.hpp"
 #include "LoggingFacility.h"
@@ -18,8 +19,6 @@ private:
 
 protected:
 	Logger logger;
-
-	string SetTimeStampAndRecvWindow(unsigned short _recvWindow = 0) const;
 
 public:
 	APIHead() = default;

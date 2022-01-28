@@ -5,6 +5,7 @@ CREATE TABLE dbo.Trades
 	Id int NOT NULL,
 	OrderID bigint NOT NULL,
 	BotName varchar(10) NOT NULL,
+	ClientOrderID varchar(25) NOT NULL,
 	InvestedAmount decimal(16,8) NOT NULL,
 	EntryPrice decimal(16,8) NOT NULL,
 	EntryTime datetime2(7) NOT NULL,

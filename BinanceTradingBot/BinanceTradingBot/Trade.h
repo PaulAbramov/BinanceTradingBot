@@ -5,6 +5,7 @@ struct Trade
 {
 	long TradeId;
 	std::string BotName;
+	std::string ClientOrderID;
 	double InvestedAmount;
 	double EntryPrice;
 	time_t EntryTime;

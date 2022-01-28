@@ -39,8 +39,6 @@ void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& 
 
 	_queryString.append("&listenKey=");
 	_queryString.append(_listenKey);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }
 
 /*
@@ -68,6 +66,4 @@ void UserDataEndpoints::DeleteUserDataCloseListenKeySpot(string& _url, string& _
 
 	_queryString.append("&listenKey=");
 	_queryString.append(_listenKey);
-
-	logger->WriteInfoEntry("Put together following string: " + _url + " and querystring: " + _queryString);
 }

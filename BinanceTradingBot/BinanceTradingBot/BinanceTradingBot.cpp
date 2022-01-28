@@ -20,7 +20,7 @@ namespace fs = std::filesystem;
 
 static Logger InitializeLogger()
 {
-	string filename = "Logger.conf";
+	string filename{ "Logger.conf" };
 
 	// if configuration file exists - use FilesystemLogger
 	if (ifstream filestream(filename); filestream.good())
@@ -38,7 +38,7 @@ static Logger InitializeLogger()
 
 		// Get the current date
 		struct tm newtime{};
-		time_t now = std::time(nullptr);
+		time_t now{ std::time(nullptr) };
 		localtime_s(&newtime, &now);
 
 		// Make a string with the current date
@@ -59,20 +59,20 @@ static Logger InitializeLogger()
 
 int main()
 {
-	Logger logger = InitializeLogger();
+	Logger logger{ InitializeLogger() };
 	logger->WriteInfoEntry("Logger initialized");
 
-	ConfigurationManager configManager = ConfigurationManager(logger);
-	Config config = configManager.LoadConfig();
+	ConfigurationManager configManager{ ConfigurationManager(logger) };
+	Config config{ configManager.LoadConfig() };
 
-	string path = "\"";
+	string path{ "\"" };
 	path += config.gnuplot_path;
 	path += "\"";
 
 	Gnuplot gp(path);
 	//Gnuplot gp("\"..\\..\\gnuplot\\bin\\gnuplot.exe\"");
 
-	Bot firstBot = Bot(logger, config);
+	Bot firstBot{ Bot(logger, config) };
 
 	return firstBot.Run();
 

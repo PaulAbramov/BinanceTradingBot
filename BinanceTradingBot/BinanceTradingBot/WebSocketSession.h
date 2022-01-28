@@ -38,7 +38,7 @@ private:
 	string hostAndPort;
 	string port;
 	tcp::endpoint tcpEndPoint;
-	bool terminate = false;
+	bool terminate;
 	Logger logger;
 	ostringstream oss;
 

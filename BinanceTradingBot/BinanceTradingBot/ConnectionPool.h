@@ -2,6 +2,7 @@
 
 #include <deque>
 #include <memory>
+#include <mutex>
 #include <set>
 
 #include "ConnectionFactory.h"
@@ -12,7 +13,7 @@ struct ConnectionUnavailable final : std::exception {
 	char const* what() const throw() override
 	{
 		return "Unable to allocate connection";
-	};
+	}
 };
 
 template<class T>
@@ -59,10 +60,10 @@ public:
 		if (this->pool.size() == 0)
 		{
 			// Are there any crashed connections listed as "borrowed"?
-			for (std::set<shared_ptr<SAConnection> >::iterator it = this->borrowed.begin(); it != this->borrowed.end(); ++it)
+			for (auto it{ this->borrowed.begin() }; it != this->borrowed.end(); ++it)
 			{
-				const auto isAlive = (*it)->isAlive();
-				const auto isConnected = (*it)->isConnected();
+				const auto isAlive { (*it)->isAlive() };
+				const auto isConnected { (*it)->isConnected() };
 
 				if (!isConnected || !isAlive)
 				{
@@ -71,7 +72,7 @@ public:
 					{
 						// If we are able to create a new connection, return it
 						std::cout << "Creating new connection to replace discarded connection";
-						std::shared_ptr<SAConnection> conn = this->factory->Create();
+						std::shared_ptr<SAConnection> conn { this->factory->Create() };
 						this->borrowed.erase(it);
 						this->borrowed.insert(conn);
 						return std::static_pointer_cast<T>(conn);
@@ -89,7 +90,7 @@ public:
 		}
 
 		// Take one off the front
-		std::shared_ptr<SAConnection>conn = this->pool.front();
+		std::shared_ptr<SAConnection>conn{ this->pool.front() };
 		this->pool.pop_front();
 
 		// Add it to the borrowed list
