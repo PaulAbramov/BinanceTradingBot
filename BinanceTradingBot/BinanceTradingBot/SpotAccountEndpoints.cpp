@@ -69,11 +69,13 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 
 	switch (_orderType)
 	{
-	case EOrderType::NONE:
+		using enum EOrderType;
+
+	case NONE:
 		logger->WriteWarnEntry("Did not set mandatory parameter 'orderType'");
 		return;
 		break;
-	case EOrderType::LIMIT:
+	case LIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
@@ -90,14 +92,14 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			return;
 		}
 		break;
-	case EOrderType::MARKET:
+	case MARKET:
 		if (_quantity.empty() && _quoteOrderQuantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' or 'quoteOrderQuantity' with " + orderType);
 			return;
 		}
 		break;
-	case EOrderType::STOPLOSS:
+	case STOPLOSS:
 		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
@@ -109,7 +111,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			return;
 		}
 		break;
-	case EOrderType::STOPLOSSLIMIT:
+	case STOPLOSSLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
@@ -131,7 +133,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			return;
 		}
 		break;
-	case EOrderType::TAKEPROFIT:
+	case TAKEPROFIT:
 		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
@@ -143,7 +145,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			return;
 		}
 		break;
-	case EOrderType::TAKEPROFITLIMIT:
+	case TAKEPROFITLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
@@ -165,7 +167,7 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 			return;
 		}
 		break;
-	case EOrderType::LIMITMAKER:
+	case LIMITMAKER:
 		if (_quantity.empty())
 		{
 			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
@@ -240,10 +242,12 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 	{
 		switch (_orderType)
 		{
-		case EOrderType::STOPLOSS:
-		case EOrderType::STOPLOSSLIMIT:
-		case EOrderType::TAKEPROFIT:
-		case EOrderType::TAKEPROFITLIMIT:
+			using enum EOrderType;
+
+		case STOPLOSS:
+		case STOPLOSSLIMIT:
+		case TAKEPROFIT:
+		case TAKEPROFITLIMIT:
 
 			_queryString.append("&stopPrice=");
 			_queryString.append(_stopPrice);
@@ -257,9 +261,11 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 	{
 		switch (_orderType)
 		{
-		case EOrderType::LIMIT:
-		case EOrderType::STOPLOSSLIMIT:
-		case EOrderType::TAKEPROFITLIMIT:
+			using enum EOrderType;
+
+		case LIMIT:
+		case STOPLOSSLIMIT:
+		case TAKEPROFITLIMIT:
 
 			_queryString.append("&icebergQty=");
 			_queryString.append(_icebergQuantity);
