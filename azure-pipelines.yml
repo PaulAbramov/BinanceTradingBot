@@ -9,7 +9,7 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
-container: mcr.microsoft.com/windows/servercore
+container: mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-10.0.19041.1415
 
 variables:
   solution: '**/*.sln'
