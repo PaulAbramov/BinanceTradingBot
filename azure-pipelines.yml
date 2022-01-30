@@ -8,6 +8,9 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
+  demands:
+  - msbuild
+  - visualstudio
 
 variables:
   solution: '**/*.sln'
