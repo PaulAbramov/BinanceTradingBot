@@ -1,14 +1,10 @@
 #pragma once
 
-#include <string>
-
-using namespace std;
-
 struct Config
 {
 public:
-	string taapi_secret;
-	string api_key;
-	string secret_key;
-	string gnuplot_path;
+	std::string taapi_secret;
+	std::string api_key;
+	std::string secret_key;
+	std::string gnuplot_path;
 };

@@ -1,5 +1,7 @@
 #include "WalletEndpoints.h"
 
+using namespace std;
+
 /*
 * All Coins' Information (USER_DATA)
 * 

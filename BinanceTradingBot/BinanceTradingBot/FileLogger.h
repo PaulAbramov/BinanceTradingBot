@@ -10,23 +10,23 @@ class FileLogger final : public LoggingFacility
 private:
     std::mutex mu;
 public:
-    virtual void WriteInfoEntry(string_view _entry, const source_location& _where) override
+    virtual void WriteInfoEntry(std::string_view _entry, const std::source_location& _where) override
     {
         mu.lock();
         //LOG(INFO) << _where.file_name() << "(" << _where.line() << ":" << _where.column() << ") " << _where.function_name() << "(): " << _entry << endl;
-        LOG(INFO) << _where.function_name() << "(): " << _entry << endl;
+        LOG(INFO) << _where.function_name() << "(): " << _entry << std::endl;
         mu.unlock();
     }
-    virtual void WriteWarnEntry(string_view _entry, const source_location& _where) override
+    virtual void WriteWarnEntry(std::string_view _entry, const std::source_location& _where) override
     {
         mu.lock();
-        LOG(WARNING) << _where.function_name() << "(): " << _entry << endl;
+        LOG(WARNING) << _where.function_name() << "(): " << _entry << std::endl;
         mu.unlock();
     }
-    virtual void WriteErrorEntry(string_view _entry, const source_location& _where) override
+    virtual void WriteErrorEntry(std::string_view _entry, const std::source_location& _where) override
     {
         mu.lock();
-        LOG(ERROR) << _where.function_name() << "(): " << _entry << endl;
+        LOG(ERROR) << _where.function_name() << "(): " << _entry << std::endl;
         mu.unlock();
     }
 };

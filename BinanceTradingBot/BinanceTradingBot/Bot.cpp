@@ -2,6 +2,8 @@
 
 #include "Bot.h"
 
+using namespace std;
+
 Bot::Bot(const Logger& _logger, const Config& _config) : manager(_logger, _config.api_key, _config.secret_key), sqlManager(_logger, symbols.size())
 {
 	logger = _logger;
@@ -20,11 +22,11 @@ bool Bot::Run()
 			});
 		t.detach();
 
-		//std::thread t2([this, &ioc, &pool]()
-		//	{
-		//		ManualRun(&ioc, pool);
-		//	});
-		//t2.detach();
+		std::thread t2([this, &ioc]()
+			{
+				ManualRun(&ioc);
+			});
+		t2.detach();
 	});
 
 	while (true)
@@ -40,7 +42,7 @@ bool Bot::Run()
 			}
 			else
 			{
-				std::this_thread::sleep_for(milliseconds(3));
+				std::this_thread::sleep_for(chrono::milliseconds(3));
 			}
 		}
 	}
@@ -66,7 +68,7 @@ void Bot::DCARun(net::io_context *_ioc)
 			{
 				if (auto iterator{ runningTrades.find(symbol) }; iterator != runningTrades.end())
 				{
-					if(iterator->second.wait_for(seconds(0)) != std::future_status::ready)
+					if(iterator->second.wait_for(chrono::seconds(0)) != std::future_status::ready)
 					{
 						continue;
 					}
@@ -132,7 +134,7 @@ void Bot::DCARun(net::io_context *_ioc)
 					auto rsiValue{ jsonResult["value"] };
 					rsiVector.push_back(rsiValue);
 
-					std::this_thread::sleep_for(milliseconds(2000));
+					std::this_thread::sleep_for(chrono::milliseconds(2000));
 				}
 
 				if (rsiVector[0] < rsiBuy15MThreshold && rsiVector[1] < rsiBuy1HThreshold && rsiVector[2] < rsiBuy1DThreshold)
@@ -221,7 +223,7 @@ void Bot::DCARun(net::io_context *_ioc)
 		}
 		else
 		{
-			std::this_thread::sleep_for(milliseconds(3));
+			std::this_thread::sleep_for(chrono::milliseconds(3));
 		}
 	}
 }
@@ -275,7 +277,7 @@ void Bot::CheckTrades(const string& _symbol) const
 			break;
 		}
 
-		std::this_thread::sleep_for(milliseconds(10000));
+		std::this_thread::sleep_for(chrono::milliseconds(10000));
 	}
 
 	logger->WriteInfoEntry("Done.");
@@ -291,18 +293,21 @@ void Bot::ManualRun(net::io_context *_ioc)
 	auto fifteenMinuteCandlestickHandle{ websocketCollection.KlineCandleStick(symbols, EIntervals::FIFTEENMINUTES,
 		[this](auto _answer)
 		{
+			logger->WriteInfoEntry(_answer);
 			return sqlManager.AddAssetToDb(_answer);
 		}) };
 
 	auto oneHourCandlestickHandle{ websocketCollection.KlineCandleStick(symbols, EIntervals::ONEHOUR,
 		[this](auto _answer)
 		{
+			logger->WriteInfoEntry(_answer);
 			return sqlManager.AddAssetToDb(_answer);
 		}) };
 
 	auto oneDayCandlestickHandle{ websocketCollection.KlineCandleStick(symbols, EIntervals::ONEDAY,
 		[this](auto _answer)
 		{
+			logger->WriteInfoEntry(_answer);
 			return sqlManager.AddAssetToDb(_answer);
 		}) };
 
@@ -337,7 +342,7 @@ void Bot::ManualRun(net::io_context *_ioc)
 			}
 			else
 			{
-				std::this_thread::sleep_for(milliseconds(3));
+				std::this_thread::sleep_for(chrono::milliseconds(3));
 			}
 		}
 	}

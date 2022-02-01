@@ -6,7 +6,8 @@
 class MarketDataEndpoints : public APIHead
 {
 private:
-	boost::unordered_map<EIntervals, const char*> eIntervalsToString{ map_list_of
+	boost::unordered_map<EIntervals, const char*> eIntervalsToString{
+		boost::assign::map_list_of
 	(EIntervals::ONEMINUTE, "1m")
 	(EIntervals::THREEMINUTES, "3m")
 	(EIntervals::FIVEMINUTES, "5m")
@@ -27,13 +28,13 @@ public:
 	MarketDataEndpoints() = default;
 	MarketDataEndpoints(const Logger& _logger) : APIHead(_logger) {}
 
-	void GetMarketTimeQuery(string& _url) const;
-	void GetMarketOrderbookQuery(string& _url, string& _queryString, const string& _symbol, int _limit = 100) const;
-	void GetMarketRecentTradesListQuery(string& _url, string& _queryString, const string& _symbol, int _limit = 500) const;
-	void GetMarketOldTradeLookupQuery(string& _url, string& _queryString, const string& _symbol, unsigned short _fromId, int _limit = 500) const;
-	void GetMarketCandlestickDataQuery(string& _url, string& _queryString, const string& _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit = 500) const;
-	void GetMarketCurrentAveragePriceQuery(string& _url, string& _queryString, const string& _symbol) const;
-	void GetMarketTickerChangeStatisticQuery(string& _url, string& _queryString, const string& _symbol) const;
-	void GetMarketSymbolPriceTickerQuery(string& _url, string& _queryString, const string& _symbol) const;
-	void GetMarketSymbolOrderbookTickerQuery(string& _url, string& _queryString, const string& _symbol) const;
+	void GetMarketTimeQuery(std::string& _url) const;
+	void GetMarketOrderbookQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, int _limit = 100) const;
+	void GetMarketRecentTradesListQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, int _limit = 500) const;
+	void GetMarketOldTradeLookupQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, unsigned short _fromId, int _limit = 500) const;
+	void GetMarketCandlestickDataQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit = 500) const;
+	void GetMarketCurrentAveragePriceQuery(std::string& _url, std::string& _queryString, const std::string& _symbol) const;
+	void GetMarketTickerChangeStatisticQuery(std::string& _url, std::string& _queryString, const std::string& _symbol) const;
+	void GetMarketSymbolPriceTickerQuery(std::string& _url, std::string& _queryString, const std::string& _symbol) const;
+	void GetMarketSymbolOrderbookTickerQuery(std::string& _url, std::string& _queryString, const std::string& _symbol) const;
 };

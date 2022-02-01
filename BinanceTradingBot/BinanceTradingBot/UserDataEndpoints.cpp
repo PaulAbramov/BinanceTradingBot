@@ -1,5 +1,7 @@
 #include "UserDataEndpoints.h"
 
+using namespace std;
+
 /*
 * Create a ListenKey (USER_STREAM)
 *

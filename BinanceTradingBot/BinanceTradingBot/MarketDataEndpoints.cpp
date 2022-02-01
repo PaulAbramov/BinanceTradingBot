@@ -1,5 +1,7 @@
 #include "MarketDataEndpoints.h"
 
+using namespace std;
+
 void MarketDataEndpoints::GetMarketTimeQuery(string& _url) const
 {
 	_url += "/api/v3/time";

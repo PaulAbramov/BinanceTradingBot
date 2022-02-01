@@ -1,5 +1,7 @@
 #include "SpotAccountEndpoints.h"
 
+using namespace std;
+
 /*
 * New Order (TRADE)
 *

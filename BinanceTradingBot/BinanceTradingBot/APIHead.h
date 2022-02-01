@@ -9,10 +9,6 @@
 #include "LoggingFacility.h"
 #include "root_certificates.h"
 
-using boost::assign::map_list_of;
-
-using namespace std;
-
 class APIHead
 {
 private:

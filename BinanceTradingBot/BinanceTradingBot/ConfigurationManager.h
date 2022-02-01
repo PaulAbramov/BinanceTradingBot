@@ -4,23 +4,21 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
-#include <json.hpp>
+#include <nlohmann/json.hpp>
 #include <iomanip>
 #include <utility>
 
 #include "Config.h"
 #include "LoggingFacility.h"
 
-using namespace std;
-
 namespace fs = std::filesystem;
 
 class ConfigurationManager
 {
 private:
-	const string configFileName{ "config.json" };
+	const std::string configFileName{ "config.json" };
 	nlohmann::json jsonObject;
-	fstream configFile;
+	std::fstream configFile;
 	Logger logger;
 
 	static void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);

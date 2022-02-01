@@ -1,5 +1,7 @@
 #include "ApiRequestManager.h"
 
+using namespace std;
+
 ApiRequestManager::ApiRequestManager(const Logger& _logger, string _apiKey, string _secretKey)
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);

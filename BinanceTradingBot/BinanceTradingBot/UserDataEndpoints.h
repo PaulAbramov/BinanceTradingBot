@@ -42,7 +42,7 @@ public:
 	UserDataEndpoints() = default;
 	UserDataEndpoints(const Logger& _logger) : APIHead(_logger) {}
 
-	static void PostUserDataCreateListenKeySpot(string& _url);
-	void PutUserDataKeepAliveListenKeySpot(string& _url, string& _queryString, string _listenKey) const;
-	void DeleteUserDataCloseListenKeySpot(string& _url, string& _queryString, string _listenKey) const;
+	static void PostUserDataCreateListenKeySpot(std::string& _url);
+	void PutUserDataKeepAliveListenKeySpot(std::string& _url, std::string& _queryString, std::string _listenKey) const;
+	void DeleteUserDataCloseListenKeySpot(std::string& _url, std::string& _queryString, std::string _listenKey) const;
 };

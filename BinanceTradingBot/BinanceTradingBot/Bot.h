@@ -20,13 +20,10 @@
 #include "WebSocketCollection.h"
 #include "Trade.h"
 
-using namespace std;
-using namespace std::chrono;
-
 class Bot
 {
 private:
-	boost::unordered_map<EIntervals, const char*> eIntervalsToString{ map_list_of
+	boost::unordered_map<EIntervals, const char*> eIntervalsToString{boost::assign::map_list_of
 	(EIntervals::ONEMINUTE, "1m")
 		(EIntervals::THREEMINUTES, "3m")
 		(EIntervals::FIVEMINUTES, "5m")
@@ -71,7 +68,7 @@ private:
 	const double rsiSell1HThreshold{ 55 };			//55
 	const double rsiSell15MThreshold{ 65 };			//65
 
-	vector<EIntervals> intervals{ { EIntervals::FIFTEENMINUTES, EIntervals::ONEHOUR, EIntervals::ONEDAY } };
+	std::vector<EIntervals> intervals{ { EIntervals::FIFTEENMINUTES, EIntervals::ONEHOUR, EIntervals::ONEDAY } };
 
 #pragma endregion
 	double busdBalance;
@@ -79,20 +76,20 @@ private:
 
 	Logger logger;
 	Config config;
-	vector<string> symbols{ "BNBBUSD" };
+	std::vector<std::string> symbols{ "BNBBUSD" };
 	ApiRequestManager manager;
 	SQLManager sqlManager;
-	shared_ptr<ConnectionPool<SAConnection>> pool;
-	map<string, future<void>> runningTrades;
+	//shared_ptr<ConnectionPool<SAConnection>> pool;
+	std::pmr::map<std::string, std::future<void>> runningTrades;
 
-	double GetBalanceForCoin(const string& _symbol) const;
+	double GetBalanceForCoin(const std::string& _symbol) const;
 
-	string RoundValueToDecimalValue(const double& _valueToRound, const int _decimalPosition) const;
-	bool CreateTradeAndSafeInDb(const string& _symbol, const string& _quantity, const string& _price, const string& _clientOrderId, ESide _side, double _takeProfit = 0) const;
-	string CreateProfitTakerForSafetyTrade(const string& _symbol, int _tradeNumber, const string& _takeProfitPrice) const;
-	Trade CreateTradeObjectFromJsonToInsert(const string& _tradeResponse) const;
+	std::string RoundValueToDecimalValue(const double& _valueToRound, const int _decimalPosition) const;
+	bool CreateTradeAndSafeInDb(const std::string& _symbol, const std::string& _quantity, const std::string& _price, const std::string& _clientOrderId, ESide _side, double _takeProfit = 0) const;
+	std::string CreateProfitTakerForSafetyTrade(const std::string& _symbol, int _tradeNumber, const std::string& _takeProfitPrice) const;
+	Trade CreateTradeObjectFromJsonToInsert(const std::string& _tradeResponse) const;
 
-	void CheckTrades(const string& _symbol) const;
+	void CheckTrades(const std::string& _symbol) const;
 
 	void ManualRun(net::io_context *_ioc);
 	void DCARun(net::io_context *_ioc);

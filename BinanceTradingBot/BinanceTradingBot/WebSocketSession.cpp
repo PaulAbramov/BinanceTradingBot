@@ -1,5 +1,7 @@
 #include "WebSocketSession.h"
 
+using namespace std;
+
 // Resolver and socket require an io_context
 WebSocketSession::WebSocketSession(net::io_context& _ioc,
 	string _host,

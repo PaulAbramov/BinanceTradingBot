@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/unordered_map.hpp>
@@ -25,14 +26,14 @@ private:
 	(EFrequency::THOUSANDMILI, "1000ms") };
 
 	net::io_context& ioContext;
-	string host;
+	std::string host;
 	char const* port;
 	Logger logger;
-	map<handle, weak_ptr<WebSocketSession>> map;
+	std::pmr::map<handle, std::weak_ptr<WebSocketSession>> map;
 
-	handle StartChannel(const std::vector<string>& _symbols, const string& _type, const std::function<bool(const string&)>& _callbackFunction);
-	static string MakeChannel(const std::vector<string>& _symbols, const string& _type);
-	static string CreateChannelString(const string& _symbol, const string& _type);
+	handle StartChannel(const std::vector<std::string>& _symbols, const std::string& _type, const std::function<bool(const std::string&)>& _callbackFunction);
+	static std::string MakeChannel(const std::vector<std::string>& _symbols, const std::string& _type);
+	static std::string CreateChannelString(const std::string& _symbol, const std::string& _type);
 
 	void RemoveDeadWebsockets();
 
@@ -45,12 +46,12 @@ public:
 	void UnsubscribeChannel(handle _websocketHandle);
 	void UnsubscribeAllChannels();
 
-	handle AggregateTrade(const std::vector<string>& _symbols, const std::function<bool(const string&)>& _callbackFunction);
-	handle Trade(const std::vector<string>& _symbols, const std::function<bool(const string&)>& _callbackFunction);
-	handle KlineCandleStick(const std::vector<string>& _symbols, const EIntervals _interval, const std::function<bool(const string&)>& _callbackFunction);
-	handle MiniTicker(const std::vector<string>& _symbols, const std::function<bool(const string&)>& _callbackFunction);
-	handle Ticker(const std::vector<string>& _symbols, const std::function<bool(const string&)>& _callbackFunction);
-	handle BookTicker(const std::vector<string>& _symbols, const std::function<bool(const string&)>& _callbackFunction);
-	handle PartialBookDepth(const std::vector<string>& _symbols, const EDepthLevel _depthLevel, const EFrequency _frequency, const std::function<bool(const string&)>& _callbackFunction);
-	handle DiffBookDepth(const std::vector<string>& _symbols, const EFrequency _frequency, const std::function<bool(const string&)>& _callbackFunction);
+	handle AggregateTrade(const std::vector<std::string>& _symbols, const std::function<bool(const std::string&)>& _callbackFunction);
+	handle Trade(const std::vector<std::string>& _symbols, const std::function<bool(const std::string&)>& _callbackFunction);
+	handle KlineCandleStick(const std::vector<std::string>& _symbols, const EIntervals _interval, const std::function<bool(const std::string&)>& _callbackFunction);
+	handle MiniTicker(const std::vector<std::string>& _symbols, const std::function<bool(const std::string&)>& _callbackFunction);
+	handle Ticker(const std::vector<std::string>& _symbols, const std::function<bool(const std::string&)>& _callbackFunction);
+	handle BookTicker(const std::vector<std::string>& _symbols, const std::function<bool(const std::string&)>& _callbackFunction);
+	handle PartialBookDepth(const std::vector<std::string>& _symbols, const EDepthLevel _depthLevel, const EFrequency _frequency, const std::function<bool(const std::string&)>& _callbackFunction);
+	handle DiffBookDepth(const std::vector<std::string>& _symbols, const EFrequency _frequency, const std::function<bool(const std::string&)>& _callbackFunction);
 };

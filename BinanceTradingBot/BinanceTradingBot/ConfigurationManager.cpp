@@ -1,5 +1,7 @@
 ﻿#include "ConfigurationManager.h"
 
+using namespace std;
+
 /*
 * Check if the configfile exists and open it
 * If it is not existent then create a new one
