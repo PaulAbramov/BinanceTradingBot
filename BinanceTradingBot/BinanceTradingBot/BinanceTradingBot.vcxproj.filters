@@ -54,9 +54,6 @@
     <ClCompile Include="ApiRequestManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Logger\easylogging++.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BinanceSwapEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
@@ -102,9 +99,11 @@
     <ClCompile Include="MiningEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
+    <ClCompile Include="$(SolutionDir)Dependencies\x64-windows-static\include\easylogging++.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Logger.conf">
       <Filter>Resource Files</Filter>
     </None>

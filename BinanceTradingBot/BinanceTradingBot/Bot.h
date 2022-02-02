@@ -79,7 +79,7 @@ private:
 	std::vector<std::string> symbols{ "BNBBUSD" };
 	ApiRequestManager manager;
 	SQLManager sqlManager;
-	//shared_ptr<ConnectionPool<SAConnection>> pool;
+	std::shared_ptr<ConnectionPool<SAConnection>> pool;
 	std::pmr::map<std::string, std::future<void>> runningTrades;
 
 	double GetBalanceForCoin(const std::string& _symbol) const;

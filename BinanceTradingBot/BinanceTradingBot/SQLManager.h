@@ -5,8 +5,6 @@
 #include <chrono>
 #include <utility>
 #include <nlohmann/json.hpp>
-#include <was/storage_account.h>
-#include <was/table.h>
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "ConnectionPool.h"
@@ -18,9 +16,8 @@
 class SQLManager
 {
 private:
-	azure::storage::cloud_storage_account storage_account;
 	Logger logger;
-	//std::shared_ptr<ConnectionPool<SAConnection>> pool;
+	std::shared_ptr<ConnectionPool<SAConnection>> pool;
 
 	std::string LongToString(const int64_t _longDate) const;
 	time_t StringToTime(std::string _dateString) const;

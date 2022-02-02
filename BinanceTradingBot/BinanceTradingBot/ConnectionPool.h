@@ -72,10 +72,10 @@ public:
 					{
 						// If we are able to create a new connection, return it
 						std::cout << "Creating new connection to replace discarded connection";
-						//std::shared_ptr<SAConnection> conn { this->factory->Create() };
+						std::shared_ptr<SAConnection> conn { this->factory->Create() };
 						this->borrowed.erase(it);
-						//this->borrowed.insert(conn);
-						//return std::static_pointer_cast<T>(conn);
+						this->borrowed.insert(conn);
+						return std::static_pointer_cast<T>(conn);
 					}
 					catch (std::exception& e) 
 					{
@@ -90,13 +90,13 @@ public:
 		}
 
 		// Take one off the front
-		//std::shared_ptr<SAConnection>conn{ this->pool.front() };
+		std::shared_ptr<SAConnection>conn{ this->pool.front() };
 		this->pool.pop_front();
 
 		// Add it to the borrowed list
-		//this->borrowed.insert(conn);
+		this->borrowed.insert(conn);
 
-		//return std::static_pointer_cast<T>(conn);
+		return std::static_pointer_cast<T>(conn);
 	}
 
 	void Unborrow(std::shared_ptr<T> _connection)
@@ -105,7 +105,7 @@ public:
 		std::lock_guard<std::mutex> lock(this->ioMutex);
 
 		// Push onto the pool
-		//this->pool.push_back(std::static_pointer_cast<SAConnection>(_connection));
+		this->pool.push_back(std::static_pointer_cast<SAConnection>(_connection));
 
 		// Unborrow
 		this->borrowed.erase(_connection);

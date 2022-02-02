@@ -98,7 +98,6 @@ void WebSocketSession::OnConnectedWebSocketSession(string _target, std::function
 		[this]
 	(boost::beast::websocket::frame_type _kind, boost::beast::string_view _payload) mutable {
 			(void)_kind; (void)_payload;
-			//std::cout << "control_callback(" << this << "): kind=" << static_cast<int>(kind) << ", payload=" << payload.data() << std::endl;
 			ws.async_pong(
 				boost::beast::websocket::ping_data{}
 				, [](boost::beast::error_code _errorCode)
