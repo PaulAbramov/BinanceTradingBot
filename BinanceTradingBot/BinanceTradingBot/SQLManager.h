@@ -2,15 +2,15 @@
 #define ELPP_THREAD_SAFE
 #define ELPP_FORCE_USE_STD_THREAD
 
-#include <chrono>
-#include <utility>
-#include <nlohmann/json.hpp>
+#include <iostream>
 
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <nlohmann/json.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+#include "Config.h"
+#include "SQLConnectionFactory.h"
 #include "ConnectionPool.h"
 #include "LoggingFacility.h"
-#include "ConnectionFactory.h"
-#include "SQLConnectionFactory.h"
 #include "Trade.h"
 
 class SQLManager
@@ -22,7 +22,7 @@ private:
 	std::string LongToString(const int64_t _longDate) const;
 	time_t StringToTime(std::string _dateString) const;
 public:
-	SQLManager(const Logger& _logger, int _symbolAmount);
+	SQLManager(const Logger& _logger, int _symbolAmount, const Config& _config);
 
 	bool AddAssetToDb(const std::string& _answer) const;
 

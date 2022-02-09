@@ -4,6 +4,8 @@
 #include <memory>
 #include <string_view>
 
+#include "easylogging++.h"
+
 class LoggingFacility
 {
 public:

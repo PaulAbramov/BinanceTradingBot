@@ -4,10 +4,12 @@
 
 using namespace std;
 
-Bot::Bot(const Logger& _logger, const Config& _config) : manager(_logger, _config.api_key, _config.secret_key), sqlManager(_logger, symbols.size())
+Bot::Bot(const Logger& _logger, const Config& _config) : manager(_logger, _config.ApiKey, _config.SecretKey), sqlManager(_logger, symbols.size(), _config)
 {
 	logger = _logger;
 	config = _config;
+
+	maxOrderValue = config.InitialBuy + config.FirstSafetyOrderAmount + config.SecondSafetyOrderAmount + config.ThirdSafetyOrderAmount + config.FourthSafetyOrderAmount;
 }
 
 bool Bot::Run()
@@ -85,7 +87,7 @@ void Bot::DCARun(net::io_context *_ioc)
 
 				auto activeTrades{ sqlManager.GetActiveTradesFromDb(symbol) };
 				//if coin is not in trade and we have < maxtrades
-				if (!activeTrades.empty() || activeTrades.size() >= maxtrades)
+				if (!activeTrades.empty() || activeTrades.size() >= config.MaxTrades)
 				{
 					if (!activeTrades.empty())
 					{
@@ -117,7 +119,7 @@ void Bot::DCARun(net::io_context *_ioc)
 				for (auto& interval : intervals)
 				{
 					string result;
-					ss << "https://api.taapi.io/rsi?secret=" << config.taapi_secret << "&exchange=binance&symbol=BNB/BUSD&interval=" << eIntervalsToString.at(interval);
+					ss << "https://api.taapi.io/rsi?secret=" << config.TaapiSecret << "&exchange=binance&symbol=BNB/BUSD&interval=" << eIntervalsToString.at(interval);
 					string url{ ss.str() };
 					ss.str(std::string());
 					ss.clear();
@@ -137,7 +139,7 @@ void Bot::DCARun(net::io_context *_ioc)
 					std::this_thread::sleep_for(chrono::milliseconds(2000));
 				}
 
-				if (rsiVector[0] < rsiBuy15MThreshold && rsiVector[1] < rsiBuy1HThreshold && rsiVector[2] < rsiBuy1DThreshold)
+				if (rsiVector[0] < config.RsiBuy15MThreshold && rsiVector[1] < config.RsiBuy1HThreshold && rsiVector[2] < config.RsiBuy1DThreshold)
 				{
 					ss << "Buying condition met for " << symbol << ". Check for coin and order status.";
 					logger->WriteWarnEntry(ss.str());
@@ -147,15 +149,15 @@ void Bot::DCARun(net::io_context *_ioc)
 					runningTrades.insert(make_pair(symbol, std::async(std::launch::async, [this, &symbol]()
 					{
 #pragma region initialTrade
-						auto tradeResponse{ manager.PostSpotAccountNewOrder(symbol, ETimeInForce::NONE, "", to_string(initialBuy), "", symbol + "initialTrade", "", "", ENewOrderResponseType::FULL, ESide::BUY, EOrderType::MARKET) };
+						auto tradeResponse{ manager.PostSpotAccountNewOrder(symbol, ETimeInForce::NONE, "", to_string(config.InitialBuy), "", symbol + "initialTrade", "", "", ENewOrderResponseType::FULL, ESide::BUY, EOrderType::MARKET) };
 						auto trade{ CreateTradeObjectFromJsonToInsert(tradeResponse) };
 						sqlManager.AddTradeToDb(trade);
 #pragma endregion
 						auto initialBuyPrice{ trade.EntryPrice };
-						const auto firstSafetyOrderPrice{ initialBuyPrice - initialBuyPrice * firstSafetyOrder };
-						const auto secondSafetyOrderPrice{ firstSafetyOrderPrice - firstSafetyOrderPrice * secondSafetyOrder };
-						const auto thirdSafetyOrderPrice{ secondSafetyOrderPrice - secondSafetyOrderPrice * thirdSafetyOrder };
-						const auto fourthSafetyOrderPrice{ thirdSafetyOrderPrice - thirdSafetyOrderPrice * fourthSafetyOrder };
+						const auto firstSafetyOrderPrice{ initialBuyPrice - initialBuyPrice * config.FirstSafetyOrder };
+						const auto secondSafetyOrderPrice{ firstSafetyOrderPrice - firstSafetyOrderPrice * config.SecondSafetyOrder };
+						const auto thirdSafetyOrderPrice{ secondSafetyOrderPrice - secondSafetyOrderPrice * config.ThirdSafetyOrder };
+						const auto fourthSafetyOrderPrice{ thirdSafetyOrderPrice - thirdSafetyOrderPrice * config.FourthSafetyOrder };
 
 						double takeProfitOrderPrice;
 						if(trade.TakeProfit * trade.Amount > 10)
@@ -167,10 +169,10 @@ void Bot::DCARun(net::io_context *_ioc)
 							takeProfitOrderPrice = 10 / trade.Amount;
 						}
 
-						const auto firstSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(firstSafetyOrderAmount / firstSafetyOrderPrice, 3) };
-						const auto secondSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(secondSafetyOrderAmount / secondSafetyOrderPrice, 3) };
-						const auto thirdSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(thirdSafetyOrderAmount / thirdSafetyOrderPrice, 3) };
-						const auto fourthSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(fourthSafetyOrderAmount / fourthSafetyOrderPrice, 3) };
+						const auto firstSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.FirstSafetyOrderAmount / firstSafetyOrderPrice, 3) };
+						const auto secondSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.SecondSafetyOrderAmount / secondSafetyOrderPrice, 3) };
+						const auto thirdSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.ThirdSafetyOrderAmount / thirdSafetyOrderPrice, 3) };
+						const auto fourthSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.FourthSafetyOrderAmount / fourthSafetyOrderPrice, 3) };
 						const auto firstSafetyOrderPriceString{ RoundValueToDecimalValue(firstSafetyOrderPrice, 1) };
 						const auto secondSafetyOrderPriceString{ RoundValueToDecimalValue(secondSafetyOrderPrice, 1) };
 						const auto thirdSafetyOrderPriceString{ RoundValueToDecimalValue(thirdSafetyOrderPrice, 1) };
@@ -210,7 +212,7 @@ void Bot::DCARun(net::io_context *_ioc)
 				})));
 
 				}
-				if(rsiVector[0] > rsiSell15MThreshold && rsiVector[1] > rsiSell1HThreshold && rsiVector[2] > rsiSell1DThreshold)
+				if(rsiVector[0] > config.RsiSell15MThreshold && rsiVector[1] > config.RsiSell1HThreshold && rsiVector[2] > config.RsiSell1DThreshold)
 				{
 					ss << "Selling condition met for " << symbol << ". Check for coin and order status.";
 					logger->WriteWarnEntry(ss.str());
@@ -430,7 +432,7 @@ Trade Bot::CreateTradeObjectFromJsonToInsert(const string& _tradeResponse) const
 	Trade trade;
 
 	trade.TradeId = jsonResultTrade["orderId"];
-	trade.InvestedAmount = initialBuy;
+	trade.InvestedAmount = config.InitialBuy;
 	trade.BotName = "DCA";
 	trade.ClientOrderID = jsonResultTrade["clientOrderId"];
 	trade.Asset = jsonResultTrade["symbol"];
@@ -451,7 +453,7 @@ Trade Bot::CreateTradeObjectFromJsonToInsert(const string& _tradeResponse) const
 	const string amount{ jsonResultTrade["origQty"] };
 	trade.Amount = stod(amount);
 
-	const auto takeProfitPrice{ trade.EntryPrice + trade.EntryPrice * takeprofit };
+	const auto takeProfitPrice{ trade.EntryPrice + trade.EntryPrice * config.TakeProfit };
 
 	if (takeProfitPrice * trade.Amount > 10)
 	{

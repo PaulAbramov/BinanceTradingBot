@@ -1,9 +1,8 @@
 #pragma once
 
 #include <map>
+
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/unordered_map.hpp>
 
 #include "WebSocketSession.h"
 #include "APIEnums.h"
@@ -14,22 +13,26 @@ private:
 	//pointer to a method
 	using handle = void*;
 
-	boost::unordered_map<EDepthLevel, const char*> eDepthLevelToString{ boost::assign::map_list_of
-	(EDepthLevel::NONE, "")
-	(EDepthLevel::FIVE, "5")
-	(EDepthLevel::TEN, "10")
-	(EDepthLevel::TWENTY, "20") };
+	std::map<EDepthLevel, const char*> eDepthLevelToString
+	{
+		{ EDepthLevel::NONE, "" },
+		{ EDepthLevel::FIVE, "5" },
+		{ EDepthLevel::TEN, "10" },
+		{ EDepthLevel::TWENTY, "20" }
+	};
 
-	boost::unordered_map<EFrequency, const char*> eFrequencyToString{ boost::assign::map_list_of
-	(EFrequency::NONE, "")
-	(EFrequency::HUNDREDMILI, "100ms")
-	(EFrequency::THOUSANDMILI, "1000ms") };
+	std::map<EFrequency, const char*> eFrequencyToString
+	{ 
+		{ EFrequency::NONE, "" },
+		{ EFrequency::HUNDREDMILI, "100ms" },
+		{ EFrequency::THOUSANDMILI, "1000ms" }
+	};
 
 	net::io_context& ioContext;
 	std::string host;
 	char const* port;
 	Logger logger;
-	std::pmr::map<handle, std::weak_ptr<WebSocketSession>> map;
+	std::map<handle, std::weak_ptr<WebSocketSession>> map;
 
 	handle StartChannel(const std::vector<std::string>& _symbols, const std::string& _type, const std::function<bool(const std::string&)>& _callbackFunction);
 	static std::string MakeChannel(const std::vector<std::string>& _symbols, const std::string& _type);

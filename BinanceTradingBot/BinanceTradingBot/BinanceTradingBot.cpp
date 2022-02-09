@@ -66,10 +66,10 @@ int main()
 	Config config{ configManager.LoadConfig() };
 
 	string path{ "\"" };
-	path += config.gnuplot_path;
+	path += config.GnuplotPath;
 	path += "\"";
 
-	Gnuplot gp(path);
+	//Gnuplot gp(path);
 	//Gnuplot gp("\"..\\..\\gnuplot\\bin\\gnuplot.exe\"");
 
 	Bot firstBot{ Bot(logger, config) };

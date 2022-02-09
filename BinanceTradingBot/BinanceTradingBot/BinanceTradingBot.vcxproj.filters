@@ -51,9 +51,6 @@
     <ClCompile Include="ConfigurationManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ApiRequestManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BinanceSwapEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
@@ -93,25 +90,31 @@
     <ClCompile Include="Bot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SQLManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MiningEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
     <ClCompile Include="$(SolutionDir)Dependencies\x64-windows-static\include\easylogging++.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ApiManager.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLManager.cpp">
+      <Filter>Source Files\Connections</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logger.conf">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="libmysql.dll">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="libmariadb.dll">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="root_certificates.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WebSocketSession.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -119,9 +122,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ApiRequestManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LoggingFacility.h">
@@ -196,7 +196,13 @@
     <ClInclude Include="Trade.h">
       <Filter>Header Files\Connections\Models</Filter>
     </ClInclude>
+    <ClInclude Include="ApiManager.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
     <ClInclude Include="SQLManager.h">
+      <Filter>Header Files\Connections</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

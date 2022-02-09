@@ -1,7 +1,6 @@
 #pragma once
 
 #include "LoggingFacility.h"
-#include "easylogging++.h"
 
 INITIALIZE_EASYLOGGINGPP
 

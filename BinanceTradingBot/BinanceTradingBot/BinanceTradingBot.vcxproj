@@ -162,21 +162,21 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
-      <ShowIncludes>true</ShowIncludes>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl.lib;libcrypto.lib;libcurl.lib;wastorage.lib;cpprest_2_10.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;zlib.lib;sqlapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>User32.lib;Crypt32.lib;libssl.lib;libcrypto.lib;libcurl.lib;sqlapis.lib;version.lib;oleaut32.lib;ole32.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;Normaliz.lib;Ws2_32.lib;Wldap32.lib;advapi32.lib;libmariadb.lib;mysqlclient.lib;zlib.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\x64-windows-static\lib</AdditionalLibraryDirectories>
       <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(SolutionDir)Dependencies\x64-windows-static\include\easylogging++.cc" />
-    <ClCompile Include="ApiRequestManager.cpp" />
+    <ClCompile Include="ApiManager.cpp" />
     <ClCompile Include="BinanceSwapEndpoints.cpp" />
     <ClCompile Include="BinanceTradingBot.cpp" />
     <ClCompile Include="Bot.cpp" />
@@ -197,6 +197,10 @@
     <ClCompile Include="WebSocketSession.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="libmariadb.dll" />
+    <None Include="libmysql.dll">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="Logger.conf">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -204,7 +208,7 @@
   <ItemGroup>
     <ClInclude Include="APIEnums.h" />
     <ClInclude Include="APIHead.h" />
-    <ClInclude Include="ApiRequestManager.h" />
+    <ClInclude Include="ApiManager.h" />
     <ClInclude Include="BinanceSwapEndpoints.h" />
     <ClInclude Include="Bot.h" />
     <ClInclude Include="Config.h" />
@@ -220,6 +224,7 @@
     <ClInclude Include="MarginAccountEndpoints.h" />
     <ClInclude Include="MarketDataEndpoints.h" />
     <ClInclude Include="MiningEndpoints.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SavingsEndpoints.h" />
     <ClInclude Include="SpotAccountEndpoints.h" />
     <ClInclude Include="SQLConnectionFactory.h" />
@@ -231,7 +236,6 @@
     <ClInclude Include="WalletEndpoints.h" />
     <ClInclude Include="WebSocketCollection.h" />
     <ClInclude Include="WebSocketSession.h" />
-    <ClInclude Include="root_certificates.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

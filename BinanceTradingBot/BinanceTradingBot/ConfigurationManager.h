@@ -3,10 +3,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
-#include <string>
 #include <nlohmann/json.hpp>
-#include <iomanip>
-#include <utility>
 
 #include "Config.h"
 #include "LoggingFacility.h"
@@ -21,10 +18,10 @@ private:
 	std::fstream configFile;
 	Logger logger;
 
-	static void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);
+	void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);
 public:
 	ConfigurationManager(const Logger& _logger) : logger(_logger) {}
 	Config LoadConfig();
 	Config CreateConfig();
-	void SafeConfig(Config& _config);
+	void SaveConfig(Config& _config);
 };

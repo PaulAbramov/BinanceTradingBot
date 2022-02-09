@@ -1,21 +1,13 @@
 #pragma once
 
-
-#include "boost/beast/core.hpp"
-#include "boost/beast/ssl.hpp"
-#include "boost/beast/websocket.hpp"
-#include "boost/beast/websocket/ssl.hpp"
-
-#include "boost/asio/connect.hpp"
-#include "boost/asio/ip/tcp.hpp"
-#include "boost/asio/ssl/stream.hpp"
-#include "root_certificates.h"
-#include "LoggingFacility.h"
-
-#include <cstdlib>
-#include <iostream>
 #include <sstream>
 #include <string>
+
+#include <boost/beast/core.hpp>
+#include <boost/beast/ssl.hpp>
+#include <boost/beast/websocket.hpp>
+
+#include "LoggingFacility.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>

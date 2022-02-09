@@ -6,23 +6,24 @@
 class MarketDataEndpoints : public APIHead
 {
 private:
-	boost::unordered_map<EIntervals, const char*> eIntervalsToString{
-		boost::assign::map_list_of
-	(EIntervals::ONEMINUTE, "1m")
-	(EIntervals::THREEMINUTES, "3m")
-	(EIntervals::FIVEMINUTES, "5m")
-	(EIntervals::FIFTEENMINUTES, "15m")
-	(EIntervals::THIRTYMINUTES, "30m")
-	(EIntervals::ONEHOUR, "1h")
-	(EIntervals::TWOHOURS, "2h")
-	(EIntervals::FOURHOURS, "4h")
-	(EIntervals::SIXHOURS, "6h")
-	(EIntervals::EIGHTHOURS, "8h")
-	(EIntervals::TWELVEHOURS, "12h")
-	(EIntervals::ONEDAY, "1d")
-	(EIntervals::THREEDAYS, "3d")
-	(EIntervals::ONEWEEK, "1w")
-	(EIntervals::ONEMONTH, "1M") };
+	std::map<EIntervals, const char*> eIntervalsToString
+	{
+		{ EIntervals::ONEMINUTE, "1m" },
+		{ EIntervals::THREEMINUTES, "3m" },
+		{ EIntervals::FIVEMINUTES, "5m" },
+		{ EIntervals::FIFTEENMINUTES, "15m" },
+		{ EIntervals::THIRTYMINUTES, "30m" },
+		{ EIntervals::ONEHOUR, "1h" },
+		{ EIntervals::TWOHOURS, "2h" },
+		{ EIntervals::FOURHOURS, "4h" },
+		{ EIntervals::SIXHOURS, "6h" },
+		{ EIntervals::EIGHTHOURS, "8h" },
+		{ EIntervals::TWELVEHOURS, "12h" },
+		{ EIntervals::ONEDAY, "1d" },
+		{ EIntervals::THREEDAYS, "3d" },
+		{ EIntervals::ONEWEEK, "1w" },
+		{ EIntervals::ONEMONTH, "1M" }
+	};
 
 public:
 	MarketDataEndpoints() = default;

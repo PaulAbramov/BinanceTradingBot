@@ -6,36 +6,40 @@
 class SpotAccountEndpoints : public APIHead
 {
 private:
-	boost::unordered_map<ESide, const char*> eSidesToString{
-		boost::assign::map_list_of
-	(ESide::NONE, "NONE")
-	(ESide::BUY, "BUY")
-	(ESide::SELL, "SELL") };
+	std::map<ESide, const char*> eSidesToString
+	{
+		{ ESide::NONE, "NONE" },
+		{ ESide::BUY, "BUY" },
+		{ ESide::SELL, "SELL" }
+	};
 
-	boost::unordered_map<EOrderType, const char*> eOrderTypeToString{
-		boost::assign::map_list_of
-	(EOrderType::NONE, "NONE")
-	(EOrderType::LIMIT, "LIMIT")
-	(EOrderType::MARKET, "MARKET")
-	(EOrderType::STOPLOSS, "STOP_LOSS")
-	(EOrderType::STOPLOSSLIMIT, "STOP_LOSS_LIMIT")
-	(EOrderType::TAKEPROFIT, "TAKE_PROFIT")
-	(EOrderType::TAKEPROFITLIMIT, "TAKE_PROFIT_LIMIT")
-	(EOrderType::LIMITMAKER, "LIMIT_MAKER") };
+	std::map<EOrderType, const char*> eOrderTypeToString
+	{
+		{ EOrderType::NONE, "NONE" },
+		{ EOrderType::LIMIT, "LIMIT" },
+		{ EOrderType::MARKET, "MARKET" },
+		{ EOrderType::STOPLOSS, "STOP_LOSS" },
+		{ EOrderType::STOPLOSSLIMIT, "STOP_LOSS_LIMIT" },
+		{ EOrderType::TAKEPROFIT, "TAKE_PROFIT" },
+		{ EOrderType::TAKEPROFITLIMIT, "TAKE_PROFIT_LIMIT" },
+		{ EOrderType::LIMITMAKER, "LIMIT_MAKER" }
+	};
 
-	boost::unordered_map<ENewOrderResponseType, const char*> eNewOrderResponseTypeToString{
-		boost::assign::map_list_of
-	(ENewOrderResponseType::ACK, "ACK")
-	(ENewOrderResponseType::NONE, "NONE")
-	(ENewOrderResponseType::RESULT, "RESULT")
-	(ENewOrderResponseType::FULL, "FULL") };
+	std::map<ENewOrderResponseType, const char*> eNewOrderResponseTypeToString
+	{
+		{ ENewOrderResponseType::ACK, "ACK" },
+		{ ENewOrderResponseType::NONE, "NONE" },
+		{ ENewOrderResponseType::RESULT, "RESULT" },
+		{ ENewOrderResponseType::FULL, "FULL" }
+	};
 
-	boost::unordered_map<ETimeInForce, const char*> eTimeInForceToString{
-		boost::assign::map_list_of
-	(ETimeInForce::NONE, "NONE")
-	(ETimeInForce::GTC, "GTC")
-	(ETimeInForce::IOC, "IOC")
-	(ETimeInForce::FOK, "FOK") };
+	std::map<ETimeInForce, const char*> eTimeInForceToString
+	{
+		{ ETimeInForce::NONE, "NONE" },
+		{ ETimeInForce::GTC, "GTC" },
+		{ ETimeInForce::IOC, "IOC" },
+		{ ETimeInForce::FOK, "FOK" }
+	};
 
 public:
 	SpotAccountEndpoints() = default;

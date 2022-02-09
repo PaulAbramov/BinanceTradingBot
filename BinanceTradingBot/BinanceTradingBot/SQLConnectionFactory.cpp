@@ -1,5 +1,7 @@
 #include "SQLConnectionFactory.h"
 
+#include <iostream>
+
 using namespace std;
 
 SqlConnectionFactory::SqlConnectionFactory(const string& _server, const string& _username, const string& _password)
@@ -9,13 +11,21 @@ SqlConnectionFactory::SqlConnectionFactory(const string& _server, const string& 
 	password = _password;
 }
 
-shared_ptr<SAConnection> SqlConnectionFactory::Create()
+shared_ptr<SAConnection> SqlConnectionFactory::Create(eSAClient _client)
 {
 	// Create the connection
 	const shared_ptr<SAConnection> connection(new SAConnection());
 
-	// Connect
-	connection->Connect(_TSA(server.c_str()), _TSA(username.c_str()), _TSA(password.c_str()), SA_SQLServer_Client);
-
-	return std::static_pointer_cast<SAConnection>(connection);
+	try
+	{
+		// Connect
+		connection->Connect(_TSA(server.c_str()), _TSA(username.c_str()), _TSA(password.c_str()), _client);
+	}
+	catch (SAException& exception)
+	{
+		cout << "connection exception." << endl;
+		cout << exception.ErrText().GetMultiByteChars() << endl;
+	}
+	
+	return static_pointer_cast<SAConnection>(connection);
 }

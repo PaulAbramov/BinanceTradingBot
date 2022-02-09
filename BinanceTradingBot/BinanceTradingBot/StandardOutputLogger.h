@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "LoggingFacility.h"
-#include "easylogging++.h"
 
 class StandardOutputLogger final : public LoggingFacility 
 {

@@ -1,7 +1,5 @@
 #include "WebSocketCollection.h"
 
-#include <utility>
-
 using namespace std;
 
 WebSocketCollection::WebSocketCollection(net::io_context& _ioc, char const* _host, char const* _port, const Logger& _logger)

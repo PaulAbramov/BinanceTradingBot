@@ -2,10 +2,29 @@
 
 using namespace std;
 
-SQLManager::SQLManager(const Logger& _logger, int _symbolAmount) : logger(_logger)
+SQLManager::SQLManager(const Logger& _logger, int _symbolAmount, const Config& _config) : logger(_logger)
 {
-	const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory("localhost@Binance;MARS Connection=True;", "", ""));
-	pool = std::make_shared<ConnectionPool<SAConnection>>(_symbolAmount * 2, connectionFactory); // double the size of the symbols, for trading and updating the Db
+	//const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory("localhost@Binance;MARS Connection=True;", "", ""));
+	const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory(_config.SqlServer, _config.SqlUserName, _config.SqlPassword));
+
+	char dllPath[] = "SuppressMessageBox.dll";
+
+	//Load the dll file
+	HMODULE hModule = LoadLibraryA((LPCSTR)dllPath);
+
+	//If hModule is null, then the dll wasn't loaded.
+	//An error message will be printed out to the console.
+	if (!hModule) {
+		cout << "Couldn't load the DLL file!" << endl;
+
+		return;
+	}
+
+	// there is a popup box here, but we suppress it
+	pool = std::make_shared<ConnectionPool<SAConnection>>(_symbolAmount * 2, connectionFactory, SA_MySQL_Client); // double the size of the symbols, for trading and updating the Db
+
+	//remove the .dll, we dont need it anymore
+	FreeLibrary(hModule);
 }
 
 bool SQLManager::AddAssetToDb(const string& _answer) const

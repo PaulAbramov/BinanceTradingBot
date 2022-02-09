@@ -1,13 +1,10 @@
 #pragma once
 
-#include <chrono>
-#include <boost/assign/list_of.hpp>
-#include <boost/unordered_map.hpp>
-#include <utility>
+#include <map>
+#include <string>
 
-#include "magic_enum.hpp"
 #include "LoggingFacility.h"
-#include "root_certificates.h"
+//#include "root_certificates.h"
 
 class APIHead
 {
