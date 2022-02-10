@@ -173,6 +173,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\x64-windows-static\lib</AdditionalLibraryDirectories>
       <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)libmysql.dll" "$(OutDir)" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(SolutionDir)Dependencies\x64-windows-static\include\easylogging++.cc" />
@@ -197,10 +200,6 @@
     <ClCompile Include="WebSocketSession.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="libmariadb.dll" />
-    <None Include="libmysql.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
     <None Include="Logger.conf">
       <DeploymentContent>true</DeploymentContent>
     </None>

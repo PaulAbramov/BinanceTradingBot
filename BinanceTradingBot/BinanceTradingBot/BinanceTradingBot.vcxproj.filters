@@ -107,12 +107,6 @@
     <None Include="Logger.conf">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="libmysql.dll">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="libmariadb.dll">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WebSocketSession.h">
