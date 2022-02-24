@@ -40,6 +40,12 @@
     <Filter Include="Header Files\Connections\Models">
       <UniqueIdentifier>{934e46a7-e88d-494f-be11-e7eef89348c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\API\Endpoints\Models">
+      <UniqueIdentifier>{914961ac-287f-4e8f-8b97-9a896984b9c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logging">
+      <UniqueIdentifier>{35acc5e2-e2e6-4a03-8ee9-1fe7d9254fc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinanceTradingBot.cpp">
@@ -49,12 +55,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConfigurationManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ApiRequestManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Logger\easylogging++.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BinanceSwapEndpoints.cpp">
@@ -96,23 +96,31 @@
     <ClCompile Include="Bot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SQLManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MiningEndpoints.cpp">
       <Filter>Source Files\API\Endpoints</Filter>
     </ClCompile>
+    <ClCompile Include="$(SolutionDir)Dependencies\x64-windows-static\include\easylogging++.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ApiManager.cpp">
+      <Filter>Source Files\API</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLManager.cpp">
+      <Filter>Source Files\Connections</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLogger.cpp">
+      <Filter>Source Files\Logging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Logger.conf">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="root_certificates.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WebSocketSession.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -120,9 +128,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ApiRequestManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LoggingFacility.h">
@@ -167,9 +172,6 @@
     <ClInclude Include="WalletEndpoints.h">
       <Filter>Header Files\API\Endpoints</Filter>
     </ClInclude>
-    <ClInclude Include="APIHead.h">
-      <Filter>Header Files\API</Filter>
-    </ClInclude>
     <ClInclude Include="APIEnums.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
@@ -197,7 +199,19 @@
     <ClInclude Include="Trade.h">
       <Filter>Header Files\Connections\Models</Filter>
     </ClInclude>
+    <ClInclude Include="ApiManager.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
     <ClInclude Include="SQLManager.h">
+      <Filter>Header Files\Connections</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolExchangeInfo.h">
+      <Filter>Header Files\API\Endpoints\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

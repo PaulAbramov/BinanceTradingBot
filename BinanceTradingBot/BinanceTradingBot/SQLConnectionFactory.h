@@ -1,20 +1,19 @@
 #pragma once
+
 #include <string>
 
 #include "ConnectionFactory.h"
 
-using namespace std;
-
 class SqlConnectionFactory final : public ConnectionFactory
 {
 private:
-	string server;
-	string username;
-	string password;
+	std::string server;
+	std::string username;
+	std::string password;
 
 public:
-	SqlConnectionFactory(const string& _server, const string& _username, const string& _password);
+	SqlConnectionFactory(const std::string& _server, const std::string& _username, const std::string& _password);
 
 	// Any exceptions thrown here should be caught elsewhere
-	shared_ptr<SAConnection> Create() override;
+	std::shared_ptr<SAConnection> Create(eSAClient _client) override;
 };

@@ -24,6 +24,8 @@
     <ProjectGuid>{a7ffff86-c14c-4ef7-a03c-69e699b047dc}</ProjectGuid>
     <RootNamespace>BinanceTradingBot</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-static</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)'=='Win32'">x86-windows-static</VcpkgTriplet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -80,7 +82,7 @@
     <IncludePath>C:\Program Files\OpenSSL\include;C:\Programmierung\Boost\boost_1_76_0;C:\Programmierung\Beast\beast-master\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -89,7 +91,7 @@
     <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -97,13 +99,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\OpenSSL\include;C:\Programmierung\Boost\boost_1_76_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\x64-windows-static\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalOptions>/bigobj /D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\OpenSSL\lib;C:\Programmierung\Boost\boost_1_76_0\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\x64-windows-static\debug\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl.lib;libcrypto.lib;libcurl-d.lib;wastorage.lib;cpprest_2_10d.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;zlibd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -114,30 +118,43 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\x64-windows-static\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalOptions>/bigobj /D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl.lib;libcrypto.lib;libcurl.lib;wastorage.lib;cpprest_2_10.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;zlib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\x64-windows-static\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_WIN32_WINNT=0x0A00;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\SQLAPI\include;$(SolutionDir)Dependencies\magic_enum-master\include;$(SolutionDir)Dependencies\Logger;$(SolutionDir)Dependencies\curl-7.79.1\x64 debug\include;$(SolutionDir)Dependencies\Beast\beast-master\include;C:\Programmierung\Boost\boost_1_76_0;C:\Program Files\OpenSSL\OpenSSL-Win64\include;$(SolutionDir)Dependencies\NLohmannJson;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\x64-windows-static\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalOptions>/bigobj /D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\SQLAPI\vs2019\x86_64\lib;C:\Programmierung\Boost\boost_1_76_0\stage\lib;C:\Program Files\OpenSSL\OpenSSL-Win64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl.lib;libcrypto.lib;C:\Programmierung\curl-7.79.1\x64 debug\lib\libcurl_a_debug.lib;sqlapid.lib;sqlapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\x64-windows-static\debug\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlibd.lib;Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl_static.lib;libcrypto_static.lib;libcurl-d.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;User32.lib;sqlapisd.lib;version.lib;oleaut32.lib;ole32.lib</AdditionalDependencies>
+      <ShowProgress>NotSet</ShowProgress>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)libmysql.dll" "$(OutDir)" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,27 +162,40 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_WIN32_WINNT=0x0A00;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Programmierung\curl-7.79.1\x64 release\include;C:\Programmierung\Beast\beast-master\include;C:\Programmierung\Boost\boost_1_76_0;C:\Program Files\OpenSSL\OpenSSL-Win64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\x64-windows-static\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalOptions>/bigobj /D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</AdditionalOptions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>framework.h</PrecompiledHeaderFile>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libssl.lib;libcrypto.lib;C:\Programmierung\curl-7.79.1\x64 release\lib\libcurl_a.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>User32.lib;Crypt32.lib;libssl.lib;libcrypto.lib;libcurl.lib;sqlapis.lib;version.lib;oleaut32.lib;ole32.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;Normaliz.lib;Ws2_32.lib;Wldap32.lib;advapi32.lib;libmariadb.lib;mysqlclient.lib;zlib.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\x64-windows-static\lib</AdditionalLibraryDirectories>
+      <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)libmysql.dll" "$(OutDir)" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Logger\easylogging++.cc" />
-    <ClCompile Include="ApiRequestManager.cpp" />
+    <ClCompile Include="$(SolutionDir)Dependencies\x64-windows-static\include\easylogging++.cc" />
+    <ClCompile Include="ApiManager.cpp" />
     <ClCompile Include="BinanceSwapEndpoints.cpp" />
     <ClCompile Include="BinanceTradingBot.cpp" />
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="ConfigurationManager.cpp" />
     <ClCompile Include="FiatEndpoints.cpp" />
+    <ClCompile Include="FileLogger.cpp" />
     <ClCompile Include="FuturesEndpoints.cpp" />
+    <ClCompile Include="JsonHelper.cpp" />
     <ClCompile Include="MarginAccountEndpoints.cpp" />
     <ClCompile Include="MarketDataEndpoints.cpp" />
     <ClCompile Include="MiningEndpoints.cpp" />
@@ -183,12 +213,12 @@
     <None Include="Logger.conf">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APIEnums.h" />
-    <ClInclude Include="APIHead.h" />
-    <ClInclude Include="ApiRequestManager.h" />
+    <ClInclude Include="ApiManager.h" />
+    <ClInclude Include="JsonHelper.h" />
+    <ClInclude Include="SymbolExchangeInfo.h" />
     <ClInclude Include="BinanceSwapEndpoints.h" />
     <ClInclude Include="Bot.h" />
     <ClInclude Include="Config.h" />
@@ -204,6 +234,7 @@
     <ClInclude Include="MarginAccountEndpoints.h" />
     <ClInclude Include="MarketDataEndpoints.h" />
     <ClInclude Include="MiningEndpoints.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SavingsEndpoints.h" />
     <ClInclude Include="SpotAccountEndpoints.h" />
     <ClInclude Include="SQLConnectionFactory.h" />
@@ -215,7 +246,6 @@
     <ClInclude Include="WalletEndpoints.h" />
     <ClInclude Include="WebSocketCollection.h" />
     <ClInclude Include="WebSocketSession.h" />
-    <ClInclude Include="root_certificates.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

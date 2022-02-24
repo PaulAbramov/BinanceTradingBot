@@ -27,26 +27,28 @@ protected:
 	std::deque<std::shared_ptr<T>> pool;
 	std::set<std::shared_ptr<T>> borrowed;
 	std::mutex ioMutex;
+	eSAClient saClient;
 
 public:
-	ConnectionPool(size_t _poolSize, const std::shared_ptr<ConnectionFactory>& _factory)
+	ConnectionPool(size_t _poolSize, const std::shared_ptr<ConnectionFactory>& _factory, eSAClient _client)
 	{
-		this->poolSize = _poolSize;
-		this->factory = _factory;
+		poolSize = _poolSize;
+		factory = _factory;
+		saClient = _client;
 
 		// Fill the pool
-		while (this->pool.size() < this->poolSize) 
+		while (pool.size() < poolSize) 
 		{
-			this->pool.push_back(this->factory->Create());
+			pool.push_back(factory->Create(_client));
 		}
 	}
 
 	ConnectionPoolStats GetStats()
 	{
-		std::lock_guard<std::mutex> lock(this->ioMutex);
+		std::lock_guard<std::mutex> lock(ioMutex);
 
 		// Get stats
-		const ConnectionPoolStats stats{ this->pool.size(), this->borrowed.size() };
+		const ConnectionPoolStats stats{ pool.size(), borrowed.size() };
 
 		return stats;
 	}
@@ -54,13 +56,13 @@ public:
 	std::shared_ptr<T> Borrow()
 	{
 		// Lock
-		std::lock_guard<std::mutex> lock(this->ioMutex);
+		std::lock_guard<std::mutex> lock(ioMutex);
 
 		// Check for a free connection
-		if (this->pool.size() == 0)
+		if (pool.size() == 0)
 		{
 			// Are there any crashed connections listed as "borrowed"?
-			for (auto it{ this->borrowed.begin() }; it != this->borrowed.end(); ++it)
+			for (auto it{ borrowed.begin() }; it != borrowed.end(); ++it)
 			{
 				const auto isAlive { (*it)->isAlive() };
 				const auto isConnected { (*it)->isConnected() };
@@ -71,10 +73,10 @@ public:
 					try
 					{
 						// If we are able to create a new connection, return it
-						std::cout << "Creating new connection to replace discarded connection";
-						std::shared_ptr<SAConnection> conn { this->factory->Create() };
-						this->borrowed.erase(it);
-						this->borrowed.insert(conn);
+						FileLogger::WriteInfoEntry("Creating new connection to replace discarded connection");
+						std::shared_ptr<SAConnection> conn { factory->Create(saClient) };
+						borrowed.erase(it);
+						borrowed.insert(conn);
 						return std::static_pointer_cast<T>(conn);
 					}
 					catch (std::exception& e) 
@@ -90,11 +92,11 @@ public:
 		}
 
 		// Take one off the front
-		std::shared_ptr<SAConnection>conn{ this->pool.front() };
-		this->pool.pop_front();
+		std::shared_ptr<SAConnection>conn{ pool.front() };
+		pool.pop_front();
 
 		// Add it to the borrowed list
-		this->borrowed.insert(conn);
+		borrowed.insert(conn);
 
 		return std::static_pointer_cast<T>(conn);
 	}
@@ -102,12 +104,12 @@ public:
 	void Unborrow(std::shared_ptr<T> _connection)
 	{
 		// Lock
-		std::lock_guard<std::mutex> lock(this->ioMutex);
+		std::lock_guard<std::mutex> lock(ioMutex);
 
 		// Push onto the pool
-		this->pool.push_back(std::static_pointer_cast<SAConnection>(_connection));
+		pool.push_back(std::static_pointer_cast<SAConnection>(_connection));
 
 		// Unborrow
-		this->borrowed.erase(_connection);
+		borrowed.erase(_connection);
 	}
 };

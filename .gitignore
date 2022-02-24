@@ -422,3 +422,6 @@ FodyWeavers.xsd
 
 # config file
 BinanceTradingBot/BinanceTradingBot/config.json
+
+# add libmysql.dll
+!**/**/libmysql.dll

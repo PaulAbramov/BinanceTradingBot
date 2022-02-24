@@ -1,14 +1,34 @@
 #pragma once
 
-#include <string>
-
-using namespace std;
-
 struct Config
 {
 public:
-	string taapi_secret;
-	string api_key;
-	string secret_key;
-	string gnuplot_path;
+	std::string TaapiSecret;
+	std::string ApiKey;
+	std::string SecretKey;
+	std::string GnuplotPath;
+
+	std::string SqlServer;
+	std::string SqlUserName;
+	std::string SqlPassword;
+
+	int MaxTrades;
+	double TakeProfit;
+	double FirstSafetyOrder;
+	double SecondSafetyOrder;
+	double ThirdSafetyOrder;
+	double FourthSafetyOrder;
+
+	double InitialBuy;
+	double FirstSafetyOrderAmount;
+	double SecondSafetyOrderAmount;
+	double ThirdSafetyOrderAmount;
+	double FourthSafetyOrderAmount;
+
+	double RsiBuy1DThreshold;
+	double RsiBuy1HThreshold;
+	double RsiBuy15MThreshold;
+	double RsiSell1DThreshold;
+	double RsiSell1HThreshold;
+	double RsiSell15MThreshold;
 };

@@ -1,5 +1,7 @@
 #include "WalletEndpoints.h"
 
+using namespace std;
+
 /*
 * All Coins' Information (USER_DATA)
 * 
@@ -162,17 +164,17 @@ void WalletEndpoints::PostWalletWithdrawQuery(string& _url, string& _queryString
 {
 	if (_coin.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'coin'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'coin'");
 		return;
 	}
 	if (_address.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'address'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'address'");
 		return;
 	}
 	if (_amount.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'amount'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'amount'");
 		return;
 	}
 
@@ -381,7 +383,7 @@ void WalletEndpoints::GetWalletDepositAddressQuery(string& _url, string& _queryS
 {
 	if (_coin.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'coin'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'coin'");
 		return;
 	}
 

@@ -4,15 +4,15 @@
 #include <memory>
 #include <string_view>
 
-using namespace std;
+#include "easylogging++.h"
 
 class LoggingFacility
 {
 public:
     virtual ~LoggingFacility() = default;
-    virtual void WriteInfoEntry(string_view _entry, const source_location& _where = source_location::current()) = 0;
-    virtual void WriteWarnEntry(string_view _entry, const source_location& _where = source_location::current()) = 0;
-    virtual void WriteErrorEntry(string_view _entry, const source_location& _where = source_location::current()) = 0;
+    virtual void WriteInfoEntry(std::string_view _entry, const std::source_location& _where = std::source_location::current()) = 0;
+    virtual void WriteWarnEntry(std::string_view _entry, const std::source_location& _where = std::source_location::current()) = 0;
+    virtual void WriteErrorEntry(std::string_view _entry, const std::source_location& _where = std::source_location::current()) = 0;
 };
 
-using Logger = shared_ptr<LoggingFacility>;
+using Logger = std::shared_ptr<LoggingFacility>;

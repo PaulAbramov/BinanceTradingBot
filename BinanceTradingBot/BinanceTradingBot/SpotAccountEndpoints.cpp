@@ -1,5 +1,7 @@
 #include "SpotAccountEndpoints.h"
 
+using namespace std;
+
 /*
 * New Order (TRADE)
 *
@@ -56,12 +58,12 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 	if (_side == ESide::NONE)
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'side'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'side'");
 		return;
 	}
 
@@ -72,110 +74,110 @@ void SpotAccountEndpoints::PostSpotAccountNewOrderQuery(string& _url, string& _q
 		using enum EOrderType;
 
 	case NONE:
-		logger->WriteWarnEntry("Did not set mandatory parameter 'orderType'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'orderType'");
 		return;
 		break;
 	case LIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
 			return;
 		}
 		if (_quantity.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
 		if (_price.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
 		break;
 	case MARKET:
 		if (_quantity.empty() && _quoteOrderQuantity.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' or 'quoteOrderQuantity' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity' or 'quoteOrderQuantity' with " + orderType);
 			return;
 		}
 		break;
 	case STOPLOSS:
 		if (_quantity.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
 		if (_stopPrice.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
 		break;
 	case STOPLOSSLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
 			return;
 		}
 		if (_quantity.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
 		if (_price.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
 		if (_stopPrice.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
 		break;
 	case TAKEPROFIT:
 		if (_quantity.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
 		if (_stopPrice.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
 		break;
 	case TAKEPROFITLIMIT:
 		if (_timeInForce == ETimeInForce::NONE)
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'timeInForce' with " + orderType);
 			return;
 		}
 		if (_quantity.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
 		if (_price.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
 		if (_stopPrice.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'stopPrice' with " + orderType);
 			return;
 		}
 		break;
 	case LIMITMAKER:
 		if (_quantity.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity' with " + orderType);
 			return;
 		}
 		if (_price.empty())
 		{
-			logger->WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
+			FileLogger::WriteWarnEntry("Did not set mandatory parameter 'price' with " + orderType);
 			return;
 		}
 		break;
@@ -304,12 +306,12 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOrderQuery(string& _url, strin
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 	if (_orderId == 0 && _originalClientOrderId.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'orderId' or 'originalClientOrderId'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'orderId' or 'originalClientOrderId'");
 		return;
 	}
 
@@ -367,7 +369,7 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelAllOpenOrdersOnSymbolQuery(str
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -408,12 +410,12 @@ void SpotAccountEndpoints::GetSpotAccountQueryOrderQuery(string& _url, string& _
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 	if (_orderId == 0 && _originalClientOrderId.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'orderId' or 'originalClientOrderId'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'orderId' or 'originalClientOrderId'");
 		return;
 	}
 
@@ -505,12 +507,12 @@ void SpotAccountEndpoints::GetSpotAccountAllOrdersQuery(string& _url, string& _q
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 	if (_startTime == 0 && _endTime == 0 && _orderId == 0)
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'starttime'/'endtime'/'orderId'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'starttime'/'endtime'/'orderId'");
 		return;
 	}
 
@@ -590,32 +592,32 @@ void SpotAccountEndpoints::PostSpotAccountNewOcoOrderQuery(string& _url, string&
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 	if (_side == ESide::NONE)
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'side'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'side'");
 		return;
 	}
 	if (_quantity.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'quantity'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'quantity'");
 		return;
 	}
 	if (_price.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'price'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'price'");
 		return;
 	}
 	if (_stopPrice.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'stopPrice'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'stopPrice'");
 		return;
 	}
 	if (!_stopLimitPrice.empty() && _stopLimitTimeInForce == ETimeInForce::NONE)
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'stopLimitTimeInForce' with 'stopLimitPrice'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'stopLimitTimeInForce' with 'stopLimitPrice'");
 		return;
 	}
 
@@ -729,12 +731,12 @@ void SpotAccountEndpoints::DeleteSpotAccountCancelOcoQuery(string& _url, string&
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 	if (_orderListId == 0 && _listClientOrderId.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter '_orderListId' or 'listClientOrderId'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter '_orderListId' or 'listClientOrderId'");
 		return;
 	}
 
@@ -792,7 +794,7 @@ void SpotAccountEndpoints::GetSpotAccountQueryOcoQuery(string& _url, string& _qu
 {
 	if (_orderListId == 0 && _originalClientOrderId.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'orderListId' or 'originalClientOrderId'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'orderListId' or 'originalClientOrderId'");
 		return;
 	}
 
@@ -841,7 +843,7 @@ void SpotAccountEndpoints::GetSpotAccountQueryAllOcoQuery(string& _url, string& 
 {
 	if (_fromId > 0 && (_startTime > 0 ||_endTime > 0))
 	{
-		logger->WriteWarnEntry("Did set too much parameters 'fromId' and 'startTime' or 'startTime'");
+		FileLogger::WriteWarnEntry("Did set too much parameters 'fromId' and 'startTime' or 'startTime'");
 		return;
 	}
 
@@ -952,7 +954,7 @@ void SpotAccountEndpoints::GetSpotAccountTradeListQuery(string& _url, string& _q
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 

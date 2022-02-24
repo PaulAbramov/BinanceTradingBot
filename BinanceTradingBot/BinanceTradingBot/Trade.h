@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 
 struct Trade
 {
@@ -13,6 +12,8 @@ struct Trade
 	double Amount;
 	double StopLoss;
 	double TakeProfit;
+	double Commission;
+	std::string CommissionAsset;
 	double ExitPrice;
 	time_t ExitTime;
 	double Earnings;

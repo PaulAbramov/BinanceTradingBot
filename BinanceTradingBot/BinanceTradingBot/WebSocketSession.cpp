@@ -1,17 +1,17 @@
 #include "WebSocketSession.h"
 
+using namespace std;
+
 // Resolver and socket require an io_context
 WebSocketSession::WebSocketSession(net::io_context& _ioc,
 	string _host,
-	string _port,
-	const Logger& _logger)
+	string _port)
 	: ioContext(_ioc),
 	sslContext( ssl::context::tlsv12_client ),
 	tcpResolver(ioContext),
 	ws(ioContext, sslContext),
 	host(std::move(_host)),
-	port(std::move(_port)),
-	logger(_logger)
+	port(std::move(_port))
 {
 }
 
@@ -25,7 +25,7 @@ void WebSocketSession::StartWebSocketSession(string _target, std::function<bool(
 		{
 			if (!terminate)
 			{
-				logger->WriteErrorEntry(_errorcode.message());
+				FileLogger::WriteErrorEntry(_errorcode.message());
 			}
 		}
 		else
@@ -65,7 +65,7 @@ void WebSocketSession::ConnectWebSocketSession(string _target, const boost::asio
 	{
 		const auto errorCode{ boost::beast::error_code(static_cast<int>(::ERR_get_error()), boost::asio::error::get_ssl_category()) };
 
-		logger->WriteErrorEntry(errorCode.message());
+		FileLogger::WriteErrorEntry(errorCode.message());
 
 		return;
 	}
@@ -80,7 +80,7 @@ void WebSocketSession::ConnectWebSocketSession(string _target, const boost::asio
 		{
 			if (!terminate)
 			{
-				logger->WriteErrorEntry(_errorCode.message());
+				FileLogger::WriteErrorEntry(_errorCode.message());
 			}
 		}
 		else 
@@ -96,7 +96,6 @@ void WebSocketSession::OnConnectedWebSocketSession(string _target, std::function
 		[this]
 	(boost::beast::websocket::frame_type _kind, boost::beast::string_view _payload) mutable {
 			(void)_kind; (void)_payload;
-			//std::cout << "control_callback(" << this << "): kind=" << static_cast<int>(kind) << ", payload=" << payload.data() << std::endl;
 			ws.async_pong(
 				boost::beast::websocket::ping_data{}
 				, [](boost::beast::error_code _errorCode)
@@ -115,7 +114,7 @@ void WebSocketSession::OnConnectedWebSocketSession(string _target, std::function
 			{
 				if (!terminate)
 				{
-					logger->WriteErrorEntry(_errorCode.message());
+					FileLogger::WriteErrorEntry(_errorCode.message());
 				}
 			}
 			else {
@@ -141,7 +140,7 @@ void WebSocketSession::StartReadWebSocketSession(boost::system::error_code _erro
 	{
 		if (!terminate) 
 		{
-			logger->WriteErrorEntry(_errorCode.message());
+			FileLogger::WriteErrorEntry(_errorCode.message());
 		}
 
 		StopWebSocketSession();
@@ -164,7 +163,7 @@ void WebSocketSession::OnReadWebSocketSession(boost::system::error_code _errorCo
 	{
 		if (!terminate)
 		{
-			logger->WriteErrorEntry(_errorCode.message());
+			FileLogger::WriteErrorEntry(_errorCode.message());
 		}
 
 		StopWebSocketSession();
