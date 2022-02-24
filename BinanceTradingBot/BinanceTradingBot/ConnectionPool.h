@@ -73,7 +73,7 @@ public:
 					try
 					{
 						// If we are able to create a new connection, return it
-						std::cout << "Creating new connection to replace discarded connection";
+						FileLogger::WriteInfoEntry("Creating new connection to replace discarded connection");
 						std::shared_ptr<SAConnection> conn { factory->Create(saClient) };
 						borrowed.erase(it);
 						borrowed.insert(conn);

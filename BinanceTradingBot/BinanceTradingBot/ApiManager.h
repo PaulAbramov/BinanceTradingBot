@@ -19,21 +19,20 @@ constexpr auto BINANCE_PORT = "9443";
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
 
-#include "LoggingFacility.h"
 #include "WalletEndpoints.h"
 #include "SpotAccountEndpoints.h"
 #include "MarketDataEndpoints.h"
+#include "JsonHelper.h"
 
 class ApiManager
 {
 private:
-	Logger logger;
 	std::string apiKey;
 	std::string secretKey;
 
-	MarketDataEndpoints marketDataEndpoints;
-	WalletEndpoints walletEndpoints;
-	SpotAccountEndpoints spotAccountEndpoints;
+	MarketDataEndpoints marketDataEndpoints{};
+	WalletEndpoints walletEndpoints{};
+	SpotAccountEndpoints spotAccountEndpoints{};
 
 	void SetSecretAndApiKeyInUrl(std::string& _url, std::vector<std::string>& _extraHttpHeader, std::string _querystring) const;
 	void SetSecretAndApiKeyInPostData(std::vector<std::string>& _extraHttpHeader, std::string& _postData) const;
@@ -46,13 +45,14 @@ private:
 	void PerformCurl(CURL* _curl) const;
 
 public:
-	ApiManager(const Logger& _logger, std::string _apiKey, std::string _secretKey);
-	void CleanUpApiManager() const;
+	ApiManager(std::string _apiKey, std::string _secretKey);
+	~ApiManager();
 
 	void CurlAPI(std::string& _url, std::string& _stringResult, bool _getServerTime = true) const;
 
 #pragma region MarketData
 	std::string GetMarketDataTime() const;
+	std::string GetMarketExchangeInformation(std::vector<std::string>& _symbols) const;
 	std::string GetMarketDataCandlestick(const std::string& _symbol, EIntervals _interval, time_t _startTime, time_t _endTime, int _limit = 500) const;
 	std::string GetMarketDataSymbolPriceTicker(const std::string& _symbol) const;
 #pragma endregion

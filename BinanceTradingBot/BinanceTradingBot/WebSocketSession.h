@@ -7,7 +7,7 @@
 #include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
 
-#include "LoggingFacility.h"
+#include "FileLogger.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -29,8 +29,6 @@ private:
 	std::string port;
 	tcp::endpoint tcpEndPoint;
 	bool terminate;
-	Logger logger;
-	std::ostringstream oss;
 
 	using holder_type = std::shared_ptr<void>;
 
@@ -43,8 +41,7 @@ private:
 public:
 	explicit WebSocketSession(net::io_context& _ioc,
 		std::string _host,
-		std::string _port,
-		const Logger& _logger);
+		std::string _port);
 
 	void StopWebSocketSession();
 	void AsyncStopWebSocketSession(holder_type _holder);

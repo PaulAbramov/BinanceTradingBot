@@ -31,7 +31,6 @@ private:
 	net::io_context& ioContext;
 	std::string host;
 	char const* port;
-	Logger logger;
 	std::map<handle, std::weak_ptr<WebSocketSession>> map;
 
 	handle StartChannel(const std::vector<std::string>& _symbols, const std::string& _type, const std::function<bool(const std::string&)>& _callbackFunction);
@@ -43,8 +42,7 @@ private:
 public:
 	explicit WebSocketCollection(net::io_context& _ioc,
 		char const* _host,
-		char const* _port,
-		const Logger& _logger);
+		char const* _port);
 
 	void UnsubscribeChannel(handle _websocketHandle);
 	void UnsubscribeAllChannels();

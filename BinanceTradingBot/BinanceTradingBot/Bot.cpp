@@ -4,9 +4,8 @@
 
 using namespace std;
 
-Bot::Bot(const Logger& _logger, const Config& _config) : manager(_logger, _config.ApiKey, _config.SecretKey), sqlManager(_logger, symbols.size(), _config)
+Bot::Bot(const Config& _config) : manager(_config.ApiKey, _config.SecretKey), sqlManager(symbols.size(), _config)
 {
-	logger = _logger;
 	config = _config;
 
 	maxOrderValue = config.InitialBuy + config.FirstSafetyOrderAmount + config.SecondSafetyOrderAmount + config.ThirdSafetyOrderAmount + config.FourthSafetyOrderAmount;
@@ -24,11 +23,11 @@ bool Bot::Run()
 			});
 		t.detach();
 
-		std::thread t2([this, &ioc]()
-			{
-				ManualRun(&ioc);
-			});
-		t2.detach();
+		//std::thread t2([this, &ioc]()
+		//	{
+		//		ManualRun(&ioc);
+		//	});
+		//t2.detach();
 	});
 
 	while (true)
@@ -49,8 +48,6 @@ bool Bot::Run()
 		}
 	}
 
-	logger->WriteWarnEntry("Closing Program.");
-
 	return EXIT_SUCCESS;
 }
 
@@ -59,13 +56,62 @@ void Bot::DCARun(net::io_context *_ioc)
 	clock_t start{ clock() };
 	while (true)
 	{
-		// 15sekunden wegen api warten
+		// 15 seconds to wait bcs of the API
 		// Free:	 1 API request / 15 seconds
 		// Basic:	 5 API requests / 15 seconds
 		// Pro :	30 API requests / 15 seconds
 		// Expert : 75 API requests / 15 seconds
 		if (((static_cast<float>(clock()) - start) / CLOCKS_PER_SEC) > 5)
 		{
+			auto result = manager.GetMarketExchangeInformation(symbols);
+			auto jsonResult = JsonHelper::ParseStringToJson(result);
+			if(jsonResult.empty())
+			{
+				continue;
+			}
+
+			for(auto symbol : jsonResult["symbols"])
+			{
+				SymbolExchangeInfo info
+				{
+					symbol["symbol"]
+				};
+
+				for(auto filter : symbol["filters"])
+				{
+					if(filter["filterType"] == "PRICE_FILTER")
+					{
+						string PriceFilterMinPrice = filter["minPrice"];
+						string PriceFilterMaxPrice = filter["maxPrice"];
+						string PriceFilterTickSize = filter["tickSize"];
+
+						info.PriceFilterMinPrice = stod(PriceFilterMinPrice);
+						info.PriceFilterMaxPrice = stod(PriceFilterMaxPrice);
+						info.PriceFilterTickSize = stod(PriceFilterTickSize);
+
+						//ticksize might be 0.01
+						//log10 calculates back, which multiplier has to be used to get to 1
+						//in our example of ticksize 0.01, this will be the multiplier -2
+						//negate it to 2
+						info.PriceFilterTickSizeDecimalPosition = -log10(info.PriceFilterTickSize);
+					}
+					else if(filter["filterType"] == "LOT_SIZE")
+					{
+						string LotSizeMinQuantity = filter["minQty"];
+						string LotSizeMaxQuantity = filter["maxQty"];
+						string LotSizeStepSize = filter["stepSize"];
+
+						info.LotSizeMinQuantity = stod(LotSizeMinQuantity);
+						info.LotSizeMaxQuantity = stod(LotSizeMaxQuantity);
+						info.LotSizeStepSize = stod(LotSizeStepSize);
+
+						info.LotSizeStepSizeDecimalPosition = -log10(info.LotSizeStepSize);
+					}
+				}
+
+				symbolsInformations.push_back(info);
+			}
+
 			for(auto& symbol : symbols)
 			{
 				if (auto iterator{ runningTrades.find(symbol) }; iterator != runningTrades.end())
@@ -76,10 +122,7 @@ void Bot::DCARun(net::io_context *_ioc)
 					}
 					else
 					{
-						ss << "Trade with symbol " << symbol << " has been completed.";
-						logger->WriteInfoEntry(ss.str());
-						ss.str(std::string());
-						ss.clear();
+						FileLogger::WriteInfoEntry(std::format("Trade with symbol {} has been completed.", symbol));
 
 						runningTrades.erase(iterator);
 					}
@@ -100,10 +143,7 @@ void Bot::DCARun(net::io_context *_ioc)
 						}
 					}
 
-					ss << symbol << " has a open Trade or maxtrades is exceeding.";
-					logger->WriteWarnEntry(ss.str());
-					ss.str(std::string());
-					ss.clear();
+					FileLogger::WriteInfoEntry(std::format("{} has a open Trade or maxtrades is exceeding.", symbol));
 
 					continue;
 				}
@@ -118,42 +158,59 @@ void Bot::DCARun(net::io_context *_ioc)
 
 				for (auto& interval : intervals)
 				{
+					string symbolToCheck = symbol;
+					string currency = "BUSD";
+
+					size_t pos = symbolToCheck.find(currency);
+					if (pos != std::string::npos)
+					{
+						// If found then erase it from string
+						symbolToCheck.erase(pos, currency.length());
+						symbolToCheck += "/";
+						symbolToCheck += currency;
+					}
+
 					string result;
-					ss << "https://api.taapi.io/rsi?secret=" << config.TaapiSecret << "&exchange=binance&symbol=BNB/BUSD&interval=" << eIntervalsToString.at(interval);
-					string url{ ss.str() };
-					ss.str(std::string());
-					ss.clear();
+					string url{ std::format("https://api.taapi.io/rsi?secret={}&exchange=binance&symbol={}&interval={}", config.TaapiSecret, symbolToCheck, eIntervalsToString.at(interval))};
 
 					manager.CurlAPI(url, result);
 
-					auto jsonResult{ nlohmann::json::parse(result) };
+					auto jsonResult = JsonHelper::ParseStringToJson(result);
+					if (jsonResult.empty())
+					{
+						break;
+					}
+
 					if (!jsonResult["value"].is_number_float())
 					{
-						logger->WriteWarnEntry("did not get value");
+						FileLogger::WriteWarnEntry("did not get value");
+						FileLogger::WriteWarnEntry(result);
 						break;
 					}
 
 					auto rsiValue{ jsonResult["value"] };
 					rsiVector.push_back(rsiValue);
 
-					std::this_thread::sleep_for(chrono::milliseconds(2000));
+					std::this_thread::sleep_for(chrono::milliseconds(3000));
+				}
+
+				if (rsiVector.size() < 3)
+				{
+					continue;
 				}
 
 				if (rsiVector[0] < config.RsiBuy15MThreshold && rsiVector[1] < config.RsiBuy1HThreshold && rsiVector[2] < config.RsiBuy1DThreshold)
 				{
-					ss << "Buying condition met for " << symbol << ". Check for coin and order status.";
-					logger->WriteWarnEntry(ss.str());
-					ss.str(std::string());
-					ss.clear();
+					FileLogger::WriteWarnEntry(std::format("Buying condition met for {}. Check for coin and order status.", symbol));
 
 					runningTrades.insert(make_pair(symbol, std::async(std::launch::async, [this, &symbol]()
 					{
 #pragma region initialTrade
-						auto tradeResponse{ manager.PostSpotAccountNewOrder(symbol, ETimeInForce::NONE, "", to_string(config.InitialBuy), "", symbol + "initialTrade", "", "", ENewOrderResponseType::FULL, ESide::BUY, EOrderType::MARKET) };
-						auto trade{ CreateTradeObjectFromJsonToInsert(tradeResponse) };
+						const auto tradeResponse{ manager.PostSpotAccountNewOrder(symbol, ETimeInForce::NONE, "", to_string(config.InitialBuy), "", symbol + "initialTrade", "", "", ENewOrderResponseType::FULL, ESide::BUY, EOrderType::MARKET) };
+						const auto trade{ CreateTradeObjectFromJsonToInsert(tradeResponse) };
 						sqlManager.AddTradeToDb(trade);
 #pragma endregion
-						auto initialBuyPrice{ trade.EntryPrice };
+						const auto initialBuyPrice{ trade.EntryPrice };
 						const auto firstSafetyOrderPrice{ initialBuyPrice - initialBuyPrice * config.FirstSafetyOrder };
 						const auto secondSafetyOrderPrice{ firstSafetyOrderPrice - firstSafetyOrderPrice * config.SecondSafetyOrder };
 						const auto thirdSafetyOrderPrice{ secondSafetyOrderPrice - secondSafetyOrderPrice * config.ThirdSafetyOrder };
@@ -169,55 +226,55 @@ void Bot::DCARun(net::io_context *_ioc)
 							takeProfitOrderPrice = 10 / trade.Amount;
 						}
 
-						const auto firstSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.FirstSafetyOrderAmount / firstSafetyOrderPrice, 3) };
-						const auto secondSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.SecondSafetyOrderAmount / secondSafetyOrderPrice, 3) };
-						const auto thirdSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.ThirdSafetyOrderAmount / thirdSafetyOrderPrice, 3) };
-						const auto fourthSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.FourthSafetyOrderAmount / fourthSafetyOrderPrice, 3) };
-						const auto firstSafetyOrderPriceString{ RoundValueToDecimalValue(firstSafetyOrderPrice, 1) };
-						const auto secondSafetyOrderPriceString{ RoundValueToDecimalValue(secondSafetyOrderPrice, 1) };
-						const auto thirdSafetyOrderPriceString{ RoundValueToDecimalValue(thirdSafetyOrderPrice, 1) };
-						const auto fourthSafetyOrderPriceString{ RoundValueToDecimalValue(fourthSafetyOrderPrice, 1) };
-						const auto takeProfitOrderPriceString{ RoundValueToDecimalValue(takeProfitOrderPrice, 1) };
+						//auto iterator = ranges::find_if(symbolsInformations, [&symbol](SymbolExchangeInfo& _info) { return _info.Symbol == symbol; });
+						//if(iterator == symbolsInformations.end())
+						//{
+						//	return;
+						//}
+
+						//const auto firstSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.FirstSafetyOrderAmount / firstSafetyOrderPrice, iterator->LotSizeStepSizeDecimalPosition) };
+						//const auto secondSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.SecondSafetyOrderAmount / secondSafetyOrderPrice, iterator->LotSizeStepSizeDecimalPosition) };
+						//const auto thirdSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.ThirdSafetyOrderAmount / thirdSafetyOrderPrice, iterator->LotSizeStepSizeDecimalPosition) };
+						//const auto fourthSafetyOrderAmountInQuantity{ RoundValueToDecimalValue(config.FourthSafetyOrderAmount / fourthSafetyOrderPrice, iterator->LotSizeStepSizeDecimalPosition) };
+						//const auto firstSafetyOrderPriceString{ RoundValueToDecimalValue(firstSafetyOrderPrice, iterator->PriceFilterTickSizeDecimalPosition) };
+						//const auto secondSafetyOrderPriceString{ RoundValueToDecimalValue(secondSafetyOrderPrice, iterator->PriceFilterTickSizeDecimalPosition) };
+						//const auto thirdSafetyOrderPriceString{ RoundValueToDecimalValue(thirdSafetyOrderPrice, iterator->PriceFilterTickSizeDecimalPosition) };
+						//const auto fourthSafetyOrderPriceString{ RoundValueToDecimalValue(fourthSafetyOrderPrice, iterator->PriceFilterTickSizeDecimalPosition) };
+						//const auto takeProfitOrderPriceString{ RoundValueToDecimalValue(takeProfitOrderPrice, iterator->PriceFilterTickSizeDecimalPosition) };
 
 						//Takeprofit
-						if(!CreateTradeAndSafeInDb(symbol, to_string(trade.Amount), takeProfitOrderPriceString, symbol + "takeprofit", ESide::SELL, takeProfitOrderPrice))
+						if(!CreateTradeAndSafeInDb(symbol, trade.Amount, takeProfitOrderPrice, symbol + "takeprofit", ESide::SELL, takeProfitOrderPrice))
 						{
-							logger->WriteErrorEntry("placing takeprofittrade failed.");
+							FileLogger::WriteErrorEntry("placing takeprofittrade failed.");
 						}
 
 						//Safetytrades
-						if (!CreateTradeAndSafeInDb(symbol, firstSafetyOrderAmountInQuantity, firstSafetyOrderPriceString, symbol + "safetytrade1", ESide::BUY, takeProfitOrderPrice))
+						if (!CreateTradeAndSafeInDb(symbol, config.FirstSafetyOrderAmount / firstSafetyOrderPrice, firstSafetyOrderPrice, symbol + "safetytrade1", ESide::BUY, takeProfitOrderPrice))
 						{
-							logger->WriteErrorEntry("placing safetytrade1 failed.");
+							FileLogger::WriteErrorEntry("placing safetytrade1 failed.");
 						}
-						if (!CreateTradeAndSafeInDb(symbol, secondSafetyOrderAmountInQuantity, secondSafetyOrderPriceString, symbol + "safetytrade2", ESide::BUY, takeProfitOrderPrice))
+						if (!CreateTradeAndSafeInDb(symbol, config.SecondSafetyOrderAmount / secondSafetyOrderPrice, secondSafetyOrderPrice, symbol + "safetytrade2", ESide::BUY, takeProfitOrderPrice))
 						{
-							logger->WriteErrorEntry("placing safetytrade2 failed.");
+							FileLogger::WriteErrorEntry("placing safetytrade2 failed.");
 						}
-						if (!CreateTradeAndSafeInDb(symbol, thirdSafetyOrderAmountInQuantity, thirdSafetyOrderPriceString, symbol + "safetytrade3", ESide::BUY, takeProfitOrderPrice))
+						if (!CreateTradeAndSafeInDb(symbol, config.ThirdSafetyOrderAmount / thirdSafetyOrderPrice, thirdSafetyOrderPrice, symbol + "safetytrade3", ESide::BUY, takeProfitOrderPrice))
 						{
-							logger->WriteErrorEntry("placing safetytrade3 failed.");
+							FileLogger::WriteErrorEntry("placing safetytrade3 failed.");
 						}
-						if (!CreateTradeAndSafeInDb(symbol, fourthSafetyOrderAmountInQuantity, fourthSafetyOrderPriceString, symbol + "safetytrade4", ESide::BUY, takeProfitOrderPrice))
+						if (!CreateTradeAndSafeInDb(symbol, config.FourthSafetyOrderAmount / fourthSafetyOrderPrice, fourthSafetyOrderPrice, symbol + "safetytrade4", ESide::BUY, takeProfitOrderPrice))
 						{
-							logger->WriteErrorEntry("placing safetytrade4 failed.");
+							FileLogger::WriteErrorEntry("placing safetytrade4 failed.");
 						}
 
-						ss << "Placed initialtrade, takeprofit and the safetytrades for symbol: " << symbol << ".";
-						logger->WriteWarnEntry(ss.str());
-						ss.str(std::string());
-						ss.clear();
+						FileLogger::WriteWarnEntry(std::format("Placed initialtrade, takeprofit and the safetytrades for symbol: {}", symbol));
 
 						CheckTrades(symbol);
-				})));
-
+					})));
 				}
+
 				if(rsiVector[0] > config.RsiSell15MThreshold && rsiVector[1] > config.RsiSell1HThreshold && rsiVector[2] > config.RsiSell1DThreshold)
 				{
-					ss << "Selling condition met for " << symbol << ". Check for coin and order status.";
-					logger->WriteWarnEntry(ss.str());
-					ss.str(std::string());
-					ss.clear();
+					FileLogger::WriteWarnEntry(std::format("Selling condition met for {}. Check for coin and order status", symbol));
 					//check on trade or balance and change DB entry
 				}
 			}
@@ -240,7 +297,11 @@ void Bot::CheckTrades(const string& _symbol) const
 		// cancel not hit safetytrades and remove their db entries
 		// if it was not hit, then set the takeprofits for the safetytrades
 		auto result{ manager.GetSpotAccountQueryOrder(_symbol, 0, _symbol + "takeprofit") };
-		auto jsonResult{ nlohmann::json::parse(result) };
+		auto jsonResult = JsonHelper::ParseStringToJson(result);
+		if (jsonResult.empty())
+		{
+			continue;
+		}
 
 		vector<string> safetyTradesToDelete;
 
@@ -266,6 +327,7 @@ void Bot::CheckTrades(const string& _symbol) const
 			}
 
 			// if it was hit, then update initialtrade and the safetytrades
+			//TODO check WinLoss regarding Commission
 			for (auto activeTrade : sqlManager.GetActiveTradesFromDb(_symbol))
 			{
 				activeTrade.ExitPrice = activeTrade.TakeProfit;
@@ -276,13 +338,12 @@ void Bot::CheckTrades(const string& _symbol) const
 				sqlManager.UpdateTradeInDb(activeTrade);
 			}
 
+			//TODO is it wished here? 
 			break;
 		}
 
 		std::this_thread::sleep_for(chrono::milliseconds(10000));
 	}
-
-	logger->WriteInfoEntry("Done.");
 }
 
 void Bot::ManualRun(net::io_context *_ioc)
@@ -290,26 +351,26 @@ void Bot::ManualRun(net::io_context *_ioc)
 	
 	vector<void*> handles;
 
-	WebSocketCollection websocketCollection{ *_ioc, BINANCE_HOST, BINANCE_PORT, logger };
+	WebSocketCollection websocketCollection{ *_ioc, BINANCE_HOST, BINANCE_PORT };
 
 	auto fifteenMinuteCandlestickHandle{ websocketCollection.KlineCandleStick(symbols, EIntervals::FIFTEENMINUTES,
 		[this](auto _answer)
 		{
-			logger->WriteInfoEntry(_answer);
+			FileLogger::WriteInfoEntry(_answer);
 			return sqlManager.AddAssetToDb(_answer);
 		}) };
 
 	auto oneHourCandlestickHandle{ websocketCollection.KlineCandleStick(symbols, EIntervals::ONEHOUR,
 		[this](auto _answer)
 		{
-			logger->WriteInfoEntry(_answer);
+			FileLogger::WriteInfoEntry(_answer);
 			return sqlManager.AddAssetToDb(_answer);
 		}) };
 
 	auto oneDayCandlestickHandle{ websocketCollection.KlineCandleStick(symbols, EIntervals::ONEDAY,
 		[this](auto _answer)
 		{
-			logger->WriteInfoEntry(_answer);
+			FileLogger::WriteInfoEntry(_answer);
 			return sqlManager.AddAssetToDb(_answer);
 		}) };
 
@@ -338,7 +399,7 @@ void Bot::ManualRun(net::io_context *_ioc)
 					{
 						auto test{ manager.GetSpotAccountCurrentOrderCountUsage() };
 
-						logger->WriteInfoEntry(test);
+						FileLogger::WriteInfoEntry(test);
 						start = clock();
 					});
 			}
@@ -352,9 +413,13 @@ void Bot::ManualRun(net::io_context *_ioc)
 
 double Bot::GetBalanceForCoin(const string& _symbol) const
 {
-	string accInfo{ manager.GetSpotAccountInformation() };
+	const string accInfo{ manager.GetSpotAccountInformation() };
+	auto jsonResultAccInfo = JsonHelper::ParseStringToJson(accInfo);
+	if (jsonResultAccInfo.empty())
+	{
+		return 0;
+	}
 
-	auto jsonResultAccInfo{ nlohmann::json::parse(accInfo) };
 	auto balances{ jsonResultAccInfo["balances"] };
 
 	for (auto& balance : balances)
@@ -381,10 +446,25 @@ string Bot::RoundValueToDecimalValue(const double& _valueToRound, const int _dec
 	return ss.str();
 }
 
-bool Bot::CreateTradeAndSafeInDb(const string& _symbol, const string& _quantity, const string& _price, const string& _clientOrderId, const ESide _side, const double _takeProfit) const
+bool Bot::CreateTradeAndSafeInDb(const string& _symbol, const double _quantity, const double _price, const string& _clientOrderId, const ESide _side, const double _takeProfit) const
 {
-	const auto tradeResponse{ manager.PostSpotAccountNewOrder(_symbol, ETimeInForce::GTC, _quantity, "", _price, _clientOrderId, "", "", ENewOrderResponseType::FULL, _side, EOrderType::LIMIT) };
-	if (const auto jsonResultTrade{ nlohmann::json::parse(tradeResponse) }; jsonResultTrade.contains("code"))
+	const auto iterator = ranges::find_if(symbolsInformations, [&_symbol](const SymbolExchangeInfo _info) { return _info.Symbol == _symbol; });
+	if (iterator == symbolsInformations.end())
+	{
+		return false;
+	}
+
+	const auto quantityString{ RoundValueToDecimalValue(_quantity, iterator->LotSizeStepSizeDecimalPosition) };
+	const auto priceString{ RoundValueToDecimalValue(_price, iterator->PriceFilterTickSizeDecimalPosition) };
+
+	const auto tradeResponse{ manager.PostSpotAccountNewOrder(_symbol, ETimeInForce::GTC, quantityString, "", priceString, _clientOrderId, "", "", ENewOrderResponseType::FULL, _side, EOrderType::LIMIT) };
+	const auto jsonResultTrade = JsonHelper::ParseStringToJson(tradeResponse);
+	if (jsonResultTrade.empty())
+	{
+		return false;
+	}
+
+	if (jsonResultTrade.contains("code"))
 	{
 		return false;
 	}
@@ -405,16 +485,26 @@ bool Bot::CreateTradeAndSafeInDb(const string& _symbol, const string& _quantity,
 /// <returns></returns>
 string Bot::CreateProfitTakerForSafetyTrade(const string& _symbol, const int _tradeNumber, const string& _takeProfitPrice) const
 {
-	auto result{ manager.GetSpotAccountQueryOrder(_symbol, 0, _symbol + "safetytrade" + to_string(_tradeNumber)) };
-	auto jsonResult{ nlohmann::json::parse(result) };
+	const auto result{ manager.GetSpotAccountQueryOrder(_symbol, 0, _symbol + "safetytrade" + to_string(_tradeNumber)) };
+	auto jsonResult = JsonHelper::ParseStringToJson(result);
+	if (jsonResult.empty())
+	{
+		return "";
+	}
 
 	if (jsonResult["status"] == "FILLED")
 	{
-		auto resultProfitTrade{ manager.GetSpotAccountQueryOrder(_symbol, 0, _symbol + "safetyprofit" + to_string(_tradeNumber)) };
-		auto jsonResultProfit{ nlohmann::json::parse(resultProfitTrade) };
+		const auto resultProfitTrade{ manager.GetSpotAccountQueryOrder(_symbol, 0, _symbol + "safetyprofit" + to_string(_tradeNumber)) };
+		const auto jsonResultProfit = JsonHelper::ParseStringToJson(resultProfitTrade);
+		if (jsonResultProfit.empty())
+		{
+			return "";
+		}
+
 		if (jsonResultProfit.contains("code"))
 		{
-			CreateTradeAndSafeInDb(_symbol, jsonResult["origQty"], _takeProfitPrice, _symbol + "safetyprofit" + to_string(_tradeNumber), ESide::SELL, stod(_takeProfitPrice));
+			const string quantity = jsonResult["origQty"];
+			CreateTradeAndSafeInDb(_symbol, stod(quantity), stod(_takeProfitPrice), _symbol + "safetyprofit" + to_string(_tradeNumber), ESide::SELL, stod(_takeProfitPrice));
 		}
 
 		return "";
@@ -427,12 +517,15 @@ string Bot::CreateProfitTakerForSafetyTrade(const string& _symbol, const int _tr
 
 Trade Bot::CreateTradeObjectFromJsonToInsert(const string& _tradeResponse) const
 {
-	auto jsonResultTrade{ nlohmann::json::parse(_tradeResponse) };
-
 	Trade trade;
 
+	auto jsonResultTrade = JsonHelper::ParseStringToJson(_tradeResponse);
+	if (jsonResultTrade.empty())
+	{
+		return trade;
+	}
+
 	trade.TradeId = jsonResultTrade["orderId"];
-	trade.InvestedAmount = config.InitialBuy;
 	trade.BotName = "DCA";
 	trade.ClientOrderID = jsonResultTrade["clientOrderId"];
 	trade.Asset = jsonResultTrade["symbol"];
@@ -454,7 +547,6 @@ Trade Bot::CreateTradeObjectFromJsonToInsert(const string& _tradeResponse) const
 	trade.Amount = stod(amount);
 
 	const auto takeProfitPrice{ trade.EntryPrice + trade.EntryPrice * config.TakeProfit };
-
 	if (takeProfitPrice * trade.Amount > 10)
 	{
 		trade.TakeProfit = takeProfitPrice;
@@ -463,6 +555,20 @@ Trade Bot::CreateTradeObjectFromJsonToInsert(const string& _tradeResponse) const
 	{
 		trade.TakeProfit = 10 / trade.Amount;
 	}
+
+	trade.CommissionAsset = jsonResultTrade["fills"][0]["commissionAsset"];
+
+	if (!jsonResultTrade["fills"].empty())
+	{
+		for(auto fill : jsonResultTrade["fills"])
+		{
+			string commissionString = fill["commission"];
+			trade.Commission += stod(commissionString);
+		}
+	}
+
+	trade.InvestedAmount = trade.EntryPrice * trade.Amount;
+
 
 	return trade;
 }

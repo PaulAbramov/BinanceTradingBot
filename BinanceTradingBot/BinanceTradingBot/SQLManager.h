@@ -10,25 +10,26 @@
 #include "Config.h"
 #include "SQLConnectionFactory.h"
 #include "ConnectionPool.h"
-#include "LoggingFacility.h"
 #include "Trade.h"
+#include "JsonHelper.h"
 
 class SQLManager
 {
 private:
-	Logger logger;
 	std::shared_ptr<ConnectionPool<SAConnection>> pool;
 
 	std::string LongToString(const int64_t _longDate) const;
 	time_t StringToTime(std::string _dateString) const;
+	std::shared_ptr<SAConnection> BorrowConnection() const;
+
 public:
-	SQLManager(const Logger& _logger, int _symbolAmount, const Config& _config);
+	SQLManager(int _symbolAmount, const Config& _config);
 
 	bool AddAssetToDb(const std::string& _answer) const;
 
-	void AddTradeToDb(const Trade& _trade, double _takeProfit = 0) const;
-	void UpdateTradeInDb(const Trade& _trade) const;
-	void RemoveTradeFromDb(const std::string& _clientOrderId) const;
+	bool AddTradeToDb(const Trade& _trade, double _takeProfit = 0) const;
+	bool UpdateTradeInDb(const Trade& _trade) const;
+	bool RemoveTradeFromDb(const std::string& _clientOrderId) const;
 
 	std::vector<Trade> GetActiveTradesFromDb(const std::string& _symbol) const;
 };

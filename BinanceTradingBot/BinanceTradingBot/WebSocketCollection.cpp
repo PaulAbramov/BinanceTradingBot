@@ -2,8 +2,8 @@
 
 using namespace std;
 
-WebSocketCollection::WebSocketCollection(net::io_context& _ioc, char const* _host, char const* _port, const Logger& _logger)
-	: ioContext(_ioc), host(_host), port(_port), logger(_logger)
+WebSocketCollection::WebSocketCollection(net::io_context& _ioc, char const* _host, char const* _port)
+	: ioContext(_ioc), host(_host), port(_port)
 {
 }
 
@@ -99,10 +99,12 @@ WebSocketCollection::handle WebSocketCollection::PartialBookDepth(const std::vec
 	const EDepthLevel _depthLevel, const EFrequency _frequency,
 	const std::function<bool(const string&)>& _callbackFunction)
 {
-    string type{ "depth" };
-    type += eDepthLevelToString.at(_depthLevel);
-    type += "@";
-    type += eFrequencyToString.at(_frequency);
+    string type{ std::format("depth{}@{}", eDepthLevelToString.at(_depthLevel), eFrequencyToString.at(_frequency)) };
+
+    //string type{ "depth" };
+    //type += eDepthLevelToString.at(_depthLevel);
+    //type += "@";
+    //type += eFrequencyToString.at(_frequency);
 
     return StartChannel(_symbols, type, _callbackFunction);
 }
@@ -111,8 +113,9 @@ WebSocketCollection::handle WebSocketCollection::DiffBookDepth(const std::vector
 	const EFrequency _frequency,
 	const std::function<bool(const string&)>& _callbackFunction)
 {
-    string type{ "depth@" };
-	type += eFrequencyToString.at(_frequency);
+    string type{ std::format("depth@{}", eFrequencyToString.at(_frequency)) };
+    //string type{ "depth@" };
+	//type += eFrequencyToString.at(_frequency);
 
     return StartChannel(_symbols, type, _callbackFunction);
 }
@@ -126,7 +129,7 @@ WebSocketCollection::handle WebSocketCollection::DiffBookDepth(const std::vector
 /// <returns></returns>
 WebSocketCollection::handle WebSocketCollection::StartChannel(const std::vector<string>& _symbols, const string& _type, const std::function<bool(const string&)>& _callbackFunction)
 {
-    auto webSocketSession{ std::make_shared<WebSocketSession>(ioContext, host, port, logger) };
+    auto webSocketSession{ std::make_shared<WebSocketSession>(ioContext, host, port) };
     auto* websocketHandle{ webSocketSession.get() };
 	std::weak_ptr<WebSocketSession> weakPointerWebSocketSession{ webSocketSession };
 
