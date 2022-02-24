@@ -1,9 +1,12 @@
 #pragma once
 
-#include "APIHead.h"
-#include "APIEnums.h"
+#include <map>
+#include <string>
 
-class SpotAccountEndpoints : public APIHead
+#include "APIEnums.h"
+#include "FileLogger.h"
+
+class SpotAccountEndpoints
 {
 private:
 	std::map<ESide, const char*> eSidesToString
@@ -42,9 +45,6 @@ private:
 	};
 
 public:
-	SpotAccountEndpoints() = default;
-	SpotAccountEndpoints(const Logger& _logger) : APIHead(_logger) {}
-
 	void PostSpotAccountNewOrderQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, ETimeInForce _timeInForce, const std::string& _quantity, const std::string& _quoteOrderQuantity, const std::string& _price,
 	                                  const std::string& _newClientOrderId, const std::string& _stopPrice, const std::string& _icebergQuantity, ENewOrderResponseType _newOrderResponseType = ENewOrderResponseType::FULL, ESide _side = ESide::NONE, EOrderType _orderType = EOrderType::NONE, unsigned short _recvWindow = 0) const;
 	void DeleteSpotAccountCancelOrderQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, unsigned short _orderId,

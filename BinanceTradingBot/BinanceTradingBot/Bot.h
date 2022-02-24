@@ -5,9 +5,11 @@
 #include <future>
 
 #include "ApiManager.h"
+#include "SymbolExchangeInfo.h"
 #include "Config.h"
 #include "SQLManager.h"
 #include "WebSocketCollection.h"
+#include "JsonHelper.h"
 
 class Bot
 {
@@ -31,25 +33,24 @@ private:
 		{EIntervals::ONEMONTH, "1M"}
 	};
 
-	double maxOrderValue;
-
 	std::vector<EIntervals> intervals{ { EIntervals::FIFTEENMINUTES, EIntervals::ONEHOUR, EIntervals::ONEDAY } };
 
-	double busdBalance;
-	std::stringstream ss;
+	std::vector<std::string> symbols{ "BNBBUSD", "MATICBUSD", "AVAXBUSD", "ALGOBUSD" };
+	std::vector<SymbolExchangeInfo> symbolsInformations;
 
-	Logger logger;
+	double maxOrderValue;
+	double busdBalance;
+
 	Config config;
-	std::vector<std::string> symbols{ "BNBBUSD" };
 	ApiManager manager;
 	SQLManager sqlManager;
 	std::shared_ptr<ConnectionPool<SAConnection>> pool;
-	std::pmr::map<std::string, std::future<void>> runningTrades;
+	std::map<std::string, std::future<void>> runningTrades;
 
 	double GetBalanceForCoin(const std::string& _symbol) const;
 
 	std::string RoundValueToDecimalValue(const double& _valueToRound, const int _decimalPosition) const;
-	bool CreateTradeAndSafeInDb(const std::string& _symbol, const std::string& _quantity, const std::string& _price, const std::string& _clientOrderId, ESide _side, double _takeProfit = 0) const;
+	bool CreateTradeAndSafeInDb(const std::string& _symbol, double _quantity, double _price, const std::string& _clientOrderId, ESide _side, double _takeProfit ) const;
 	std::string CreateProfitTakerForSafetyTrade(const std::string& _symbol, int _tradeNumber, const std::string& _takeProfitPrice) const;
 	Trade CreateTradeObjectFromJsonToInsert(const std::string& _tradeResponse) const;
 
@@ -59,6 +60,6 @@ private:
 	void DCARun(net::io_context *_ioc);
 
 public:
-	Bot(const Logger& _logger, const Config& _config);
+	Bot(const Config& _config);
 	bool Run();
 };

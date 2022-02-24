@@ -7,6 +7,38 @@ void MarketDataEndpoints::GetMarketTimeQuery(string& _url) const
 	_url += "/api/v3/time";
 }
 
+/// <summary>
+/// Get informations for the symbols
+///	i.e. the lotsize for given symbol
+/// </summary>
+/// <param name="_url"></param>
+/// <param name="_symbols"></param>
+void MarketDataEndpoints::GetMarketExchangeInformationQuery(std::string& _url, const std::vector<std::string>& _symbols) const
+{
+	_url += "/api/v3/exchangeInfo";
+
+	if(_symbols.size() == 1)
+	{
+		_url += std::format("?symbol={}", _symbols.at(0));
+	}
+	else if(_symbols.size() > 1)
+	{
+		_url += "?symbols=[";
+		for(const auto& symbol : _symbols)
+		{
+			// use %22 instead of \" to escape the quotation as it doesn't work as desired
+			// %22 = "
+			_url += std::format("%22{}%22", symbol);
+
+			if(symbol != _symbols.back())
+			{
+				_url += ",";
+			}
+		}
+		_url += "]";
+	}
+}
+
 /*
 * Order Book
 *
@@ -28,7 +60,7 @@ void MarketDataEndpoints::GetMarketOrderbookQuery(string& _url, string& _querySt
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -57,7 +89,7 @@ void MarketDataEndpoints::GetMarketRecentTradesListQuery(string& _url, string& _
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -89,7 +121,7 @@ void MarketDataEndpoints::GetMarketOldTradeLookupQuery(string& _url, string& _qu
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -129,7 +161,7 @@ void MarketDataEndpoints::GetMarketCandlestickDataQuery(string& _url, string& _q
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 
@@ -171,7 +203,7 @@ void MarketDataEndpoints::GetMarketCurrentAveragePriceQuery(string& _url, string
 {
 	if (_symbol.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'symbol'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'symbol'");
 		return;
 	}
 

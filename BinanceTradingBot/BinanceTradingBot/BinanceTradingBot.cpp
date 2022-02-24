@@ -8,61 +8,61 @@
 #include "WebSocketCollection.h"
 #include "ConfigurationManager.h"
 #include "FileLogger.h"
-#include "StandardOutputLogger.h"
 #include "Bot.h"
 
 #include "GnuplotIoStream.h"
+
+#include "easylogging++.h"
+INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 using namespace std::chrono;
 
 namespace fs = std::filesystem;
 
-static Logger InitializeLogger()
+static void InitializeLogger()
 {
 	string filename{ "Logger.conf" };
 
 	// if configuration file exists - use FilesystemLogger
 	if (ifstream filestream(filename); filestream.good())
 	{
-		//Check if logs directory exists, if not create it
-		if(!fs::exists("logs"))
-		{
-			fs::create_directory("logs");
-		}
-
 		// Load configuration from file
 		el::Configurations config(filename);
 		// Actually reconfigure all loggers instead
 		el::Loggers::reconfigureAllLoggers(config);
 
-		// Get the current date
-		struct tm newtime{};
-		time_t now{ std::time(nullptr) };
-		localtime_s(&newtime, &now);
+		el::Logger* l = el::Loggers::getLogger("default");
+		if(l->typedConfigurations()->toFile(el::Level::Info))
+		{
+			//Check if logs directory exists, if not create it
+			if (!fs::exists("logs"))
+			{
+				fs::create_directory("logs");
+			}
 
-		// Make a string with the current date
-		ostringstream oss;
-		oss << "logs/" << put_time(&newtime, "%d-%m-%Y_%H-%M-%S") << ".log";
+			// Get the current date
+			struct tm newtime {};
+			time_t now{ std::time(nullptr) };
+			localtime_s(&newtime, &now);
 
-		// set globally the filepath to the file with the currentdate
-		config.setGlobally(el::ConfigurationType::Filename, oss.str());
-		el::Loggers::reconfigureLogger("default", config);
+			// Make a string with the current date
+			ostringstream oss;
+			oss << "logs/" << put_time(&newtime, "%d-%m-%Y_%H-%M-%S") << ".log";
 
-		return make_shared<FileLogger>();
-	}
-	else
-	{
-		return make_shared<StandardOutputLogger>();
+			// set globally the filepath to the file with the currentdate
+			config.setGlobally(el::ConfigurationType::Filename, oss.str());
+			el::Loggers::reconfigureLogger("default", config);
+		}
 	}
 }
 
 int main()
 {
-	Logger logger{ InitializeLogger() };
-	logger->WriteInfoEntry("Logger initialized");
+	InitializeLogger();
+	FileLogger::WriteErrorEntry("Logger initialized");
 
-	ConfigurationManager configManager{ ConfigurationManager(logger) };
+	ConfigurationManager configManager{};
 	Config config{ configManager.LoadConfig() };
 
 	string path{ "\"" };
@@ -72,9 +72,9 @@ int main()
 	//Gnuplot gp(path);
 	//Gnuplot gp("\"..\\..\\gnuplot\\bin\\gnuplot.exe\"");
 
-	Bot firstBot{ Bot(logger, config) };
+	Bot dcaBot{ config };
 
-	return firstBot.Run();
+	return dcaBot.Run();
 
 	return EXIT_SUCCESS;
 }

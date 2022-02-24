@@ -4,6 +4,8 @@
 
 #include <memory>
 
+#include "FileLogger.h"
+
 class ConnectionFactory
 {
 protected:

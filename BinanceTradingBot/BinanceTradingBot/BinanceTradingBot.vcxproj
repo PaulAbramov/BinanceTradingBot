@@ -85,7 +85,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <SourcePath>$(SourcePath)</SourcePath>
@@ -135,18 +135,26 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_WIN32_WINNT=0x0A00;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\x64-windows-static\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/bigobj /D _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS /D _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\x64-windows-static\debug\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl.lib;libcrypto.lib;libcurl-d.lib;wastorage.lib;cpprest_2_10d.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;zlibd.lib</AdditionalDependencies>
+      <AdditionalDependencies>zlibd.lib;Normaliz.lib;Ws2_32.lib;Wldap32.lib;Crypt32.lib;advapi32.lib;libssl_static.lib;libcrypto_static.lib;libcurl-d.lib;ucrt.lib;vcruntime.lib;msvcrt.lib;kernel32.lib;User32.lib;sqlapisd.lib;version.lib;oleaut32.lib;ole32.lib</AdditionalDependencies>
+      <ShowProgress>NotSet</ShowProgress>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)libmysql.dll" "$(OutDir)" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -185,7 +193,9 @@
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="ConfigurationManager.cpp" />
     <ClCompile Include="FiatEndpoints.cpp" />
+    <ClCompile Include="FileLogger.cpp" />
     <ClCompile Include="FuturesEndpoints.cpp" />
+    <ClCompile Include="JsonHelper.cpp" />
     <ClCompile Include="MarginAccountEndpoints.cpp" />
     <ClCompile Include="MarketDataEndpoints.cpp" />
     <ClCompile Include="MiningEndpoints.cpp" />
@@ -206,8 +216,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="APIEnums.h" />
-    <ClInclude Include="APIHead.h" />
     <ClInclude Include="ApiManager.h" />
+    <ClInclude Include="JsonHelper.h" />
+    <ClInclude Include="SymbolExchangeInfo.h" />
     <ClInclude Include="BinanceSwapEndpoints.h" />
     <ClInclude Include="Bot.h" />
     <ClInclude Include="Config.h" />

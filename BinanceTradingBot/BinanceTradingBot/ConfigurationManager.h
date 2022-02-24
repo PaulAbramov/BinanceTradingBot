@@ -6,7 +6,8 @@
 #include <nlohmann/json.hpp>
 
 #include "Config.h"
-#include "LoggingFacility.h"
+#include "FileLogger.h"
+#include "JsonHelper.h"
 
 namespace fs = std::filesystem;
 
@@ -16,11 +17,9 @@ private:
 	const std::string configFileName{ "config.json" };
 	nlohmann::json jsonObject;
 	std::fstream configFile;
-	Logger logger;
 
 	void InitializeConfig(Config& _config, const nlohmann::json& _jsonObject);
 public:
-	ConfigurationManager(const Logger& _logger) : logger(_logger) {}
 	Config LoadConfig();
 	Config CreateConfig();
 	void SaveConfig(Config& _config);

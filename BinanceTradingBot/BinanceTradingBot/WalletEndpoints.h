@@ -1,6 +1,7 @@
 #pragma once
+#include <string>
 
-#include "APIHead.h"
+#include "FileLogger.h"
 
 enum class ESnapshotType : int
 {
@@ -9,14 +10,11 @@ enum class ESnapshotType : int
 	FUTURES
 };
 
-class WalletEndpoints : public APIHead
+class WalletEndpoints
 {
 private:
 
 public:
-	WalletEndpoints() = default;
-	WalletEndpoints(const Logger& _logger) : APIHead(_logger){}
-
 	void GetWalletAllCoinsInformationQuery(std::string& _url, std::string& _queryString, unsigned short _recvWindow = 0) const;
 	void GetWalletDailyAccountSnapshotQuery(std::string& _url, std::string& _queryString, ESnapshotType _snapshotType, time_t _startTime, time_t _endTime, int _limit = 5, unsigned short _recvWindow = 0) const;
 	void PostWalletDisableFastWithdrawQuery(std::string& _url, std::string& _queryString, unsigned short _recvWindow = 0) const;

@@ -33,7 +33,7 @@ void UserDataEndpoints::PutUserDataKeepAliveListenKeySpot(string& _url, string& 
 {
 	if (_listenKey.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'listenKey'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'listenKey'");
 		return;
 	}
 
@@ -60,7 +60,7 @@ void UserDataEndpoints::DeleteUserDataCloseListenKeySpot(string& _url, string& _
 {
 	if (_listenKey.empty())
 	{
-		logger->WriteWarnEntry("Did not set mandatory parameter 'listenKey'");
+		FileLogger::WriteWarnEntry("Did not set mandatory parameter 'listenKey'");
 		return;
 	}
 

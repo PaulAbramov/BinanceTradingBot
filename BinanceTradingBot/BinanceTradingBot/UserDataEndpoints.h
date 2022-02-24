@@ -1,6 +1,8 @@
 #pragma once
 
-#include "APIHead.h"
+#include <string>
+
+#include "FileLogger.h"
 
 /*
 * The base API endpoint is: https://api.binance.com
@@ -34,15 +36,12 @@
 * If the order is an OCO, an event will be displayed named ListStatus in addition to the executionReport event.
 */
 
-class UserDataEndpoints : public APIHead
+class UserDataEndpoints
 {
 private:
 
 public:
-	UserDataEndpoints() = default;
-	UserDataEndpoints(const Logger& _logger) : APIHead(_logger) {}
-
-	static void PostUserDataCreateListenKeySpot(std::string& _url);
+	void PostUserDataCreateListenKeySpot(std::string& _url);
 	void PutUserDataKeepAliveListenKeySpot(std::string& _url, std::string& _queryString, std::string _listenKey) const;
 	void DeleteUserDataCloseListenKeySpot(std::string& _url, std::string& _queryString, std::string _listenKey) const;
 };

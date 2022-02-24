@@ -8,12 +8,12 @@ using namespace std;
 */
 Config ConfigurationManager::LoadConfig()
 {
-	logger->WriteInfoEntry("Load Configuration...");
-	Config config;
+	FileLogger::WriteErrorEntry("Load Configuration...");
+
+	Config config{};
 	
 	//throw these errors
 	configFile.exceptions(fstream::failbit | fstream::badbit);
-
 	try 
 	{
 		if (fs::exists(configFileName))
@@ -28,11 +28,15 @@ Config ConfigurationManager::LoadConfig()
 				configText.append(buffer);
 			}
 
-			jsonObject = nlohmann::json::parse(configText);
+			jsonObject = JsonHelper::ParseStringToJson(configText);
+			if (jsonObject.empty())
+			{
+				return config;
+			}
 
 			InitializeConfig(config, jsonObject);
 
-			logger->WriteInfoEntry("Configuration successfully loaded.");
+			FileLogger::WriteErrorEntry("Configuration successfully loaded.");
 			configFile.close();
 		}
 		else
@@ -46,7 +50,7 @@ Config ConfigurationManager::LoadConfig()
 		enum { BUFFER_SIZE = 200 };
 		char buffer[BUFFER_SIZE];
 		cerr << "Error: " << strerror_s(buffer, errno) << endl;
-		logger->WriteErrorEntry(e.what());
+		FileLogger::WriteErrorEntry(e.what());
 	}
 
 	return config;
@@ -57,7 +61,7 @@ Config ConfigurationManager::LoadConfig()
 */
 Config ConfigurationManager::CreateConfig()
 {
-	logger->WriteInfoEntry("Create Configuration...");
+	FileLogger::WriteErrorEntry("Create Configuration...");
 
 	Config config;
 
@@ -104,7 +108,8 @@ Config ConfigurationManager::CreateConfig()
 
 	InitializeConfig(config, jsonObject);
 
-	logger->WriteInfoEntry("Configuration successfully created.");
+	//FileLogger::WriteInfoEntry("Configuration successfully created.");
+	FileLogger::WriteErrorEntry("Configuration successfully created.");
 	return config;
 }
 

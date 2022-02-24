@@ -2,21 +2,16 @@
 
 using namespace std;
 
-ApiManager::ApiManager(const Logger& _logger, string _apiKey, string _secretKey)
+ApiManager::ApiManager(string _apiKey, string _secretKey)
 {
 	curl_global_init(CURL_GLOBAL_DEFAULT);
 	apiKey = std::move(_apiKey);
 	secretKey = std::move(_secretKey);
-	logger = _logger;
-
-	marketDataEndpoints = MarketDataEndpoints(_logger);
-	walletEndpoints = WalletEndpoints(_logger);
-	spotAccountEndpoints = SpotAccountEndpoints(_logger);
 }
 
-void ApiManager::CleanUpApiManager() const
+ApiManager::~ApiManager()
 {
-	logger->WriteInfoEntry("Cleaning up the ApiManager.");
+	FileLogger::WriteInfoEntry("Cleaning up the ApiManager.");
 
 	curl_global_cleanup();
 }
@@ -32,6 +27,22 @@ string ApiManager::GetMarketDataTime() const
 	string queryString;
 
 	marketDataEndpoints.GetMarketTimeQuery(url);
+
+	CurlAPI(url, strResult, false);
+
+	return strResult;
+}
+
+std::string ApiManager::GetMarketExchangeInformation(std::vector<std::string>& _symbols) const
+{
+	string postData;
+	string strResult;
+	const string action{ "GET" };
+
+	string url(BINANCE_APIENDPOINT);
+	string queryString;
+
+	marketDataEndpoints.GetMarketExchangeInformationQuery(url, _symbols);
 
 	CurlAPI(url, strResult, false);
 
@@ -674,14 +685,18 @@ void ApiManager::CurlAPIWithHeader(string& _url, string& _strResult, string& _po
 {
 	if (apiKey.empty() || secretKey.empty())
 	{
-		logger->WriteWarnEntry("API Key or/and Secret Key has not been set.");
+		FileLogger::WriteWarnEntry("API Key or/and Secret Key has not been set.");
 		return;
 	}
 
 	if(_getServerTime)
 	{
 		auto timeString{ GetMarketDataTime() };
-		auto timeJson{ nlohmann::json::parse(timeString) };
+		auto timeJson = JsonHelper::ParseStringToJson(timeString);
+		if (timeJson.empty())
+		{
+			return;
+		}
 
 		_queryString.append("&timestamp=");
 
@@ -736,7 +751,7 @@ void ApiManager::CurlAPIWithHeader(string& _url, string& _strResult, string& _po
 	}
 	else
 	{
-		logger->WriteErrorEntry("Could not initialize cURL.");
+		FileLogger::WriteErrorEntry("Could not initialize cURL.");
 	}
 }
 
@@ -801,7 +816,11 @@ void ApiManager::CurlAPI(string& _url, string& _stringResult, bool _getServerTim
 	if (_getServerTime)
 	{
 		auto timeString{ GetMarketDataTime() };
-		auto timeJson{ nlohmann::json::parse(timeString) };
+		auto timeJson = JsonHelper::ParseStringToJson(timeString);
+		if (timeJson.empty())
+		{
+			return;
+		}
 
 		_url.append("&timestamp=");
 
@@ -819,13 +838,13 @@ void ApiManager::CurlAPI(string& _url, string& _stringResult, bool _getServerTim
 	}
 	else
 	{
-		logger->WriteErrorEntry("Could not initialize cURL.");
+		FileLogger::WriteErrorEntry("Could not initialize cURL.");
 	}
 }
 
 void ApiManager::SetCurlOptions(CURL* _curl, const string _url, string& _strResult)
 {
-	//logger->WriteInfoEntry("making cUrl call to " + _url);
+	//FileLogger::WriteInfoEntry("making cUrl call to " + _url);
 
 	curl_easy_setopt(_curl, CURLOPT_URL, _url.c_str());
 	curl_easy_setopt(_curl, CURLOPT_WRITEFUNCTION, ApiManager::WebRequestCallback);
@@ -838,7 +857,7 @@ void ApiManager::PerformCurl(CURL* _curl) const
 {
 	if (const CURLcode res{ curl_easy_perform(_curl) }; res != CURLE_OK)
 	{
-		logger->WriteErrorEntry(curl_easy_strerror(res));
+		FileLogger::WriteErrorEntry(curl_easy_strerror(res));
 		PerformCurl(_curl);
 		//cerr << "CURL error: " << res << endl;
 	}

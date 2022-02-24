@@ -1,31 +1,14 @@
 #pragma once
 
-#include "LoggingFacility.h"
+#include <easylogging++.h>
+#include <mutex>
+#include <source_location>
 
-INITIALIZE_EASYLOGGINGPP
-
-class FileLogger final : public LoggingFacility
+class FileLogger
 {
 private:
-    std::mutex mu;
 public:
-    virtual void WriteInfoEntry(std::string_view _entry, const std::source_location& _where) override
-    {
-        mu.lock();
-        //LOG(INFO) << _where.file_name() << "(" << _where.line() << ":" << _where.column() << ") " << _where.function_name() << "(): " << _entry << endl;
-        LOG(INFO) << _where.function_name() << "(): " << _entry << std::endl;
-        mu.unlock();
-    }
-    virtual void WriteWarnEntry(std::string_view _entry, const std::source_location& _where) override
-    {
-        mu.lock();
-        LOG(WARNING) << _where.function_name() << "(): " << _entry << std::endl;
-        mu.unlock();
-    }
-    virtual void WriteErrorEntry(std::string_view _entry, const std::source_location& _where) override
-    {
-        mu.lock();
-        LOG(ERROR) << _where.function_name() << "(): " << _entry << std::endl;
-        mu.unlock();
-    }
+    static void WriteInfoEntry(std::string _entry, const std::source_location& _where = std::source_location::current());
+    static void WriteWarnEntry(std::string _entry, const std::source_location& _where = std::source_location::current());
+    static void WriteErrorEntry(std::string _entry, const std::source_location& _where = std::source_location::current());
 };

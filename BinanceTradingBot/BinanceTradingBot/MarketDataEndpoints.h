@@ -1,9 +1,14 @@
 #pragma once
 
-#include "APIHead.h"
-#include "APIEnums.h"
+#include <format>
+#include <map>
+#include <string>
+#include <vector>
 
-class MarketDataEndpoints : public APIHead
+#include "APIEnums.h"
+#include "FileLogger.h"
+
+class MarketDataEndpoints
 {
 private:
 	std::map<EIntervals, const char*> eIntervalsToString
@@ -26,10 +31,8 @@ private:
 	};
 
 public:
-	MarketDataEndpoints() = default;
-	MarketDataEndpoints(const Logger& _logger) : APIHead(_logger) {}
-
 	void GetMarketTimeQuery(std::string& _url) const;
+	void GetMarketExchangeInformationQuery(std::string& _url, const std::vector<std::string>& _symbols) const;
 	void GetMarketOrderbookQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, int _limit = 100) const;
 	void GetMarketRecentTradesListQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, int _limit = 500) const;
 	void GetMarketOldTradeLookupQuery(std::string& _url, std::string& _queryString, const std::string& _symbol, unsigned short _fromId, int _limit = 500) const;

@@ -40,6 +40,12 @@
     <Filter Include="Header Files\Connections\Models">
       <UniqueIdentifier>{934e46a7-e88d-494f-be11-e7eef89348c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\API\Endpoints\Models">
+      <UniqueIdentifier>{914961ac-287f-4e8f-8b97-9a896984b9c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logging">
+      <UniqueIdentifier>{35acc5e2-e2e6-4a03-8ee9-1fe7d9254fc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinanceTradingBot.cpp">
@@ -102,6 +108,12 @@
     <ClCompile Include="SQLManager.cpp">
       <Filter>Source Files\Connections</Filter>
     </ClCompile>
+    <ClCompile Include="JsonHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileLogger.cpp">
+      <Filter>Source Files\Logging</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logger.conf">
@@ -160,9 +172,6 @@
     <ClInclude Include="WalletEndpoints.h">
       <Filter>Header Files\API\Endpoints</Filter>
     </ClInclude>
-    <ClInclude Include="APIHead.h">
-      <Filter>Header Files\API</Filter>
-    </ClInclude>
     <ClInclude Include="APIEnums.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
@@ -197,6 +206,12 @@
       <Filter>Header Files\Connections</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SymbolExchangeInfo.h">
+      <Filter>Header Files\API\Endpoints\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

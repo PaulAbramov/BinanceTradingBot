@@ -1,7 +1,5 @@
 #include "SQLConnectionFactory.h"
 
-#include <iostream>
-
 using namespace std;
 
 SqlConnectionFactory::SqlConnectionFactory(const string& _server, const string& _username, const string& _password)
@@ -23,8 +21,8 @@ shared_ptr<SAConnection> SqlConnectionFactory::Create(eSAClient _client)
 	}
 	catch (SAException& exception)
 	{
-		cout << "connection exception." << endl;
-		cout << exception.ErrText().GetMultiByteChars() << endl;
+		FileLogger::WriteErrorEntry("connection exception.");
+		FileLogger::WriteErrorEntry(exception.ErrText().GetMultiByteChars());
 	}
 	
 	return static_pointer_cast<SAConnection>(connection);
