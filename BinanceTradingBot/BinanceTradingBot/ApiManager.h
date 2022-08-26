@@ -40,6 +40,7 @@ private:
 	std::string HmacSha256(const std::string& _querystring) const;
 	static std::string B2AHex(const unsigned char* _byteArray, int _n);
 	static size_t WebRequestCallback(void* _content, size_t _size, size_t _nmemb, std::string* _buffer);
+	static size_t FileDownloadCallback(void* _content, size_t _size, size_t _nmemb, FILE* _stream);
 
 	static void SetCurlOptions(CURL* _curl, const std::string _url, std::string& _strResult);
 	void PerformCurl(CURL* _curl) const;
@@ -49,6 +50,7 @@ public:
 	~ApiManager();
 
 	void CurlAPI(std::string& _url, std::string& _stringResult, bool _getServerTime = true) const;
+	void CurlFile() const;
 
 #pragma region MarketData
 	std::string GetMarketDataTime() const;

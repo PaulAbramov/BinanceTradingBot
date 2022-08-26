@@ -17,11 +17,13 @@ bool Bot::Run()
 	
 	ioc.post([this, &ioc]()
 	{
-		std::thread t([this, &ioc]()
-			{
-				DCARun(&ioc);
-			});
-		t.detach();
+		manager.CurlFile();
+
+		//std::thread t([this, &ioc]()
+		//	{
+		//		DCARun(&ioc);
+		//	});
+		//t.detach();
 
 		//std::thread t2([this, &ioc]()
 		//	{

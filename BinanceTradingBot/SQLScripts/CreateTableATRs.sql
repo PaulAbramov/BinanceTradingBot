@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS [dbo].[ATRs];
+
+CREATE TABLE dbo.ATRs
+	(
+	Id int IDENTITY(1,1) PRIMARY KEY,
+	AssetId int FOREIGN KEY REFERENCES Assets(Id) unique WITH (IGNORE_DUP_KEY = ON),
+	ATR14 decimal(18,8),
+	)

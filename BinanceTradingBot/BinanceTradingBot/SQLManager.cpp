@@ -4,8 +4,8 @@ using namespace std;
 
 SQLManager::SQLManager(int _symbolAmount, const Config& _config)
 {
-	//const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory("localhost@Binance;MARS Connection=True;", "", ""));
-	const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory(_config.SqlServer, _config.SqlUserName, _config.SqlPassword));
+	const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory("localhost@Binance;MARS Connection=True;", "", ""));
+	//const shared_ptr<SqlConnectionFactory> connectionFactory(new SqlConnectionFactory(_config.SqlServer, _config.SqlUserName, _config.SqlPassword));
 
 	constexpr char dllPath[] = "SuppressMessageBox.dll";
 
@@ -21,7 +21,8 @@ SQLManager::SQLManager(int _symbolAmount, const Config& _config)
 	}
 
 	// there is a popup box here, but we suppress it
-	pool = std::make_shared<ConnectionPool<SAConnection>>(_symbolAmount * 2, connectionFactory, SA_MySQL_Client); // double the size of the symbols, for trading and updating the Db
+	pool = std::make_shared<ConnectionPool<SAConnection>>(_symbolAmount * 2, connectionFactory, SA_SQLServer_Client); // double the size of the symbols, for trading and updating the Db
+	//pool = std::make_shared<ConnectionPool<SAConnection>>(_symbolAmount * 2, connectionFactory, SA_MySQL_Client); // double the size of the symbols, for trading and updating the Db
 
 	if(pool->GetStats().PoolSize > 0)
 	{

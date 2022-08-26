@@ -790,6 +790,12 @@ size_t ApiManager::WebRequestCallback(void* _content, const size_t _size, const 
 	return totalsize;
 }
 
+size_t ApiManager::FileDownloadCallback(void* _content, size_t _size, size_t _nmemb, FILE* _stream)
+{
+	const size_t written = fwrite(_content, _size, _nmemb, _stream);
+	return written;
+}
+
 string ApiManager::HmacSha256(const string& _querystring) const
 {
 	const unsigned char* digest{ HMAC(EVP_sha256(), secretKey.c_str(), strlen(secretKey.c_str()),
@@ -839,6 +845,38 @@ void ApiManager::CurlAPI(string& _url, string& _stringResult, bool _getServerTim
 	else
 	{
 		FileLogger::WriteErrorEntry("Could not initialize cURL.");
+	}
+}
+
+void ApiManager::CurlFile() const
+{
+	CURL* curl;
+	FILE* fp;
+	CURLcode res;
+	char outfilename[FILENAME_MAX] = "file.zip";
+
+	curl = curl_easy_init();
+	if (curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_URL, "https://data.binance.vision/data/spot/monthly/klines/BNBUSDT/1m/BNBUSDT-1m-2019-01.zip");
+		//curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		//curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1); //Prevent "longjmp causes uninitialized stack frame" bug
+		//fp = fopen(outfilename, "wb");
+		auto test = fopen_s(&fp, outfilename, "wb");
+		int errnum = 0;
+		if (nullptr == fp)
+		{
+			errnum = errno;
+			fprintf(stderr, "Value of errno: %d\n", errno);
+			perror("Error printed by perror");
+		}
+		//curl_easy_setopt(curl, CURLOPT_CAINFO, "./ca-bundle.crt");
+		//curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, false);
+		//curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, false);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ApiManager::FileDownloadCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+		res = curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
 	}
 }
 
